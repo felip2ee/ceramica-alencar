@@ -18,7 +18,7 @@ test("nome e fatos obrigatórios presentes", () => {
   for (const s of ["Cerâmicas Alencar", "Tocantinópolis", "7 × 24", "3 a 7 dias", "frete próprio", "Conversar sobre meu projeto"]) assert.ok(html.includes(s), s);
 });
 test("seções na ordem do spec", () => {
-  const ids = ["hero","materialidade","revestimentos","aplicacoes","fabrica","parceiros","contato"];
+  const ids = ["hero","fabrica","materialidade","revestimentos","aplicacoes","parceiros","contato"];
   const pos = ids.map(id => html.indexOf(`id="${id}"`));
   assert.ok(pos.every(p => p > 0));
   assert.deepEqual(pos, [...pos].sort((a,b)=>a-b));

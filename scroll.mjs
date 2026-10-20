@@ -1,9 +1,8 @@
-// Coreografia de scroll (browser): revelações das seções, plaqueta narradora que sai da casa,
-// para ao lado dos títulos e cai na carroceria, e o caminhão que desce a rota até Palmas.
+// Coreografia de scroll (browser): revelações das seções, plaqueta narradora que sai da casa
+// e cai direto na carroceria (a Fábrica é a 2ª seção), e o caminhão que desce a rota até Palmas.
 // Toda a matemática fica em lib/trajeto.mjs; aqui só DOM e GSAP.
-import { alvosParadas, pontosTrajeto, janelas, rotaDesde } from "./lib/trajeto.mjs";
+import { pontosTrajeto, rotaDesde } from "./lib/trajeto.mjs";
 
-const SECOES = ["#materialidade", "#revestimentos", "#aplicacoes"];
 const SOLTA_PX = 40;
 const NS = "http://www.w3.org/2000/svg";
 // Plaqueta 7 × 24 deitada sobre os paletes, no ângulo dos paletes do desenho (viewBox do caminhão).
@@ -88,9 +87,8 @@ function dirigir(gsap, svg, veiculo, meta) {
 function narrar(gsap, ScrollTrigger, svg, veiculo) {
   const no = document.getElementById("plaqueta-narradora");
   const casa = document.querySelector("#casa #plaqueta-solta");
-  const titulos = SECOES.map((s) => document.querySelector(`${s} h2`));
-  const proximas = [...SECOES.slice(1), "#fabrica"].map((s) => document.querySelector(s));
-  if (!no || !casa || titulos.some((t) => !t) || proximas.some((s) => !s)) return;
+  const fabrica = document.getElementById("fabrica");
+  if (!no || !casa || !fabrica) return;
 
   const carga = document.createElementNS(NS, "g");
   carga.setAttribute("class", "carga-extra");
@@ -112,18 +110,21 @@ function narrar(gsap, ScrollTrigger, svg, veiculo) {
     carga.setAttribute("opacity", naCarga ? "1" : "0");
   }
 
+  // Da casa direto à carroceria: começa quando a Fábrica (logo abaixo do hero) sobe a 80% da tela,
+  // nunca antes de a peça soltar da casa, e termina onde o caminhão parte (topo do mapa a 40%).
   tl = gsap.timeline({
     onUpdate: pintar,
     scrollTrigger: {
-      trigger: "#materialidade", start: "top 80%",
-      endTrigger: svg, end: "top 40%", // o mesmo ponto em que o caminhão parte
+      trigger: fabrica,
+      start: () => Math.max(SOLTA_PX, fabrica.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.8),
+      endTrigger: svg, end: "top 40%",
       scrub: 0.6, invalidateOnRefresh: true,
       onRefresh: (self) => tl && construir(self),
     },
   });
 
-  // Monta as pernas em px de scroll (duração da timeline = start…end do trigger, 1 px = 1 unidade).
-  // Roda a cada refresh (resize, load, fontes), já com start/end novos.
+  // Uma perna só, origem → arco → carga, em coordenadas de tela da peça fixa.
+  // Roda a cada refresh (resize, load, fontes) e ao soltar da casa, com medidas novas.
   function construir(st, origemTela) {
     if (!(st.end >= st.start)) return; // trigger ainda sem medidas: o próximo refresh monta
     const vw = raiz.clientWidth;
@@ -131,10 +132,9 @@ function narrar(gsap, ScrollTrigger, svg, veiculo) {
     const w = no.offsetWidth;
     const h = no.offsetHeight;
     const topoMin = parseFloat(getComputedStyle(raiz).getPropertyValue("--header")) + 16;
-    const limitar = ({ x, y, rot }) => ({
+    const limitar = ({ x, y }) => ({
       x: Math.min(Math.max(x, 8), vw - w - 8),
       y: Math.min(Math.max(y, topoMin), vh - h - 8),
-      rot,
     });
 
     // Origem: onde a plaqueta da casa está na tela ao soltar (ou estaria, com o scroll em SOLTA_PX).
@@ -142,44 +142,17 @@ function narrar(gsap, ScrollTrigger, svg, veiculo) {
     const origem = origemTela ?? { x: r.left, y: r.top + window.scrollY - SOLTA_PX };
     origem.x += r.width / 2 - w / 2;
     origem.y += r.height / 2 - h / 2;
-    const escalaCasa = r.width / w; // nasce do tamanho da peça da casa e cresce na primeira perna
-
-    const caixas = titulos.map((t) => {
-      const faixa = document.createRange();
-      faixa.selectNodeContents(t);
-      const texto = faixa.getBoundingClientRect();
-      const caixa = t.getBoundingClientRect();
-      return { top: caixa.top + window.scrollY - desloc(t), height: caixa.height, titleRight: texto.right };
-    });
-    const alvos = alvosParadas(caixas, vw, vh);
-    // Para quando o meio do título passa a 42% da tela; sai quando a seção seguinte entra por baixo.
-    const folga = vh * 0.1;
-    const marcos = caixas.map(({ top, height }, i) => {
-      const parada = top + height / 2 - vh * 0.42;
-      const entraProxima = proximas[i].getBoundingClientRect().top + window.scrollY - vh;
-      return { chega: parada - folga - st.start, sai: Math.max(parada + folga, entraProxima) - st.start };
-    });
 
     // Destino: centro da carga extra no fim do trecho (fora do transform do caminhão, que ainda está na partida).
     const m = svg.getScreenCTM();
     const bb = carga.getBBox();
     const c = new DOMPoint(bb.x + bb.width / 2, bb.y + bb.height / 2).matrixTransform(m);
     const destino = { x: c.x - w / 2, y: c.y - desloc(svg) + window.scrollY - st.end - h / 2 };
-    const escala = (bb.width * m.a) / w;
 
-    const total = Math.max(st.end - st.start, 1);
-    const pts = pontosTrajeto(origem, alvos, destino).map(limitar);
-    tl.clear();
-    const pernas = janelas(total, marcos);
-    pernas.forEach(({ de, ate }, k) => {
-      const trecho = pts.slice(2 * k, 2 * k + 3); // [parada, controle, próxima]; a última perna é reta
-      const [a, b] = [trecho[0], trecho.at(-1)];
-      const ultima = k === pernas.length - 1;
-      tl.fromTo(no, { rotation: a.rot, scale: k === 0 ? escalaCasa : 1 }, {
-        motionPath: { path: trecho.map(({ x, y }) => ({ x, y })), autoRotate: false, fromCurrent: false },
-        rotation: b.rot, scale: ultima ? escala : 1,
-        duration: Math.max(ate - de, 0.001), ease: "none", immediateRender: k === 0,
-      }, de);
+    tl.clear().fromTo(no, { scale: r.width / w }, { // nasce do tamanho da peça da casa e encolhe até o da carga
+      motionPath: { path: pontosTrajeto(origem, [], destino).map(limitar), autoRotate: false, fromCurrent: false },
+      scale: (bb.width * m.a) / w,
+      duration: 1, ease: "power1.inOut",
     });
     // Ida e volta força o render: com a timeline já em 0, só progress(0) não redesenharia a origem nova.
     tl.progress(1, true).progress(st.progress, true);
@@ -191,10 +164,9 @@ function narrar(gsap, ScrollTrigger, svg, veiculo) {
   solta = ScrollTrigger.create({
     start: SOLTA_PX, end: "max",
     onToggle: (self) => {
-      if (self.isActive) {
-        const r = casa.getBoundingClientRect();
-        construir(tl.scrollTrigger, { x: r.left, y: r.top });
-      }
+      // Num salto (âncora, reload no meio) a peça da casa já saiu da tela: usa a origem padrão.
+      const r = casa.getBoundingClientRect();
+      if (self.isActive && r.top >= 0) construir(tl.scrollTrigger, { x: r.left, y: r.top });
       pintar();
     },
   });
