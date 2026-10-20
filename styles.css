@@ -137,35 +137,46 @@ main { padding-top: var(--header); }
 /* hero: moldura da casa sozinha em cima; título | texto | CTA embaixo; faixa de rótulos numerados */
 .hero { padding-top: 0; }
 .hero__grade { grid-template-columns: minmax(0, 1fr); }
-.hero__moldura { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: var(--s-6) var(--s-3) 0; border-bottom: 1px solid var(--line); }
+.hero__moldura { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--s-6) var(--s-3) var(--s-3); border-bottom: 1px solid var(--line); }
 .hero__legenda { position: absolute; top: var(--s-2); left: var(--gutter); right: var(--gutter); }
-.hero__casa { aspect-ratio: 900 / 456; width: 100%; }
+.hero__casa { aspect-ratio: 900 / 435; width: 100%; }
 .hero__titulo, .hero__produto, .hero__acao { border-left: 0; padding-left: var(--gutter); }
 .hero__titulo h1 { margin: 0; max-width: 9.5em; font-size: var(--h1); line-height: 1.04; }
-.hero__produto p { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }
+.hero__copy { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }
+.hero__ganho { display: grid; gap: var(--s-1); margin-top: var(--s-2); }
 .hero__produto, .hero__acao { border-top: 1px solid var(--line); }
 /* três tons lado a lado: retângulos na proporção 7:24 da plaqueta, cores das plaquetas da casa */
-.tons-mini { display: grid; grid-template-columns: repeat(3, minmax(0, 108px)); gap: var(--s-1) 12px; margin: 12px 0 var(--s-2); }
-.tons-mini li { display: grid; align-content: start; gap: 6px; font-size: 11px; }
-.tom-mini { display: block; width: 100%; aspect-ratio: 24 / 7; }
-.tom-mini--claro { background: #C9896A; }
-.tom-mini--medio { background: var(--clay); }
-.tom-mini--escuro { background: #8E4529; }
+.tons-mini { display: grid; grid-template-columns: repeat(3, minmax(0, 112px)); gap: var(--s-1); margin: 12px 0 var(--s-2); }
+.tons-mini li { display: grid; align-content: start; gap: var(--s-1); }
+/* cada tom é um pedaço de parede: duas fiadas de plaqueta 24:7 em amarração corrida, juntas de 1 px na cor do fundo */
+.tom-mini {
+  --j: var(--background);
+  display: block; width: 100%; aspect-ratio: 24 / 7; background-color: var(--tom);
+  background-image:
+    linear-gradient(var(--j), var(--j)), linear-gradient(var(--j), var(--j)),
+    linear-gradient(var(--j), var(--j)), linear-gradient(var(--j), var(--j));
+  background-repeat: no-repeat;
+  background-size: 100% 1px, 1px 50%, 1px 50%, 1px 50%;
+  background-position: 0 50%, 50% 0, 25% 100%, 75% 100%;
+}
+.tom-mini--claro { --tom: #C9896A; }
+.tom-mini--medio { --tom: var(--clay); }
+.tom-mini--escuro { --tom: #8E4529; }
 .hero__acao { padding-bottom: var(--s-4); }
 @media (min-width: 768px) {
   .hero__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .hero__moldura, .hero__titulo { grid-column: 1 / -1; }
   .hero__acao { border-left: 1px solid var(--line); padding-left: var(--s-3); }
-  .hero__casa { width: min(100%, calc((100svh - var(--header) - 300px) * 900 / 456)); }
+  .hero__casa { width: min(100%, calc((100svh - var(--header) - 320px) * 900 / 435)); }
 }
 @media (min-width: 1200px) {
   /* a dobra inteira: a moldura fica com o que sobra da tela (≥ 55 % da altura) */
-  .hero__grade { grid-template-columns: minmax(0, 1fr) 400px 360px; grid-template-rows: minmax(55svh, 1fr) auto; min-height: calc(100svh - var(--header) - 50px); }
-  .hero__moldura { padding-top: var(--s-2); }
+  .hero__grade { grid-template-columns: minmax(0, 1fr) 400px 360px; grid-template-rows: minmax(55svh, 1fr) auto; min-height: calc(100svh - var(--header) - 51px); } /* 1 px: sentinela do cabeçalho compacto no topo do main */
+  .hero__moldura { padding-block: var(--s-3); }
   .hero__titulo { grid-column: auto; padding-block: var(--s-3) var(--s-4); }
   .hero__produto, .hero__acao { border-top: 0; border-left: 1px solid var(--line); padding-left: var(--s-3); }
-  /* a casa usa a altura que sobra da dobra (cabeçalho, faixa de produto ≈ 260 px, régua de rótulos) */
-  .hero__casa { width: min(100%, calc((100svh - var(--header) - 50px - 278px) * 900 / 456)); }
+  /* a casa usa a altura que sobra da dobra: cabeçalho, faixa de produto (≈ 260 px), régua de rótulos e a folga da moldura */
+  .hero__casa { width: min(100%, calc((100svh - var(--header) - 52px - 260px - 2 * var(--s-3)) * 900 / 435)); }
 }
 #casa svg { width: 100%; height: auto; }
 /* a casa apoia num fio de chão igual aos da grade; vidro em neutro quente (só a plaqueta tem cor) */

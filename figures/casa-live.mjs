@@ -1,7 +1,7 @@
 // Animação da casa do hero (browser). Constrói fileira a fileira, mobília, e depois respira com o ponteiro.
 // Fases: "construindo" (timers) → "pronta" (loop único: paralaxe com follow + tour ocioso, pausa fora da tela).
 
-const FILEIRA_MS = 70;
+const FILEIRA_MS = 40; // 37 fiadas: a última assenta antes das paredes (2 s) e a casa fecha em ≈ 4,3 s
 const MOVEL_MS = 90;
 const OVERSHOOT = "cubic-bezier(.2,.9,.2,1.2)";
 const ASSENTA = "cubic-bezier(.2,.8,.2,1)";
