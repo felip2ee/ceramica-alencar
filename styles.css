@@ -180,23 +180,9 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .tom--medida .ph { border-top: 1px solid var(--clay); }
 
 /* galeria */
-.filtros { display: grid; gap: var(--s-2); margin-bottom: var(--s-6); }
-.filtros__grupo { display: flex; flex-wrap: wrap; gap: var(--s-1); }
-.filtros button {
-  min-height: 48px; padding: 0 var(--s-2);
-  border: 1px solid var(--line); border-radius: 2px;
-  background: transparent; color: var(--ink);
-  font: 500 16px/1 var(--font-text); cursor: pointer;
-  transition: background-color var(--t), color var(--t), border-color var(--t);
-}
-.filtros button:hover { border-color: var(--action); }
-.filtros button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--background); }
 .galeria { display: grid; gap: var(--s-4) var(--s-3); }
 @media (min-width: 768px) { .galeria { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1280px) { .galeria { grid-template-columns: repeat(3, 1fr); } }
-.galeria figure[hidden] { display: none; }
-.galeria__vazio { grid-column: 1 / -1; margin: 0; font: 400 16px/1.5 var(--font-text); color: var(--ink); }
-.galeria__vazio[hidden] { display: none; }
 
 /* fábrica */
 .fabrica__grade { display: grid; gap: var(--s-6); align-items: center; }

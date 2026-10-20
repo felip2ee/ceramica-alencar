@@ -1,11 +1,9 @@
 import { linkWhatsapp, MENSAGEM_PADRAO } from "./lib/whatsapp.mjs";
-import { filtrarGaleria, todosOcultos } from "./lib/galeria.mjs";
 import { gradePlaquetas, cronograma, deveRodarAbertura } from "./lib/abertura.mjs";
 import { animarCasa } from "./figures/casa-live.mjs";
 import { iniciarScroll } from "./scroll.mjs";
 
 const WHATSAPP = document.body.dataset.whatsapp;
-const DIMENSOES = ["ambiente", "tom"];
 
 function aplicarCtas() {
   const href = linkWhatsapp(WHATSAPP, MENSAGEM_PADRAO);
@@ -19,32 +17,6 @@ function aplicarCtas() {
   }
 }
 
-function ligarFiltros() {
-  const figuras = [...document.querySelectorAll("#galeria figure")];
-  const itens = figuras.map(({ dataset }) => ({ ambiente: dataset.ambiente, tom: dataset.tom }));
-  const filtro = { ambiente: null, tom: null };
-  const botoes = DIMENSOES.flatMap((chave) =>
-    [...document.querySelectorAll(`#galeria-filtros [data-filtro-${chave}]`)].map((botao) => ({
-      botao, chave, valor: botao.getAttribute(`data-filtro-${chave}`),
-    })));
-
-  const vazio = document.querySelector("#galeria .galeria__vazio");
-  const atualizar = () => {
-    const visiveis = filtrarGaleria(itens, filtro);
-    visiveis.forEach((visivel, i) => { figuras[i].hidden = !visivel; });
-    if (vazio) vazio.hidden = !todosOcultos(visiveis);
-    for (const { botao, chave, valor } of botoes) {
-      botao.setAttribute("aria-pressed", String((filtro[chave] ?? "todos") === valor));
-    }
-  };
-
-  for (const { botao, chave, valor } of botoes) {
-    botao.addEventListener("click", () => {
-      filtro[chave] = valor === "todos" || filtro[chave] === valor ? null : valor;
-      atualizar();
-    });
-  }
-}
 
 function ligarCabecalhoCompacto() {
   const topo = document.querySelector("header.topo");
@@ -247,6 +219,5 @@ try { iniciarAbertura(); } catch (erro) {
 }
 figuras.then(injetarFiguras).catch((erro) => console.warn("figuras indisponíveis", erro));
 aplicarCtas();
-ligarFiltros();
 ligarCabecalhoCompacto();
 ligarWhatsappFlutuante();

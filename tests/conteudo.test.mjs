@@ -32,10 +32,9 @@ test("fontes: só Bodoni Moda e DM Sans", () => {
   assert.doesNotMatch(css, /monospace|Jost|Manrope|Outfit|Archivo|Cormorant/);
 });
 test("ids e ganchos de interface das tasks seguintes", () => {
-  for (const id of ["abertura","casa","plaqueta-narradora","caminhao","galeria","galeria-filtros","whatsapp-flutuante"]) assert.ok(html.includes(`id="${id}"`), id);
+  for (const id of ["abertura","casa","plaqueta-narradora","caminhao","galeria","whatsapp-flutuante"]) assert.ok(html.includes(`id="${id}"`), id);
   assert.equal((html.match(/<figure[^>]*data-ambiente="[^"]+"[^>]*data-tom="(claro|medio|escuro)"/g) || []).length, 6);
   assert.equal((html.match(/<div class="amostra" data-tom="(claro|medio|escuro)"/g) || []).length, 3);
-  assert.ok(html.includes("data-filtro-ambiente") && html.includes("data-filtro-tom"));
   assert.ok(/<script type="module" src="main\.js">/.test(html));
   assert.equal((html.match(/<script defer src="https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/gsap\/3\.12\.5\//g) || []).length, 3);
 });
@@ -79,7 +78,7 @@ test("materialidade: vídeo em loop, mudo, com a foto como poster e pausado sem 
   assert.match(js, /video-materialidade[\s\S]*?removeAttribute\("autoplay"\)/);
 });
 test("pré-carga e botão Pular estático", () => {
-  for (const m of ["main.js", "scroll.mjs", "figures/casa-live.mjs", "lib/whatsapp.mjs", "lib/galeria.mjs", "lib/abertura.mjs", "lib/trajeto.mjs", "figures/out/figures.js"]) {
+  for (const m of ["main.js", "scroll.mjs", "figures/casa-live.mjs", "lib/whatsapp.mjs", "lib/abertura.mjs", "lib/trajeto.mjs", "figures/out/figures.js"]) {
     assert.ok(html.includes(`<link rel="modulepreload" href="${m}">`), m);
   }
   assert.match(html, /<div id="abertura"[^>]*><button class="abertura__pular" type="button">Pular<\/button><\/div>/);

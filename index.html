@@ -27,7 +27,6 @@
   <link rel="modulepreload" href="scroll.mjs">
   <link rel="modulepreload" href="figures/casa-live.mjs">
   <link rel="modulepreload" href="lib/whatsapp.mjs">
-  <link rel="modulepreload" href="lib/galeria.mjs">
   <link rel="modulepreload" href="lib/abertura.mjs">
   <link rel="modulepreload" href="lib/trajeto.mjs">
   <link rel="modulepreload" href="figures/out/figures.js">
@@ -150,26 +149,8 @@
     <section class="section" id="aplicacoes">
       <div class="container">
         <h2>Onde o barro <em>fica em casa.</em></h2>
-        <p class="lead">Fachada, sala, cozinha, área gourmet, comércio e varanda. Filtre por ambiente ou por tom.</p>
-        <div id="galeria-filtros" class="filtros">
-          <div class="filtros__grupo" role="group" aria-label="Filtrar por ambiente">
-            <button type="button" data-filtro-ambiente="todos" aria-pressed="true">Todos</button>
-            <button type="button" data-filtro-ambiente="fachada" aria-pressed="false">Fachada</button>
-            <button type="button" data-filtro-ambiente="sala" aria-pressed="false">Sala</button>
-            <button type="button" data-filtro-ambiente="cozinha" aria-pressed="false">Cozinha</button>
-            <button type="button" data-filtro-ambiente="gourmet" aria-pressed="false">Gourmet</button>
-            <button type="button" data-filtro-ambiente="comercial" aria-pressed="false">Comercial</button>
-            <button type="button" data-filtro-ambiente="varanda" aria-pressed="false">Varanda</button>
-          </div>
-          <div class="filtros__grupo" role="group" aria-label="Filtrar por tom">
-            <button type="button" data-filtro-tom="todos" aria-pressed="true">Todos os tons</button>
-            <button type="button" data-filtro-tom="claro" aria-pressed="false">Claro</button>
-            <button type="button" data-filtro-tom="medio" aria-pressed="false">Médio</button>
-            <button type="button" data-filtro-tom="escuro" aria-pressed="false">Escuro</button>
-          </div>
-        </div>
+        <p class="lead">Fachada, sala, cozinha, área gourmet, comércio e varanda.</p>
         <div id="galeria" class="galeria">
-          <p class="galeria__vazio" aria-live="polite" hidden>Nenhuma imagem para essa combinação ainda. Fale com a gente sobre o seu ambiente.</p>
           <figure data-ambiente="fachada" data-tom="escuro">
             <img src="assets/flow/flow-fachada-1.jpg" srcset="assets/flow/flow-fachada-1-800.jpg 800w, assets/flow/flow-fachada-1.jpg 1200w" sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" alt="Fachada residencial em plaqueta de barro escura, luz forte de cerrado" width="1200" height="896" loading="lazy" decoding="async">
             <figcaption>Fachada · escuro · imagem conceitual</figcaption>
