@@ -5,6 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ISO_CSS } from "./kit/iso-kit.mjs";
 import { amostraSvg } from "./amostras.mjs";
+import { casa } from "./casa.mjs";
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const raiz = join(aqui, "..", "..");
@@ -46,6 +47,8 @@ function escreverFigures(mapa) {
   writeFileSync(join(aqui, "out/figures.js"), linhas.join("\n") + "\n");
 }
 
+const CASA = casa();
+
 escreverFigures({
   LOGO_VIEWBOX: viewBox,
   LOGO_PATHS,
@@ -55,4 +58,6 @@ escreverFigures({
     medio: amostraSvg("#B65E3C", "médio"),
     escuro: amostraSvg("#8E4529", "escuro"),
   },
+  CASA: CASA.svg,
+  CASA_META: CASA.meta,
 });

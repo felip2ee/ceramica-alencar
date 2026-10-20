@@ -1,6 +1,7 @@
 import { linkWhatsapp, MENSAGEM_PADRAO } from "./lib/whatsapp.mjs";
 import { filtrarGaleria } from "./lib/galeria.mjs";
 import { gradePlaquetas, cronograma, deveRodarAbertura } from "./lib/abertura.mjs";
+import { animarCasa } from "./figures/casa-live.mjs";
 
 const WHATSAPP = document.body.dataset.whatsapp;
 const DIMENSOES = ["ambiente", "tom"];
@@ -81,6 +82,24 @@ function injetarFiguras(F) {
   for (const no of document.querySelectorAll(".amostra[data-tom]")) {
     no.innerHTML = F.AMOSTRAS[no.dataset.tom] ?? "";
   }
+  const casa = document.getElementById("casa");
+  if (casa && F.CASA) {
+    casa.innerHTML = F.CASA;
+    iniciarCasa(casa);
+  }
+}
+
+// A casa só se constrói depois da abertura (ou já, se ela não rodou ou acabou antes do import).
+function iniciarCasa(casa) {
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+  const comecar = () => {
+    try { animarCasa(casa.querySelector("svg"), { reduceMotion }); } catch (erro) {
+      console.warn("casa sem animação", erro);
+      casa.classList.add("is-ready");
+    }
+  };
+  if (document.documentElement.dataset.abertura === "fim") comecar();
+  else document.addEventListener("alencar:abertura-fim", comecar, { once: true });
 }
 
 function iniciarAbertura() {
