@@ -4,10 +4,12 @@
 import * as k from "./kit/iso-kit.mjs";
 
 const LARGURA = 900;
-const ALTURA = 620;
+const ALTURA = 456;
 const ROTULO = "Casa moderna de um pavimento revestida em plaqueta de barro, com sala mobiliada vista pelo pano de vidro";
 
-const PLANTA = { x: 0, y: 0, w: 200, d: 140, r: 0 };
+// Casa térrea comprida: o muro de plaqueta é o protagonista (a dobra do hero é larga e baixa).
+const PLANTA = { x: 0, y: 0, w: 416, d: 140, r: 0 };
+const DX = PLANTA.w - 200; // a sala (móveis, quadro, clarabóia) fica junto ao pano de vidro, na ponta x = PLANTA.w
 const PISO_Z = -6;
 const FIADA = 7; // altura de uma plaqueta
 const FILEIRAS = 14; // 14 × 7 = 98 de pé-direito
@@ -18,20 +20,26 @@ const CINTA = 7; // viga recuada que forma a fresta de sombra sob a cobertura
 const BEIRAL = 8;
 const COBERTURA = 7;
 const COB_Z = PE + CINTA;
-const CLARABOIA = { x: 70, y: 46, w: 48, d: 30, r: 0 };
+const CLARABOIA = { x: 70 + DX, y: 46, w: 48, d: 30, r: 0 };
 const PLANO_COB = { x: -BEIRAL, y: -BEIRAL, w: PLANTA.w + 2 * BEIRAL, d: PLANTA.d + 2 * BEIRAL, r: 0 };
 
 // Juntas verticais (peças de 24): pares cruzam meia peça com os ímpares; a quina alterna de dono.
-const JUNTAS_FRENTE = [[176, 152, 128, 104, 80, 56, 32, 8], [188, 164, 140, 116, 92, 68, 44, 20]];
+const juntas = (de) => Array.from({ length: Math.floor((de - 1) / 24) + 1 }, (_, i) => de - 24 * i).filter((x) => x > 0);
+const JUNTAS_FRENTE = [juntas(PLANTA.w - 24), juntas(PLANTA.w - 12)];
 const JUNTAS_RETORNO = [[112], [124]];
 const SOLTA = { x: 140, y: PLANTA.d - ESP, w: 24, d: ESP, r: 0 }; // vão da última fileira (ímpar), entre as juntas 140 e 164
 
 const r1 = (n) => Math.round(n * 10) / 10;
+// Pegada no chão (casa e deck): define a linha de chão e entra no enquadramento.
+const PEGADA = [
+  ...k.boxCorners(PLANTA, PISO_Z, PISO_Z),
+  ...k.boxCorners({ x: PLANTA.w, y: 4, w: 26, d: 100, r: 0 }, PISO_Z, PISO_Z),
+];
 
 export function casa() {
   const P = k.fitProjection(
-    [...k.boxCorners(PLANTA, PISO_Z, 120), ...k.boxCorners(PLANO_COB, COB_Z, COB_Z + COBERTURA), [244, 70, PISO_Z]],
-    LARGURA, ALTURA, { pad: 40, azimuth: 40, elevation: 30 },
+    [...k.boxCorners(PLANTA, PISO_Z, 120), ...k.boxCorners(PLANO_COB, COB_Z, COB_Z + COBERTURA), [PLANTA.w + 44, 70, PISO_Z], ...PEGADA],
+    LARGURA, ALTURA, { pad: 12, azimuth: 45, elevation: 12 },
   );
   const prof = (p) => k.depthOf(p, P);
   const meio = (plan, z, h) => [plan.x + plan.w / 2, plan.y + plan.d / 2, z + h / 2];
@@ -56,61 +64,63 @@ export function casa() {
   const camadas = [];
 
   // 0 · piso, deck e pedras: a base, pintada antes de tudo que apoia nela.
-  const deck = { x: 200, y: 4, w: 26, d: 100, r: 0 };
+  const deck = { x: PLANTA.w, y: 4, w: 26, d: 100, r: 0 };
   const tabuas = Array.from({ length: 9 }, (_, i) => k.lineOnTop([deck.x, 14 + i * 10], [deck.x + deck.w, 14 + i * 10], -2, P)).join("");
+  // Sem sombra: a casa apoia numa linha de chão de 1 px (cor do fio da grade, via CSS .chao) na cota do vértice mais baixo.
+  const chaoY = r1(Math.max(...PEGADA.map((p) => k.iso(p, P)[1])));
   camadas.push(k.groupSvg([
-    `<path class="iso-halo" d="${k.haloOf({ x: -6, y: -6, w: 240, d: 172, r: 8 }, PISO_Z, 1, P)}"/>`,
+    `<line class="chao" x1="0" y1="${chaoY}" x2="${LARGURA}" y2="${chaoY}"/>`,
     ordenar([
       caixa(PLANTA, PISO_Z, -PISO_Z, { tone: "mid" }),
-      caixa(deck, PISO_Z, 4, { tone: "mid", className: "mat-madeira", inner: k.lineSvg(tabuas, { tone: "lo" }) }),
-      caixa({ x: 232, y: 60, w: 12, d: 18, r: 2 }, PISO_Z, 1.2, { tone: "lo" }),
-      caixa({ x: 232, y: 84, w: 12, d: 14, r: 2 }, PISO_Z, 1.2, { tone: "lo" }),
+      caixa(deck, PISO_Z, 4, { tone: "mid", className: "mat-cobertura", inner: k.lineSvg(tabuas, { tone: "lo" }) }),
+      caixa({ x: PLANTA.w + 32, y: 60, w: 12, d: 18, r: 2 }, PISO_Z, 1.2, { tone: "lo" }),
+      caixa({ x: PLANTA.w + 32, y: 84, w: 12, d: 14, r: 2 }, PISO_Z, 1.2, { tone: "lo" }),
     ]),
   ], { class: "estrutura", "data-parte": "piso" }));
 
   // 1 · paredes de fundo (vistas pelo vidro) e o quadro na parede.
   camadas.push(k.groupSvg(ordenar([
-    caixa({ x: 0, y: 0, w: 196, d: ESP, r: 0 }, 0, PE, { tone: "mid" }),
+    caixa({ x: 0, y: 0, w: PLANTA.w - ESP, d: ESP, r: 0 }, 0, PE, { tone: "mid" }),
     caixa({ x: 0, y: ESP, w: ESP, d: PLANTA.d - 2 * ESP, r: 0 }, 0, PE, { tone: "mid" }),
-    caixa({ x: 140, y: ESP, w: 28, d: 1, r: 0 }, 36, 18, { tone: "mid", className: "mat-escuro" }),
+    caixa({ x: 140 + DX, y: ESP, w: 28, d: 1, r: 0 }, 36, 18, { tone: "mid", className: "mat-escuro" }),
   ]), { class: "estrutura", "data-parte": "paredes" }));
 
   // 2 · tapete (deitado no piso, antes de tudo que fica sobre ele).
-  camadas.push(k.groupSvg(caixa({ x: 112, y: 34, w: 74, d: 56, r: 1.5 }, 0, 0.8, { tone: "lo", className: "mat-tapete" }).svg,
+  camadas.push(k.groupSvg(caixa({ x: 112 + DX, y: 34, w: 74, d: 56, r: 1.5 }, 0, 0.8, { tone: "lo", className: "mat-tapete" }).svg,
     { class: "movel", "data-movel": "tapete" }));
 
   // 3 · móveis, ordenados entre si pelo centro.
   const tecido = { tone: "mid", className: "mat-tecido" };
-  const madeira = { tone: "mid", className: "mat-madeira" };
+  const madeira = { tone: "mid", className: "mat-escuro" }; // só a parede de plaqueta tem cor
   const sofa = grupo([
-    ...[[121, 9], [171, 9], [121, 29], [171, 29]].map(([x, y]) => cilindro(x, y, 1.5, 0, 4, madeira)),
-    caixa({ x: 118, y: 6, w: 56, d: 26, r: 1 }, 4, 6, tecido),
-    caixa({ x: 124, y: 6, w: 44, d: 7, r: 1 }, 10, 20, tecido),
-    caixa({ x: 125, y: 13, w: 21, d: 4, r: 1.5 }, 15, 13, tecido),
-    caixa({ x: 146, y: 13, w: 21, d: 4, r: 1.5 }, 15, 13, tecido),
-    caixa({ x: 124, y: 13, w: 22, d: 19, r: 1.5 }, 10, 5, tecido),
-    caixa({ x: 146, y: 13, w: 22, d: 19, r: 1.5 }, 10, 5, tecido),
-    caixa({ x: 118, y: 6, w: 6, d: 26, r: 1.5 }, 10, 12, tecido),
-    caixa({ x: 168, y: 6, w: 6, d: 26, r: 1.5 }, 10, 12, tecido),
-  ], { class: "movel", "data-movel": "sofa" }, [146, 19, 15]);
+    ...[[121, 9], [171, 9], [121, 29], [171, 29]].map(([x, y]) => [x + DX, y]).map(([x, y]) => cilindro(x, y, 1.5, 0, 4, madeira)),
+    caixa({ x: 118 + DX, y: 6, w: 56, d: 26, r: 1 }, 4, 6, tecido),
+    caixa({ x: 124 + DX, y: 6, w: 44, d: 7, r: 1 }, 10, 20, tecido),
+    caixa({ x: 125 + DX, y: 13, w: 21, d: 4, r: 1.5 }, 15, 13, tecido),
+    caixa({ x: 146 + DX, y: 13, w: 21, d: 4, r: 1.5 }, 15, 13, tecido),
+    caixa({ x: 124 + DX, y: 13, w: 22, d: 19, r: 1.5 }, 10, 5, tecido),
+    caixa({ x: 146 + DX, y: 13, w: 22, d: 19, r: 1.5 }, 10, 5, tecido),
+    caixa({ x: 118 + DX, y: 6, w: 6, d: 26, r: 1.5 }, 10, 12, tecido),
+    caixa({ x: 168 + DX, y: 6, w: 6, d: 26, r: 1.5 }, 10, 12, tecido),
+  ], { class: "movel", "data-movel": "sofa" }, [146 + DX, 19, 15]);
   const mesa = grupo([
-    ...[[142, 46], [164, 46], [142, 56], [164, 56]].map(([x, y]) => cilindro(x, y, 1, 0, 12, madeira)),
-    caixa({ x: 140, y: 44, w: 26, d: 14, r: 1 }, 12, 2, madeira),
-    cilindro(149, 51, 2.5, 14, 6, { tone: "mid", className: "mat-plaqueta" }),
-    caixa({ x: 155, y: 47, w: 7, d: 6, r: 0.5 }, 14, 1.5, { tone: "mid" }),
-  ], { class: "movel", "data-movel": "mesa" }, [153, 51, 8]);
+    ...[[142, 46], [164, 46], [142, 56], [164, 56]].map(([x, y]) => [x + DX, y]).map(([x, y]) => cilindro(x, y, 1, 0, 12, madeira)),
+    caixa({ x: 140 + DX, y: 44, w: 26, d: 14, r: 1 }, 12, 2, madeira),
+    cilindro(149 + DX, 51, 2.5, 14, 6, { tone: "mid", className: "mat-cobertura" }),
+    caixa({ x: 155 + DX, y: 47, w: 7, d: 6, r: 0.5 }, 14, 1.5, { tone: "mid" }),
+  ], { class: "movel", "data-movel": "mesa" }, [153 + DX, 51, 8]);
   const luminaria = grupo([
-    cilindro(186, 14, 5, 0, 1.5, { tone: "mid", className: "mat-escuro" }),
-    cilindro(186, 14, 1, 1.5, 54, { tone: "mid", className: "mat-escuro" }),
-    cilindro(186, 14, 9, 54, 12, { tone: "mid", className: "mat-tapete" }),
-  ], { class: "movel", "data-movel": "luminaria" }, [186, 14, 33]);
-  const folha = { tone: "mid", className: "mat-folha" };
+    cilindro(186 + DX, 14, 5, 0, 1.5, { tone: "mid", className: "mat-escuro" }),
+    cilindro(186 + DX, 14, 1, 1.5, 54, { tone: "mid", className: "mat-escuro" }),
+    cilindro(186 + DX, 14, 9, 54, 12, { tone: "mid", className: "mat-tapete" }),
+  ], { class: "movel", "data-movel": "luminaria" }, [186 + DX, 14, 33]);
+  const folha = { tone: "mid", className: "mat-escuro" }; // folhagem em silhueta de tinta
   const planta = grupo([
-    cilindro(180, 78, 6, 0, 13, { tone: "mid", className: "mat-plaqueta" }),
-    lamina(178, 77, 0.3, 3.2, 13, 24, folha),
-    lamina(182, 79, 2.2, 3, 13, 18, folha),
-    lamina(180, 80, 4.1, 2.8, 13, 28, folha),
-  ], { class: "movel", "data-movel": "planta" }, [180, 78, 20]);
+    cilindro(180 + DX, 78, 6, 0, 13, { tone: "mid", className: "mat-cobertura" }),
+    lamina(178 + DX, 77, 0.3, 3.2, 13, 24, folha),
+    lamina(182 + DX, 79, 2.2, 3, 13, 18, folha),
+    lamina(180 + DX, 80, 4.1, 2.8, 13, 28, folha),
+  ], { class: "movel", "data-movel": "planta" }, [180 + DX, 78, 20]);
   camadas.push(ordenar([sofa, mesa, luminaria, planta]));
 
   // 4 · cinta recuada (atrás das plaquetas que a encostam).
@@ -151,24 +161,20 @@ export function casa() {
     { ...caixa({ x: PLANTA.w - 1, y: 55, w: 1, d: 1, r: 0 }, 38, 8, escuro), prof: Infinity }, // puxador curto no montante da porta, por fora do vidro
   ]), { class: "vidro" }));
 
-  // 7 · cobertura neutra; o único acento vermelho é a linha da testeira em volta do beiral. Clarabóia em cinza quente.
+  // 7 · cobertura neutra; a linha da testeira em volta do beiral é tinta (o acento fica para o CTA). Clarabóia em cinza quente.
   const topo = COB_Z + COBERTURA;
   camadas.push(k.groupSvg([
     k.solidSvg(k.slabOf(PLANO_COB, COB_Z, COBERTURA, P), {
       tone: "mid", className: "mat-cobertura",
-      inner: k.lineSvg(k.sideSeam(PLANO_COB, COB_Z + COBERTURA / 2, P, 2), { tone: "red" })
+      inner: k.lineSvg(k.sideSeam(PLANO_COB, COB_Z + COBERTURA / 2, P, 2), { tone: "hi" })
         + k.lineSvg(k.planOutline(k.insetPlan(PLANO_COB, 4), topo, P, 2), { tone: "faint" }),
     }),
     k.solidSvg(k.slabOf(CLARABOIA, topo, 3, P), { tone: "mid" }),
     k.solidSvg(k.slabOf(k.insetPlan(CLARABOIA, 3), topo + 3, 0.6, P), { tone: "lo", className: "mat-vidro" }),
   ], { class: "estrutura", "data-parte": "cobertura" }));
 
-  // 8 · jardim na frente do muro e arandela no retorno.
+  // 8 · arandela no retorno (o canteiro saiu: o muro de plaqueta fica livre, sem verde fora da paleta).
   camadas.push(k.groupSvg(ordenar([
-    caixa({ x: 24, y: PLANTA.d + 6, w: 72, d: 12, r: 1 }, PISO_Z, 14, { tone: "mid" }),
-    caixa({ x: 26, y: PLANTA.d + 8, w: 68, d: 8, r: 0.5 }, 7.6, 0.6, { tone: "lo", className: "mat-escuro" }),
-    ...[36, 60, 84].flatMap((x, i) => [[-2.5, 0.4, 22], [2.5, 2.3, 17], [0, 4.2, 28]]
-      .map(([dx, ang, h]) => lamina(x + dx, PLANTA.d + 11 + (dx ? 0 : 2), ang + i, 4, 8.2, h - 3 * i, folha))),
     caixa({ x: PLANTA.w, y: 117, w: 2.5, d: 5, r: 0.5 }, 58, 8, escuro),
     caixa({ x: PLANTA.w, y: 126, w: 0.8, d: 8, r: 0 }, 46, 5, escuro),
   ]), { class: "estrutura", "data-parte": "jardim" }));

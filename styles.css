@@ -123,8 +123,8 @@ h1 em, h2 em, h3 em { font-style: italic; }
 .topo__nav a { display: flex; align-items: flex-start; padding: var(--s-2) var(--s-3) 0 var(--s-2); }
 .topo__nav a:hover, .topo__nav a:focus-visible { background: var(--surface); }
 /* o CTA do topo é o 1º dos dois usos do acento na dobra (texto + seta) */
-.topo__cta { position: relative; display: block; min-height: 44px; padding: var(--s-2) var(--s-3); color: var(--action); }
-.topo__cta .seta { position: absolute; right: var(--s-2); bottom: var(--s-1); font-size: 16px; letter-spacing: 0; }
+.topo__cta { display: block; min-height: 44px; padding: var(--s-2) var(--s-3); color: var(--action); }
+.topo__cta .seta { letter-spacing: 0; white-space: pre; }
 .topo__cta:hover { background: var(--surface); }
 .so-desktop { display: none; }
 @media (min-width: 1200px) {
@@ -137,43 +137,40 @@ main { padding-top: var(--header); }
 /* hero: moldura da casa sozinha em cima; título | texto | CTA embaixo; faixa de rótulos numerados */
 .hero { padding-top: 0; }
 .hero__grade { grid-template-columns: minmax(0, 1fr); }
-.hero__moldura { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--s-6) var(--s-3) var(--s-3); border-bottom: 1px solid var(--line); }
-/* fio tracejado interno com marcas "+" nos quatro cantos */
-.hero__moldura::before {
-  content: ""; position: absolute; inset: var(--s-2); pointer-events: none;
-  border: 1px dashed var(--line);
-}
-.hero__moldura::after {
-  --m: linear-gradient(var(--ink), var(--ink));
-  content: ""; position: absolute; inset: calc(var(--s-2) - 6px); pointer-events: none; opacity: .7;
-  background:
-    var(--m) left 0 top 6px / 13px 1px no-repeat, var(--m) left 6px top 0 / 1px 13px no-repeat,
-    var(--m) right 0 top 6px / 13px 1px no-repeat, var(--m) right 6px top 0 / 1px 13px no-repeat,
-    var(--m) left 0 bottom 6px / 13px 1px no-repeat, var(--m) left 6px bottom 0 / 1px 13px no-repeat,
-    var(--m) right 0 bottom 6px / 13px 1px no-repeat, var(--m) right 6px bottom 0 / 1px 13px no-repeat;
-}
-.hero__legenda { position: absolute; top: calc(var(--s-2) + 12px); left: calc(var(--s-2) + 16px); right: calc(var(--s-2) + 16px); }
-.hero__casa { aspect-ratio: 900 / 620; width: 100%; }
-.hero__grade > .celula { border-left: 0; }
-.hero__titulo, .hero__texto, .hero__acao { padding-left: var(--gutter); }
+.hero__moldura { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: var(--s-6) var(--s-3) 0; border-bottom: 1px solid var(--line); }
+.hero__legenda { position: absolute; top: var(--s-2); left: var(--gutter); right: var(--gutter); }
+.hero__casa { aspect-ratio: 900 / 456; width: 100%; }
+.hero__titulo, .hero__produto, .hero__acao { border-left: 0; padding-left: var(--gutter); }
 .hero__titulo h1 { margin: 0; max-width: 9.5em; font-size: var(--h1); line-height: 1.04; }
-.hero__texto p { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; }
-.hero__texto, .hero__acao { border-top: 1px solid var(--line); }
+.hero__produto p { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }
+.hero__produto, .hero__acao { border-top: 1px solid var(--line); }
+/* três tons lado a lado: retângulos na proporção 7:24 da plaqueta, cores das plaquetas da casa */
+.tons-mini { display: grid; grid-template-columns: repeat(3, minmax(0, 108px)); gap: var(--s-1) 12px; margin: 12px 0 var(--s-2); }
+.tons-mini li { display: grid; align-content: start; gap: 6px; font-size: 11px; }
+.tom-mini { display: block; width: 100%; aspect-ratio: 24 / 7; }
+.tom-mini--claro { background: #C9896A; }
+.tom-mini--medio { background: var(--clay); }
+.tom-mini--escuro { background: #8E4529; }
 .hero__acao { padding-bottom: var(--s-4); }
 @media (min-width: 768px) {
   .hero__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .hero__moldura, .hero__titulo { grid-column: 1 / -1; }
   .hero__acao { border-left: 1px solid var(--line); padding-left: var(--s-3); }
-  .hero__casa { width: min(100%, calc((100svh - var(--header) - 300px) * 900 / 620)); }
+  .hero__casa { width: min(100%, calc((100svh - var(--header) - 300px) * 900 / 456)); }
 }
 @media (min-width: 1200px) {
   /* a dobra inteira: a moldura fica com o que sobra da tela (≥ 55 % da altura) */
-  .hero__grade { grid-template-columns: minmax(0, 1fr) 360px 360px; grid-template-rows: minmax(55svh, 1fr) auto; min-height: calc(100svh - var(--header) - 50px); }
+  .hero__grade { grid-template-columns: minmax(0, 1fr) 400px 360px; grid-template-rows: minmax(55svh, 1fr) auto; min-height: calc(100svh - var(--header) - 50px); }
+  .hero__moldura { padding-top: var(--s-2); }
   .hero__titulo { grid-column: auto; padding-block: var(--s-3) var(--s-4); }
-  .hero__texto, .hero__acao { border-top: 0; border-left: 1px solid var(--line); padding-left: var(--s-3); }
-  .hero__casa { width: min(100%, calc((100svh - var(--header) - 50px - 290px) * 900 / 620)); }
+  .hero__produto, .hero__acao { border-top: 0; border-left: 1px solid var(--line); padding-left: var(--s-3); }
+  /* a casa usa a altura que sobra da dobra (cabeçalho, faixa de produto ≈ 260 px, régua de rótulos) */
+  .hero__casa { width: min(100%, calc((100svh - var(--header) - 50px - 278px) * 900 / 456)); }
 }
 #casa svg { width: 100%; height: auto; }
+/* a casa apoia num fio de chão igual aos da grade; vidro em neutro quente (só a plaqueta tem cor) */
+#casa .chao { stroke: var(--line); stroke-width: 1px; vector-effect: non-scaling-stroke; }
+#casa .mat-vidro { --anatomy-top: #F3ECDF; --anatomy-shade-0: #DDD2C0; --anatomy-shade-1: #E4DAC8; --anatomy-shade-2: #EDE4D4; --anatomy-shade-3: #F0E8DA; --anatomy-face: #EDE4D4; opacity: .7; }
 /* até a construção começar, as partes da casa ficam ocultas (o JS revela uma a uma) */
 #casa:not(.is-ready) :is(.fileira, .movel, .estrutura, .vidro, #plaqueta-solta) { opacity: 0; }
 .faixa { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -288,7 +285,7 @@ html.abrindo #whatsapp-flutuante, #whatsapp-flutuante.is-oculto { opacity: 0; vi
 }
 
 /* abertura: plaquetas na forma da logo */
-html.abrindo { overflow: hidden; }
+html.abrindo { overflow: hidden; scroll-behavior: auto; } /* durante a abertura a página fica parada no topo, sem rolagem animada */
 html[data-abertura="skip"] #abertura { display: none; }
 #abertura {
   position: fixed; inset: 0; z-index: 200; overflow: hidden;

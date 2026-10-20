@@ -15,7 +15,8 @@ test("ISO_CSS_MARCA recolorido e sem card", () => {
 });
 test("casa: hero dentro do orçamento e com os grupos que o live precisa", () => {
   const solidos = (F.CASA.match(/class="iso-solid/g)||[]).length;
-  assert.ok(solidos >= 80 && solidos <= 150, `solidos=${solidos}`);
+  // p1 r2: o canteiro com folhagem saiu (só a plaqueta tem cor), por isso o piso desceu de 80 para 70
+  assert.ok(solidos >= 70 && solidos <= 150, `solidos=${solidos}`);
   assert.equal((F.CASA.match(/class="fileira mat-plaqueta"/g)||[]).length, F.CASA_META.fileiras);
   assert.ok(F.CASA_META.fileiras >= 10);
   assert.deepEqual([...F.CASA.matchAll(/data-movel="(\w+)"/g)].map(m=>m[1]).sort(), ["luminaria","mesa","planta","sofa","tapete"]);
