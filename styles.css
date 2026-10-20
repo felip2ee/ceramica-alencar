@@ -159,6 +159,8 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .mat-mapa { --anatomy-top: #F0E8DA; --anatomy-shade-0: #D8CCB8; --anatomy-shade-1: #E0D5C1; --anatomy-shade-2: #E8DCC6; --anatomy-shade-3: #EDE4D4; --anatomy-face: #F0E8DA; }
 .iso-dots[data-tone="red"] circle { fill: var(--anatomy-red); opacity: 1; }
 #rota-principal { stroke-width: 1.6; }
+.rotulo-mapa { font: 500 15px var(--font-text); fill: var(--anatomy-hi); paint-order: stroke; stroke: var(--anatomy-paper); stroke-width: 3px; stroke-linejoin: round; }
+@media (max-width: 600px) { .rotulo-mapa { font-size: 22px; stroke-width: 4px; } } /* o svg encolhe ~0,55× no celular */
 .mat-folha { --anatomy-top: #6E9A63; --anatomy-shade-0: #3E6139; --anatomy-shade-1: #466C40; --anatomy-shade-2: #4F7A4A; --anatomy-shade-3: #5E8A57; --anatomy-face: #4F7A4A; }
 .tom h3 { margin: var(--s-2) 0 0; }
 .tom--medida .ph { border-top: 1px solid var(--clay); }
@@ -182,7 +184,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 
 /* fábrica */
 .fabrica__grade { display: grid; gap: var(--s-6); align-items: center; }
-.fabrica__mapa { aspect-ratio: 900 / 700; width: 100%; }
+.fabrica__mapa { width: 100%; }
 #caminhao svg { width: 100%; height: auto; }
 @media (min-width: 1024px) { .fabrica__grade { grid-template-columns: 55fr 45fr; } }
 .numeros { display: grid; gap: 0; }

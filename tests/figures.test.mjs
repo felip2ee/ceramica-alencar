@@ -1,5 +1,6 @@
 import { test } from "node:test"; import assert from "node:assert/strict";
 import * as F from "../figures/out/figures.js";
+import mapa from "../figures/mapa-to.json" with { type: "json" };
 test("amostras: três svgs válidos, cada um com dezenas de peças", () => {
   for (const tom of ["claro","medio","escuro"]) {
     const svg = F.AMOSTRAS[tom];
@@ -23,7 +24,6 @@ test("casa: hero dentro do orçamento e com os grupos que o live precisa", () =>
   assert.doesNotMatch(F.CASA, /iso-plate|data-readout/);
   assert.ok(F.CASA.length < 400_000, "SVG abaixo de 400 KB");
 });
-import mapa from "../figures/mapa-to.json" with { type: "json" };
 test("mapa do Tocantins simplificado e com as duas cidades", () => {
   assert.ok(mapa.anel.length >= 80 && mapa.anel.length <= 400);
   const lons = mapa.anel.map(p=>p[0]), lats = mapa.anel.map(p=>p[1]);
@@ -31,9 +31,13 @@ test("mapa do Tocantins simplificado e com as duas cidades", () => {
   assert.deepEqual(mapa.cidades.tocantinopolis, [-47.4224,-6.3245]);
 });
 test("caminhão: figura com mapa, rota e carroceria", () => {
-  assert.match(F.CAMINHAO, /id="mapa"/); assert.match(F.CAMINHAO, /id="caminhao"/); assert.match(F.CAMINHAO, /id="rota-principal"/);
+  assert.match(F.CAMINHAO, /id="mapa"/); assert.match(F.CAMINHAO, /<g id="caminhao-veiculo" class="movel">/); assert.match(F.CAMINHAO, /id="rota-principal"/);
   assert.equal((F.CAMINHAO.match(/class="rota"/g)||[]).length, 4);
   const solidos = (F.CAMINHAO.match(/class="iso-solid/g)||[]).length;
   assert.ok(solidos >= 40 && solidos <= 80, `solidos=${solidos}`);
   assert.ok(F.CAMINHAO_META.inicio[1] < F.CAMINHAO_META.fim[1], "Tocantinópolis fica acima de Palmas na tela");
+  assert.deepEqual([...F.CAMINHAO.matchAll(/data-uf="(\w+)"/g)].map(m=>m[1]).sort(), ["GO","MA","PA","PI"]);
+  assert.equal((F.CAMINHAO.match(/mat-plaqueta/g)||[]).length, 12);
+  assert.equal(F.CAMINHAO_META.partida.length, 2);
+  assert.ok(F.CAMINHAO_META.carroceria.w > 0);
 });
