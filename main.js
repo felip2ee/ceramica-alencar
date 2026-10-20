@@ -113,12 +113,17 @@ function iniciarAbertura() {
     avisarFimAbertura();
   }
 
+  let montada = false;
   document.documentElement.classList.add("abrindo");
   fundo.forEach((el) => el.setAttribute("inert", ""));
   no.focus({ preventScroll: true });
 
+  // Teto armado já, antes do import: se o import travar, ainda assim a página é liberada.
+  agendar(() => (montada ? encerrar() : abortar("limite de tempo antes de montar")), LIMITE_ABERTURA_MS);
+
   import("./figures/out/figures.js").then(({ LOGO_PATHS }) => {
     if (encerrada) return;
+    montada = true;
     const pecas = gradePlaquetas({ cols: 11, rows: 25, larg: 48, alt: 14, gap: 3, x0: 280, y0: 440 });
     const tempos = cronograma(pecas, { porFileiraMs: 70, jitterMs: 120, seed: 7 });
     const visivel = pecas.map((p) =>
@@ -150,7 +155,6 @@ function iniciarAbertura() {
     let recursosProntos = false;
     const tentarFim = () => { if (tempoCumprido && recursosProntos) encerrar(); };
     agendar(() => { tempoCumprido = true; tentarFim(); }, FIM_ABERTURA_MS);
-    agendar(encerrar, LIMITE_ABERTURA_MS);
     const carregada = document.readyState === "complete"
       ? Promise.resolve()
       : new Promise((ok) => window.addEventListener("load", ok, { once: true }));
