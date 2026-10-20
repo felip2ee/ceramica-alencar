@@ -4,6 +4,8 @@ Cada bloco corresponde a um placeholder da página. Regras comuns: luz quente na
 
 ## Materialidade: foto aproximada do barro
 
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-materialidade-1.jpg` (variante 800 px: `flow-materialidade-1-800.jpg`). Alternativa: nenhuma (só há uma versão).
+
 - **Ambiente:** Detalhe macro da superfície
 - **Tom da plaqueta:** médio (qualquer um serve)
 - **Cena:** Close da superfície da plaqueta lisa de barro queimado, luz rasante que revela a textura e a variação natural da queima.
@@ -19,6 +21,8 @@ Macro photograph of a smooth fired clay brick tile, 7x24 cm, mid terracotta tone
 ```
 
 ## Galeria 1: Fachada
+
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-fachada-1.jpg` (variante 800 px: `flow-fachada-1-800.jpg`). Alternativa: `assets/flow/flow-fachada-2.jpg`.
 
 - **Ambiente:** Fachada residencial
 - **Tom da plaqueta:** escuro
@@ -36,6 +40,8 @@ Modern single-story house facade clad in dark brown smooth clay brick tiles 7x24
 
 ## Galeria 2: Sala
 
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-sala-1.jpg` (variante 800 px: `flow-sala-1-800.jpg`). Alternativa: `assets/flow/flow-sala-2.jpg`.
+
 - **Ambiente:** Sala de estar
 - **Tom da plaqueta:** médio
 - **Cena:** Parede de destaque atrás do sofá em plaqueta de tom médio, luz de janela lateral.
@@ -51,6 +57,8 @@ Brazilian living room with a feature wall in mid-tone terracotta smooth clay bri
 ```
 
 ## Galeria 3: Cozinha
+
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-cozinha-2.jpg` (variante 800 px: `flow-cozinha-2-800.jpg`). Alternativa: `assets/flow/flow-cozinha-1.jpg`.
 
 - **Ambiente:** Cozinha
 - **Tom da plaqueta:** claro
@@ -68,6 +76,8 @@ Bright Brazilian kitchen with a backsplash wall in light sand-colored smooth cla
 
 ## Galeria 4: Gourmet
 
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-gourmet-2.jpg` (variante 800 px: `flow-gourmet-2-800.jpg`). Alternativa: `assets/flow/flow-gourmet-1.jpg`.
+
 - **Ambiente:** Área gourmet
 - **Tom da plaqueta:** médio
 - **Cena:** Churrasqueira e bancada revestidas em plaqueta de tom médio, varanda aberta ao quintal.
@@ -84,6 +94,8 @@ Brazilian outdoor gourmet area, barbecue and counter clad in mid-tone terracotta
 
 ## Galeria 5: Comercial
 
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-comercial-2.jpg` (variante 800 px: `flow-comercial-2-800.jpg`). Alternativa: `assets/flow/flow-comercial-1.jpg`.
+
 - **Ambiente:** Fachada comercial
 - **Tom da plaqueta:** escuro
 - **Cena:** Fachada de café ou loja de rua, plaqueta escura, vitrine e letreiro sem texto legível.
@@ -99,6 +111,8 @@ Small commercial storefront in a Brazilian interior town, facade clad in dark sm
 ```
 
 ## Galeria 6: Varanda
+
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-varanda-1.jpg` (variante 800 px: `flow-varanda-1-800.jpg`). Alternativa: `assets/flow/flow-varanda-2.jpg`.
 
 - **Ambiente:** Varanda
 - **Tom da plaqueta:** claro

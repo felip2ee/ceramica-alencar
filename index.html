@@ -9,7 +9,15 @@
   <meta property="og:locale" content="pt_BR">
   <meta property="og:title" content="Cerâmicas Alencar · Plaqueta de barro">
   <meta property="og:description" content="Plaqueta lisa de barro 7 × 24 cm em três tons, feita em Tocantinópolis-TO. Frete próprio, entrega em 3 a 7 dias.">
-  <meta property="og:image" content="assets/logo/favicon-512.png">
+  <meta property="og:image" content="https://SITE_DOMINIO/assets/logo/favicon-512.png">
+  <script>
+    // só evita o flash do marfim para quem já viu a abertura; a regra de verdade é deveRodarAbertura (lib/abertura.mjs)
+    try {
+      var reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var forca = new URLSearchParams(location.search).get("abertura") === "1";
+      if (reduz || (!forca && localStorage.getItem("alencar:abertura") === "1")) document.documentElement.dataset.abertura = "skip";
+    } catch (e) {}
+  </script>
   <link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="assets/logo/favicon.ico" sizes="48x48">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -88,7 +96,7 @@
     <section class="section" id="materialidade">
       <div class="container duas-colunas">
         <figure class="foto">
-          <img src="assets/flow/flow-materialidade-1.jpg" alt="Foto aproximada da superfície da plaqueta de barro, com luz rasante" width="1200" height="896" loading="lazy">
+          <img src="assets/flow/flow-materialidade-1.jpg" srcset="assets/flow/flow-materialidade-1-800.jpg 800w, assets/flow/flow-materialidade-1.jpg 1200w" sizes="(min-width: 960px) 50vw, 100vw" alt="Foto aproximada da superfície da plaqueta de barro, com luz rasante" width="1200" height="896" loading="lazy" decoding="async">
         </figure>
         <div>
           <h2>A luz revela a <em>textura.</em></h2>
@@ -150,27 +158,27 @@
         </div>
         <div id="galeria" class="galeria">
           <figure data-ambiente="fachada" data-tom="escuro">
-            <img src="assets/flow/flow-fachada-1.jpg" alt="Fachada residencial em plaqueta de barro escura, luz forte de cerrado" width="1200" height="896" loading="lazy">
+            <img src="assets/flow/flow-fachada-1.jpg" srcset="assets/flow/flow-fachada-1-800.jpg 800w, assets/flow/flow-fachada-1.jpg 1200w" sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" alt="Fachada residencial em plaqueta de barro escura, luz forte de cerrado" width="1200" height="896" loading="lazy" decoding="async">
             <figcaption>Fachada · escuro · imagem conceitual</figcaption>
           </figure>
           <figure data-ambiente="sala" data-tom="medio">
-            <img src="assets/flow/flow-sala-1.jpg" alt="Parede de sala em plaqueta de barro de tom médio, luz quente natural" width="1200" height="896" loading="lazy">
+            <img src="assets/flow/flow-sala-1.jpg" srcset="assets/flow/flow-sala-1-800.jpg 800w, assets/flow/flow-sala-1.jpg 1200w" sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" alt="Parede de sala em plaqueta de barro de tom médio, luz quente natural" width="1200" height="896" loading="lazy" decoding="async">
             <figcaption>Sala · médio · imagem conceitual</figcaption>
           </figure>
           <figure data-ambiente="cozinha" data-tom="claro">
-            <img src="assets/flow/flow-cozinha-2.jpg" alt="Cozinha com parede de plaqueta de barro clara" width="1200" height="896" loading="lazy">
+            <img src="assets/flow/flow-cozinha-2.jpg" srcset="assets/flow/flow-cozinha-2-800.jpg 800w, assets/flow/flow-cozinha-2.jpg 1200w" sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" alt="Cozinha com parede de plaqueta de barro clara" width="1200" height="896" loading="lazy" decoding="async">
             <figcaption>Cozinha · claro · imagem conceitual</figcaption>
           </figure>
           <figure data-ambiente="gourmet" data-tom="medio">
-            <img src="assets/flow/flow-gourmet-2.jpg" alt="Área gourmet com churrasqueira revestida em plaqueta de barro de tom médio" width="1200" height="896" loading="lazy">
+            <img src="assets/flow/flow-gourmet-2.jpg" srcset="assets/flow/flow-gourmet-2-800.jpg 800w, assets/flow/flow-gourmet-2.jpg 1200w" sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" alt="Área gourmet com churrasqueira revestida em plaqueta de barro de tom médio" width="1200" height="896" loading="lazy" decoding="async">
             <figcaption>Gourmet · médio · imagem conceitual</figcaption>
           </figure>
           <figure data-ambiente="comercial" data-tom="escuro">
-            <img src="assets/flow/flow-comercial-2.jpg" alt="Fachada comercial em plaqueta de barro escura" width="1200" height="896" loading="lazy">
+            <img src="assets/flow/flow-comercial-2.jpg" srcset="assets/flow/flow-comercial-2-800.jpg 800w, assets/flow/flow-comercial-2.jpg 1200w" sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" alt="Fachada comercial em plaqueta de barro escura" width="1200" height="896" loading="lazy" decoding="async">
             <figcaption>Comercial · escuro · imagem conceitual</figcaption>
           </figure>
           <figure data-ambiente="varanda" data-tom="claro">
-            <img src="assets/flow/flow-varanda-1.jpg" alt="Varanda com parede de plaqueta de barro clara e vegetação do cerrado" width="1200" height="896" loading="lazy">
+            <img src="assets/flow/flow-varanda-1.jpg" srcset="assets/flow/flow-varanda-1-800.jpg 800w, assets/flow/flow-varanda-1.jpg 1200w" sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" alt="Varanda com parede de plaqueta de barro clara e vegetação do cerrado" width="1200" height="896" loading="lazy" decoding="async">
             <figcaption>Varanda · claro · imagem conceitual</figcaption>
           </figure>
         </div>

@@ -43,3 +43,19 @@ test("skip link aponta para o main; texto pequeno não usa --clay", () => {
   assert.match(html, /<main id="conteudo">/);
   assert.doesNotMatch(css.replace(/--clay:[^;]+;/, ""), /color:\s*var\(--clay\)/);
 });
+test("acessibilidade estática", () => {
+  assert.match(html, /<html lang="pt-BR"/);
+  for (const m of html.matchAll(/<img [^>]*>/g)) assert.match(m[0], /alt="/, m[0]);
+  assert.match(css, /:focus-visible\{outline:2px solid var\(--action\)/);
+  assert.ok(!/<h3/.test(html) || /<h2/.test(html));
+  assert.match(html, /#plaqueta-narradora[^>]*aria-hidden="true"|id="plaqueta-narradora"[^>]*aria-hidden="true"/);
+});
+test("ajustes da Task 8: og:image absoluto, anti-flash, flutuante e áreas de toque", () => {
+  assert.match(html, /property="og:image" content="https:\/\/SITE_DOMINIO\/assets\/logo\/favicon-512\.png"/);
+  assert.ok(html.indexOf('dataset.abertura = "skip"') > 0 && html.indexOf('dataset.abertura = "skip"') < html.indexOf('href="styles.css"'));
+  assert.match(css, /html\[data-abertura="skip"\] #abertura\s*\{\s*display:\s*none/);
+  assert.match(css, /#whatsapp-flutuante\.is-oculto/);
+  assert.match(css, /env\(safe-area-inset-bottom\)/);
+  assert.match(css, /\.link\s*\{[^}]*min-height:\s*44px/);
+  assert.equal((html.match(/<img [^>]*assets\/flow\/[^>]*srcset=/g) || []).length, 7);
+});

@@ -54,7 +54,7 @@ figure, address { margin: 0; font-style: normal; }
 ul { list-style: none; margin: 0; padding: 0; }
 p { margin: 0 0 var(--s-3); max-width: 60ch; }
 a { color: var(--action); text-underline-offset: 4px; transition: color var(--t); }
-:focus-visible { outline: 2px solid var(--action); outline-offset: 3px; }
+:focus-visible{outline:2px solid var(--action);outline-offset:4px}
 
 h1, h2, h3 {
   margin: 0 0 var(--s-3);
@@ -67,7 +67,12 @@ h3 { font-size: var(--h3); line-height: 1.15; }
 h1 em, h2 em, h3 em { font-style: italic; }
 
 .container { max-width: 1280px; margin-inline: auto; padding-inline: var(--gutter); }
-.section { padding-top: var(--section); }
+.section { position: relative; padding-top: var(--section); }
+/* fio de 1 px no meio do respiro entre seções: não soma altura; o hero já fecha com o fio da .faixa */
+.section:not(.hero):not(#fabrica)::before {
+  content: ""; position: absolute; top: calc(var(--section) / 2); left: var(--gutter); right: var(--gutter);
+  max-width: calc(1280px - 2 * var(--gutter)); margin-inline: auto; height: 1px; background: var(--line); pointer-events: none;
+}
 #contato { padding-bottom: var(--section); }
 .lead { font-size: 18px; margin-bottom: var(--s-6); }
 
@@ -88,7 +93,7 @@ h1 em, h2 em, h3 em { font-style: italic; }
 }
 .btn:hover { background: var(--ink); }
 .btn--grande { min-height: 64px; padding: 0 var(--s-6); font-size: 18px; }
-.link { font: 500 16px/1.2 var(--font-text); }
+.link { display: inline-flex; align-items: center; min-height: 44px; font: 500 16px/1.2 var(--font-text); }
 .acoes { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); }
 
 /* cabeçalho fixo */
@@ -101,7 +106,7 @@ h1 em, h2 em, h3 em { font-style: italic; }
 .topo__logo img { height: 40px; width: auto; transition: height var(--t); }
 .topo.is-compact .topo__logo img { height: 32px; }
 .topo__nav { display: none; gap: var(--s-4); }
-.topo__nav a { font: 500 16px/1 var(--font-text); color: var(--ink); text-decoration: none; }
+.topo__nav a { display: inline-flex; align-items: center; min-height: 44px; font: 500 16px/1 var(--font-text); color: var(--ink); text-decoration: none; }
 .topo__nav a:hover { color: var(--action); }
 .so-desktop { display: none; }
 @media (min-width: 960px) {
@@ -160,8 +165,16 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .mat-mapa { --anatomy-top: #F0E8DA; --anatomy-shade-0: #D8CCB8; --anatomy-shade-1: #E0D5C1; --anatomy-shade-2: #E8DCC6; --anatomy-shade-3: #EDE4D4; --anatomy-face: #F0E8DA; }
 .iso-dots[data-tone="red"] circle { fill: var(--anatomy-red); opacity: 1; }
 #rota-principal { stroke-width: 1.6; }
-.rotulo-mapa { font: 500 15px var(--font-text); fill: var(--anatomy-hi); paint-order: stroke; stroke: var(--anatomy-paper); stroke-width: 3px; stroke-linejoin: round; }
-@media (max-width: 600px) { .rotulo-mapa { font-size: 22px; stroke-width: 4px; } } /* o svg encolhe ~0,55× no celular */
+.rotulo-mapa { font: 500 15px var(--font-text); fill: var(--anatomy-hi); paint-order: stroke; stroke: var(--anatomy-paper); stroke-linejoin: round; }
+/* o svg (viewBox 643) escala com a largura do #caminhao (limitada a 640 px): rótulo efetivo fica em 12–15 px */
+#caminhao { container-type: inline-size; }
+#caminhao svg { max-width: 640px; }
+.rotulo-mapa { --u: 13.5; font-size: calc(var(--u) * 1px); stroke-width: calc(var(--u) * .2px); }
+@container (max-width: 599px) { .rotulo-mapa { --u: 15; } }
+@container (max-width: 514px) { .rotulo-mapa { --u: 18; } }
+@container (max-width: 429px) { .rotulo-mapa { --u: 22; } }
+@container (max-width: 349px) { .rotulo-mapa { --u: 26; } }
+@container (max-width: 299px) { .rotulo-mapa { --u: 29; } }
 .mat-folha { --anatomy-top: #6E9A63; --anatomy-shade-0: #3E6139; --anatomy-shade-1: #466C40; --anatomy-shade-2: #4F7A4A; --anatomy-shade-3: #5E8A57; --anatomy-face: #4F7A4A; }
 .tom h3 { margin: var(--s-2) 0 0; }
 .tom--medida .ph { border-top: 1px solid var(--clay); }
@@ -217,7 +230,14 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 @media (prefers-reduced-motion: reduce) { #plaqueta-narradora { display: none; } }
 
 /* WhatsApp flutuante */
-#whatsapp-flutuante { position: fixed; right: 24px; bottom: 24px; z-index: 60; }
+#whatsapp-flutuante {
+  position: fixed; z-index: 60;
+  right: max(var(--s-3), env(safe-area-inset-right)); bottom: max(var(--s-3), calc(env(safe-area-inset-bottom) + var(--s-2)));
+  transition: opacity var(--t), background-color var(--t);
+}
+/* some durante a abertura e enquanto outro CTA do conteúdo está na tela (classe via IntersectionObserver em main.js) */
+html.abrindo #whatsapp-flutuante, #whatsapp-flutuante.is-oculto { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity var(--t), visibility 0s var(--t); }
+@media (max-width: 767px) { .rodape { padding-bottom: calc(var(--s-8) + 72px + env(safe-area-inset-bottom)); } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -226,6 +246,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 
 /* abertura: plaquetas na forma da logo */
 html.abrindo { overflow: hidden; }
+html[data-abertura="skip"] #abertura { display: none; }
 #abertura {
   position: fixed; inset: 0; z-index: 200; overflow: hidden;
   background: var(--background); cursor: pointer; will-change: transform;
@@ -234,7 +255,8 @@ html.abrindo { overflow: hidden; }
 }
 #abertura:focus { outline: none; }
 @keyframes abertura-failsafe { to { visibility: hidden; pointer-events: none; } }
-#abertura svg { position: absolute; top: 7vh; left: 0; width: 100%; height: 86vh; }
+/* reserva 136 px embaixo para o contador e os rótulos nunca encostarem no símbolo */
+#abertura svg { position: absolute; top: 6vh; left: 0; width: 100%; height: calc(94vh - 136px); }
 #abertura .bk { opacity: 0; transform: translateY(10px); transition: opacity .22s ease, transform .38s cubic-bezier(.2, .8, .2, 1); }
 #abertura .bk.on { opacity: 1; transform: none; }
 #abertura .outline {
@@ -271,4 +293,5 @@ html.abrindo { overflow: hidden; }
   font: 500 14px/1 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
 }
 .abertura__pular:hover { text-decoration: underline; }
+@media (max-width: 599px) { .abertura__rotulos { display: none; } } /* no celular os rótulos encostam no símbolo */
 @media (prefers-reduced-motion: reduce) { #abertura { display: none; } html.abrindo { overflow: auto; } }

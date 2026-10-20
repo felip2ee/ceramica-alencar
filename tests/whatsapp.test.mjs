@@ -12,3 +12,9 @@ test("placeholder gera link para #contato", () => {
 test("mensagem padrão é curta e cita a plaqueta", () => {
   assert.ok(MENSAGEM_PADRAO.length < 120); assert.match(MENSAGEM_PADRAO, /plaqueta/);
 });
+test("número ausente, nulo ou vazio cai em #contato sem lançar", () => {
+  for (const n of [undefined, null, "", "   "]) assert.equal(linkWhatsapp(n, "x"), "#contato");
+});
+test("texto sem dígitos cai em #contato", () => {
+  assert.equal(linkWhatsapp("sem número", "x"), "#contato");
+});

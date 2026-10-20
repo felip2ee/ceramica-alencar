@@ -54,6 +54,20 @@ function ligarCabecalhoCompacto() {
   }).observe(sentinela);
 }
 
+// O botão flutuante some enquanto o hero (que tem o CTA principal) ou outro CTA do conteúdo está na tela:
+// nunca duplica um CTA visível nem cobre o texto do hero.
+function ligarWhatsappFlutuante() {
+  const flutuante = document.getElementById("whatsapp-flutuante");
+  const alvos = document.querySelectorAll("#hero, main a[data-cta]");
+  if (!flutuante || !alvos.length || !("IntersectionObserver" in window)) return;
+  const visiveis = new Set();
+  const observador = new IntersectionObserver((entradas) => {
+    for (const { target, isIntersecting } of entradas) visiveis[isIntersecting ? "add" : "delete"](target);
+    flutuante.classList.toggle("is-oculto", visiveis.size > 0);
+  });
+  alvos.forEach((alvo) => observador.observe(alvo));
+}
+
 const SVG_TRANSFORM = "translate(300 32) scale(0.865) translate(10 10)";
 // Caixa do símbolo no viewBox da abertura (limites reais ≈ x 315–759, y 48–442) e viewBox com ~12 de margem.
 const CAIXA = { x0: 315.6, x1: 759.4, y0: 48.4, y1: 442.2 };
@@ -126,6 +140,7 @@ function iniciarAbertura() {
     return avisarFimAbertura();
   }
 
+  delete document.documentElement.dataset.abertura; // o script do <head> só adianta o "pular"; aqui a regra é deveRodarAbertura
   const fundo = document.querySelectorAll("header, main");
   const timers = [];
   let encerrada = false;
@@ -221,3 +236,4 @@ figuras.then(injetarFiguras).catch((erro) => console.warn("figuras indisponívei
 aplicarCtas();
 ligarFiltros();
 ligarCabecalhoCompacto();
+ligarWhatsappFlutuante();
