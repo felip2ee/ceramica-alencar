@@ -25,7 +25,7 @@
   --header: 80px;
   --t: 200ms;
 
-  --h1: clamp(42px, 9vw, 52px);
+  --h1: clamp(42px, 11vw, 48px);
   --h2: clamp(34px, 8vw, 40px);
   --h3: clamp(26px, 6vw, 30px);
 }
@@ -34,7 +34,7 @@
   :root { --gutter: 48px; --section: 96px; --h2: clamp(48px, 5vw, 56px); --h3: 28px; }
 }
 @media (min-width: 960px) {
-  :root { --h1: clamp(72px, 6vw, 96px); --h2: clamp(48px, 4.4vw, 64px); --h3: clamp(28px, 2.4vw, 36px); }
+  :root { --h1: clamp(56px, 5vw, 72px); --h2: clamp(48px, 4.4vw, 64px); --h3: clamp(28px, 2.4vw, 36px); }
 }
 @media (min-width: 1280px) {
   :root { --gutter: 64px; --section: 128px; }
@@ -96,40 +96,95 @@ h1 em, h2 em, h3 em { font-style: italic; }
 .link { display: inline-flex; align-items: center; min-height: 44px; font: 500 16px/1.2 var(--font-text); }
 .acoes { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); }
 
-/* cabeçalho fixo */
+/* grade de células (peça 1; reutilizável nas próximas peças)
+   .grade   linha de células que vai de borda a borda da tela, fechada por um fio de 1 px embaixo
+   .celula  célula da grade: fio de 1 px à esquerda (a primeira de cada linha não tem), respiro de 24 px
+   .rotulo  rótulo DM Sans 500, 12 px, caixa alta, tracking 0.08em, cor ink; .rotulo--par empurra o 2º <span> para a direita */
+.grade { display: grid; border-bottom: 1px solid var(--line); }
+.celula { min-width: 0; padding: var(--s-3); border-left: 1px solid var(--line); }
+.grade > .celula:first-child { border-left: 0; padding-left: var(--gutter); }
+.rotulo {
+  margin: 0; max-width: none;
+  font: 500 12px/1.4 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); text-decoration: none;
+}
+.rotulo--par { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-2); }
+
+/* cabeçalho fixo: logo | links, um por célula | CTA */
 .topo {
   position: fixed; inset: 0 0 auto; z-index: 50;
-  background: var(--background); border-bottom: 1px solid var(--line);
+  background: var(--background);
 }
-.topo__linha { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); height: var(--header); transition: height var(--t); }
+.topo__linha { grid-template-columns: minmax(0, 1fr) auto; height: var(--header); transition: height var(--t); }
 .topo.is-compact .topo__linha { height: 64px; }
+.topo__logo { display: flex; align-items: center; padding-block: 0; }
 .topo__logo img { height: 40px; width: auto; transition: height var(--t); }
 .topo.is-compact .topo__logo img { height: 32px; }
-.topo__nav { display: none; gap: var(--s-4); }
-.topo__nav a { display: inline-flex; align-items: center; min-height: 44px; font: 500 16px/1 var(--font-text); color: var(--ink); text-decoration: none; }
-.topo__nav a:hover { color: var(--action); }
+.topo__nav { display: none; }
+.topo__nav a { display: flex; align-items: flex-start; padding: var(--s-2) var(--s-3) 0 var(--s-2); }
+.topo__nav a:hover, .topo__nav a:focus-visible { background: var(--surface); }
+/* o CTA do topo é o 1º dos dois usos do acento na dobra (texto + seta) */
+.topo__cta { position: relative; display: block; min-height: 44px; padding: var(--s-2) var(--s-3); color: var(--action); }
+.topo__cta .seta { position: absolute; right: var(--s-2); bottom: var(--s-1); font-size: 16px; letter-spacing: 0; }
+.topo__cta:hover { background: var(--surface); }
 .so-desktop { display: none; }
-@media (min-width: 960px) {
-  .topo__nav { display: flex; }
+@media (min-width: 1200px) {
+  .topo__linha { grid-template-columns: minmax(0, 1fr) auto 360px; }
+  .topo__nav { display: grid; grid-auto-flow: column; }
   .so-desktop { display: inline; white-space: pre; }
 }
 main { padding-top: var(--header); }
 
-/* hero */
-.hero { padding-top: var(--s-6); }
-.hero__grade { display: grid; gap: var(--s-6); align-items: center; }
+/* hero: moldura da casa sozinha em cima; título | texto | CTA embaixo; faixa de rótulos numerados */
+.hero { padding-top: 0; }
+.hero__grade { grid-template-columns: minmax(0, 1fr); }
+.hero__moldura { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--s-6) var(--s-3) var(--s-3); border-bottom: 1px solid var(--line); }
+/* fio tracejado interno com marcas "+" nos quatro cantos */
+.hero__moldura::before {
+  content: ""; position: absolute; inset: var(--s-2); pointer-events: none;
+  border: 1px dashed var(--line);
+}
+.hero__moldura::after {
+  --m: linear-gradient(var(--ink), var(--ink));
+  content: ""; position: absolute; inset: calc(var(--s-2) - 6px); pointer-events: none; opacity: .7;
+  background:
+    var(--m) left 0 top 6px / 13px 1px no-repeat, var(--m) left 6px top 0 / 1px 13px no-repeat,
+    var(--m) right 0 top 6px / 13px 1px no-repeat, var(--m) right 6px top 0 / 1px 13px no-repeat,
+    var(--m) left 0 bottom 6px / 13px 1px no-repeat, var(--m) left 6px bottom 0 / 1px 13px no-repeat,
+    var(--m) right 0 bottom 6px / 13px 1px no-repeat, var(--m) right 6px bottom 0 / 1px 13px no-repeat;
+}
+.hero__legenda { position: absolute; top: calc(var(--s-2) + 12px); left: calc(var(--s-2) + 16px); right: calc(var(--s-2) + 16px); }
 .hero__casa { aspect-ratio: 900 / 620; width: 100%; }
-@media (min-width: 1024px) {
-  .hero__grade { grid-template-columns: 45fr 55fr; }
-  .hero__casa { order: 2; }
+.hero__grade > .celula { border-left: 0; }
+.hero__titulo, .hero__texto, .hero__acao { padding-left: var(--gutter); }
+.hero__titulo h1 { margin: 0; max-width: 9.5em; font-size: var(--h1); line-height: 1.04; }
+.hero__texto p { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; }
+.hero__texto, .hero__acao { border-top: 1px solid var(--line); }
+.hero__acao { padding-bottom: var(--s-4); }
+@media (min-width: 768px) {
+  .hero__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .hero__moldura, .hero__titulo { grid-column: 1 / -1; }
+  .hero__acao { border-left: 1px solid var(--line); padding-left: var(--s-3); }
+  .hero__casa { width: min(100%, calc((100svh - var(--header) - 300px) * 900 / 620)); }
+}
+@media (min-width: 1200px) {
+  /* a dobra inteira: a moldura fica com o que sobra da tela (≥ 55 % da altura) */
+  .hero__grade { grid-template-columns: minmax(0, 1fr) 360px 360px; grid-template-rows: minmax(55svh, 1fr) auto; min-height: calc(100svh - var(--header) - 50px); }
+  .hero__titulo { grid-column: auto; padding-block: var(--s-3) var(--s-4); }
+  .hero__texto, .hero__acao { border-top: 0; border-left: 1px solid var(--line); padding-left: var(--s-3); }
+  .hero__casa { width: min(100%, calc((100svh - var(--header) - 50px - 290px) * 900 / 620)); }
 }
 #casa svg { width: 100%; height: auto; }
 /* até a construção começar, as partes da casa ficam ocultas (o JS revela uma a uma) */
 #casa:not(.is-ready) :is(.fileira, .movel, .estrutura, .vidro, #plaqueta-solta) { opacity: 0; }
-.faixa {
-  display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4);
-  margin-top: var(--s-8); padding-top: var(--s-3); border-top: 1px solid var(--line);
-  font: 500 14px/1.4 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
+.faixa { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.faixa > .celula { display: flex; gap: 12px; padding-block: var(--s-2); }
+.faixa > .celula:nth-child(odd) { border-left: 0; padding-left: var(--gutter); }
+.faixa > .celula:nth-child(n+3) { border-top: 1px solid var(--line); }
+@media (min-width: 1200px) {
+  .faixa { grid-template-columns: repeat(5, minmax(0, 1fr)) max-content; }
+  .faixa > .celula:nth-child(odd) { border-left: 1px solid var(--line); padding-left: var(--s-3); }
+  .faixa > .celula:first-child { border-left: 0; padding-left: var(--gutter); }
+  .faixa > .celula:nth-child(n+3) { border-top: 0; }
 }
 
 /* placeholders de imagem */
@@ -254,7 +309,7 @@ html[data-abertura="skip"] #abertura { display: none; }
 #abertura .outline.on { stroke-dashoffset: 0; }
 .abertura__contador {
   position: absolute; left: var(--gutter); bottom: var(--s-3); margin: 0;
-  font: 500 14px/1.2 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
+  font: 500 12px/1.2 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
 }
 .abertura__contador b {
   display: block; margin-bottom: 4px; letter-spacing: -.02em;
@@ -262,7 +317,7 @@ html[data-abertura="skip"] #abertura { display: none; }
 }
 .abertura__rotulos {
   position: absolute; right: var(--gutter); bottom: 64px; margin: 0; padding: 0; list-style: none; text-align: right;
-  font: 500 14px/1.6 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
+  font: 500 12px/1.6 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
 }
 .abertura__rotulos li { opacity: 0; animation: abertura-entra .5s ease forwards; }
 .abertura__rotulos li:nth-child(1) { animation-delay: .4s; }
@@ -278,7 +333,7 @@ html[data-abertura="skip"] #abertura { display: none; }
 .abertura__pular {
   position: absolute; right: var(--gutter); bottom: var(--s-1); min-height: 44px; padding: 0;
   border: 0; background: none; cursor: pointer;
-  font: 500 14px/1 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
+  font: 500 12px/1 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
 }
 .abertura__pular:hover { text-decoration: underline; }
 @media (max-width: 599px) { .abertura__rotulos { display: none; } } /* no celular os rótulos encostam no símbolo */

@@ -7,7 +7,7 @@ const js = readFileSync(new URL("../main.js", import.meta.url), "utf8");
 
 test("um único h1 com o título editorial", () => {
   assert.equal((html.match(/<h1[\s>]/g) || []).length, 1);
-  assert.match(html, /O barro também desenha o <em>ambiente\.<\/em>/);
+  assert.match(html, /<h1>A parede de barro acolhe a <em>luz\.<\/em><\/h1>/);
 });
 test("palavras vetadas ausentes", () => {
   // só o texto visível: a classe/atributo `amostra` dos placeholders de tom é contrato com a Task 4

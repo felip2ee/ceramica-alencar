@@ -43,18 +43,18 @@
   <a class="pular" href="#conteudo">Ir para o conteúdo</a>
 
   <header class="topo" id="topo">
-    <div class="container topo__linha">
-      <a class="topo__logo" href="#hero" aria-label="Cerâmicas Alencar, início">
+    <div class="grade topo__linha">
+      <a class="celula topo__logo" href="#hero" aria-label="Cerâmicas Alencar, início">
         <img src="assets/logo/alencar-horizontal-terracota-transparente.svg" alt="Cerâmica Alencar" width="1200" height="340">
       </a>
       <nav class="topo__nav" aria-label="Principal">
-        <a href="#fabrica">Fábrica</a>
-        <a href="#revestimentos">Revestimentos</a>
-        <a href="#aplicacoes">Aplicações</a>
-        <a href="#parceiros">Para arquitetos</a>
-        <a href="#parceiros">Para lojas</a>
+        <a class="celula rotulo" href="#fabrica">Fábrica</a>
+        <a class="celula rotulo" href="#revestimentos">Revestimentos</a>
+        <a class="celula rotulo" href="#aplicacoes">Aplicações</a>
+        <a class="celula rotulo" href="#parceiros">Para arquitetos</a>
+        <a class="celula rotulo" href="#parceiros">Para lojas</a>
       </nav>
-      <a class="btn" data-cta href="#contato">Conversar<span class="so-desktop"> sobre meu projeto</span></a>
+      <a class="celula rotulo topo__cta" data-cta href="#contato">Conversar<span class="so-desktop"> sobre meu projeto</span><span class="seta" aria-hidden="true">→</span></a>
     </div>
   </header>
 
@@ -62,27 +62,29 @@
 
   <main id="conteudo">
     <section class="section hero" id="hero">
-      <div class="container hero__grade">
-        <div id="casa" class="hero__casa"></div>
-        <div class="hero__texto">
-          <h1>O barro também desenha o <em>ambiente.</em></h1>
-          <p>Plaqueta lisa de barro, 7 × 24 cm, feita em Tocantinópolis. Do barro à queima, tudo acontece na nossa fábrica.</p>
-          <div class="acoes">
-            <a class="btn" data-cta href="#contato">Conversar sobre meu projeto</a>
-            <a class="link" href="#revestimentos">Conhecer os revestimentos</a>
-          </div>
+      <div class="grade hero__grade">
+        <div class="celula hero__moldura">
+          <p class="rotulo rotulo--par hero__legenda"><span>Casa em plaqueta de barro</span><span>Fig. 01</span></p>
+          <div id="casa" class="hero__casa"></div>
+        </div>
+        <div class="celula hero__titulo">
+          <h1>A parede de barro acolhe a <em>luz.</em></h1>
+        </div>
+        <div class="celula hero__texto">
+          <p>Plaqueta lisa de barro, 7 × 24 cm, em três tons de queima. Do barro ao forno, tudo sai da nossa fábrica em Tocantinópolis.</p>
+        </div>
+        <div class="celula hero__acao">
+          <a class="btn" data-cta href="#contato">Conversar sobre meu projeto</a>
         </div>
       </div>
-      <div class="container">
-        <ul class="faixa" aria-label="Usos e entrega">
-          <li>Fachadas</li>
-          <li>Interiores</li>
-          <li>Área gourmet</li>
-          <li>Comercial</li>
-          <li>Sob medida</li>
-          <li>Frete próprio 3 a 7 dias</li>
-        </ul>
-      </div>
+      <ul class="grade faixa" aria-label="Usos e entrega">
+        <li class="celula rotulo"><span>[01]</span><span>Fachadas</span></li>
+        <li class="celula rotulo"><span>[02]</span><span>Interiores</span></li>
+        <li class="celula rotulo"><span>[03]</span><span>Área gourmet</span></li>
+        <li class="celula rotulo"><span>[04]</span><span>Comercial</span></li>
+        <li class="celula rotulo"><span>[05]</span><span>Sob medida</span></li>
+        <li class="celula rotulo"><span>[06]</span><span>Frete próprio 3 a 7 dias</span></li>
+      </ul>
     </section>
 
     <section class="section" id="fabrica">
