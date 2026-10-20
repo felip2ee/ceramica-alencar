@@ -53,4 +53,4 @@ O script lê o símbolo versionado em `assets/logo/alencar-simbolo-terracota-tra
 
 ## Verificação feita
 
-Sem rolagem horizontal de 280 a 1440 px, botões e filtros com pelo menos 48 px, links secundários e de navegação com área de toque de 44 px, rótulos do mapa entre 12 e 15 px efetivos, foco visível (`:focus-visible`), `prefers-reduced-motion` respeitado.
+Sem rolagem horizontal de 280 a 1440 px, botões com pelo menos 48 px, links secundários e de navegação com área de toque de 44 px, rótulos do mapa entre 12 e 15 px efetivos, foco visível (`:focus-visible`), `prefers-reduced-motion` respeitado.
