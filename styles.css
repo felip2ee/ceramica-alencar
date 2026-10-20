@@ -154,6 +154,11 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .mat-madeira { --anatomy-top: #C08A5B; --anatomy-shade-0: #7E5232; --anatomy-shade-1: #8E5E3A; --anatomy-shade-2: #A06C45; --anatomy-shade-3: #B27B50; --anatomy-face: #A06C45; }
 .mat-tecido { --anatomy-top: #D9CDB8; --anatomy-shade-0: #B9AA92; --anatomy-shade-1: #BFB097; --anatomy-shade-2: #C4B59C; --anatomy-shade-3: #CEC1AA; --anatomy-face: #C4B59C; }
 .mat-tapete { --anatomy-top: #EFE6D6; --anatomy-shade-0: #CFC2AC; --anatomy-shade-1: #D9CDB8; --anatomy-shade-2: #E3D8C5; --anatomy-shade-3: #EADFCD; --anatomy-face: #E3D8C5; }
+.mat-cabine { --anatomy-top: #6B4030; --anatomy-shade-0: #3F241A; --anatomy-shade-1: #4A2B1F; --anatomy-shade-2: #5A3423; --anatomy-shade-3: #65392A; --anatomy-face: #5A3423; }
+.mat-pneu { --anatomy-top: #3A2D26; --anatomy-shade-0: #1F1814; --anatomy-shade-1: #241C17; --anatomy-shade-2: #2B211C; --anatomy-shade-3: #332721; --anatomy-face: #2B211C; }
+.mat-mapa { --anatomy-top: #F0E8DA; --anatomy-shade-0: #D8CCB8; --anatomy-shade-1: #E0D5C1; --anatomy-shade-2: #E8DCC6; --anatomy-shade-3: #EDE4D4; --anatomy-face: #F0E8DA; }
+.iso-dots[data-tone="red"] circle { fill: var(--anatomy-red); opacity: 1; }
+#rota-principal { stroke-width: 1.6; }
 .mat-folha { --anatomy-top: #6E9A63; --anatomy-shade-0: #3E6139; --anatomy-shade-1: #466C40; --anatomy-shade-2: #4F7A4A; --anatomy-shade-3: #5E8A57; --anatomy-face: #4F7A4A; }
 .tom h3 { margin: var(--s-2) 0 0; }
 .tom--medida .ph { border-top: 1px solid var(--clay); }
@@ -177,11 +182,12 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 
 /* fábrica */
 .fabrica__grade { display: grid; gap: var(--s-6); align-items: center; }
-.fabrica__mapa { aspect-ratio: 4 / 3; width: 100%; }
-@media (min-width: 960px) { .fabrica__grade { grid-template-columns: 3fr 2fr; } }
+.fabrica__mapa { aspect-ratio: 900 / 700; width: 100%; }
+#caminhao svg { width: 100%; height: auto; }
+@media (min-width: 1024px) { .fabrica__grade { grid-template-columns: 55fr 45fr; } }
 .numeros { display: grid; gap: 0; }
 .numeros li { display: grid; gap: 2px; padding-block: var(--s-3); border-top: 1px solid var(--line); }
-.numeros strong { font: 400 var(--h3)/1.1 var(--font-display); letter-spacing: -.025em; color: var(--brand); }
+.numeros strong { font: 400 clamp(40px, 5vw, 64px)/1.05 var(--font-display); letter-spacing: -.025em; color: var(--brand); }
 .numeros span { font-size: 14px; color: var(--ink); }
 
 /* parceiros e fechamento */

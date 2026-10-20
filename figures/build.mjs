@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url";
 import { ISO_CSS } from "./kit/iso-kit.mjs";
 import { amostraSvg } from "./amostras.mjs";
 import { casa } from "./casa.mjs";
+import { caminhao } from "./caminhao.mjs";
+import mapaTO from "./mapa-to.json" with { type: "json" };
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const raiz = join(aqui, "..", "..");
@@ -48,6 +50,7 @@ function escreverFigures(mapa) {
 }
 
 const CASA = casa();
+const CAMINHAO = caminhao(mapaTO);
 
 escreverFigures({
   LOGO_VIEWBOX: viewBox,
@@ -60,4 +63,6 @@ escreverFigures({
   },
   CASA: CASA.svg,
   CASA_META: CASA.meta,
+  CAMINHAO: CAMINHAO.svg,
+  CAMINHAO_META: CAMINHAO.meta,
 });

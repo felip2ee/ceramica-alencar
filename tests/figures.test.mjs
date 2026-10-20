@@ -23,3 +23,17 @@ test("casa: hero dentro do orçamento e com os grupos que o live precisa", () =>
   assert.doesNotMatch(F.CASA, /iso-plate|data-readout/);
   assert.ok(F.CASA.length < 400_000, "SVG abaixo de 400 KB");
 });
+import mapa from "../figures/mapa-to.json" with { type: "json" };
+test("mapa do Tocantins simplificado e com as duas cidades", () => {
+  assert.ok(mapa.anel.length >= 80 && mapa.anel.length <= 400);
+  const lons = mapa.anel.map(p=>p[0]), lats = mapa.anel.map(p=>p[1]);
+  assert.ok(Math.min(...lons) > -51 && Math.max(...lons) < -45 && Math.min(...lats) > -14 && Math.max(...lats) < -5);
+  assert.deepEqual(mapa.cidades.tocantinopolis, [-47.4224,-6.3245]);
+});
+test("caminhão: figura com mapa, rota e carroceria", () => {
+  assert.match(F.CAMINHAO, /id="mapa"/); assert.match(F.CAMINHAO, /id="caminhao"/); assert.match(F.CAMINHAO, /id="rota-principal"/);
+  assert.equal((F.CAMINHAO.match(/class="rota"/g)||[]).length, 4);
+  const solidos = (F.CAMINHAO.match(/class="iso-solid/g)||[]).length;
+  assert.ok(solidos >= 40 && solidos <= 80, `solidos=${solidos}`);
+  assert.ok(F.CAMINHAO_META.inicio[1] < F.CAMINHAO_META.fim[1], "Tocantinópolis fica acima de Palmas na tela");
+});

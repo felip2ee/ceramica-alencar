@@ -87,6 +87,8 @@ function injetarFiguras(F) {
     casa.innerHTML = F.CASA;
     iniciarCasa(casa);
   }
+  const caminhao = document.getElementById("caminhao");
+  if (caminhao && F.CAMINHAO) caminhao.innerHTML = F.CAMINHAO;
 }
 
 // A casa só se constrói depois da abertura (ou já, se ela não rodou ou acabou antes do import).
