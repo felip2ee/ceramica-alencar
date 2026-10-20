@@ -4,7 +4,7 @@ Cada bloco corresponde a um placeholder da página. Regras comuns: luz quente na
 
 ## Materialidade: foto aproximada do barro
 
-- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-materialidade-1.jpg` (variante 800 px: `flow-materialidade-1-800.jpg`). Alternativa: nenhuma (só há uma versão).
+- **Status:** gerada (Google Flow). Usada na página como vídeo em loop: `assets/flow/flow-materialidade-1.mp4` (8 s, 1280 × 720, mudo), com `assets/flow/flow-materialidade-1.jpg` como poster. A variante 800 px (`flow-materialidade-1-800.jpg`) ficou sem uso. Com `prefers-reduced-motion`, só o poster aparece.
 
 - **Ambiente:** Detalhe macro da superfície
 - **Tom da plaqueta:** médio (qualquer um serve)

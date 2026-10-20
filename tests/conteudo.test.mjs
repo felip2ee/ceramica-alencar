@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
+const js = readFileSync(new URL("../main.js", import.meta.url), "utf8");
 
 test("um único h1 com o título editorial", () => {
   assert.equal((html.match(/<h1[\s>]/g) || []).length, 1);
@@ -57,17 +58,25 @@ test("ajustes da Task 8: og:image absoluto, anti-flash, flutuante e áreas de to
   assert.match(css, /#whatsapp-flutuante\.is-oculto/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
   assert.match(css, /\.link\s*\{[^}]*min-height:\s*44px/);
-  assert.equal((html.match(/<img [^>]*assets\/flow\/[^>]*srcset=/g) || []).length, 7);
+  assert.equal((html.match(/<img [^>]*assets\/flow\/[^>]*srcset=/g) || []).length, 6);
 });
 test("toda imagem gerada (assets/flow/) vem com a legenda \"imagem conceitual\"", () => {
   const figuras = [...html.matchAll(/<figure[\s\S]*?<\/figure>/g)].map((m) => m[0]);
   const flow = [...html.matchAll(/<img [^>]*src="assets\/flow\/[^>]*>/g)];
-  assert.equal(flow.length, 7);
+  assert.equal(flow.length, 6);
   for (const [img] of flow) {
     const fig = figuras.find((f) => f.includes(img));
     assert.ok(fig, `img sem <figure>: ${img}`);
     assert.match(fig.match(/<figcaption>([\s\S]*?)<\/figcaption>/)?.[1] ?? "", /imagem conceitual/, img);
   }
+});
+test("materialidade: vídeo em loop, mudo, com a foto como poster e pausado sem movimento", () => {
+  const video = html.match(/<video [^>]*id="video-materialidade"[^>]*>/)?.[0] ?? "";
+  for (const attr of ["autoplay", "muted", "loop", "playsinline", 'poster="assets/flow/flow-materialidade-1.jpg"', 'aria-label="']) assert.match(video, new RegExp(attr), attr);
+  assert.match(html, /<source src="assets\/flow\/flow-materialidade-1\.mp4" type="video\/mp4">/);
+  assert.match(html.match(/<figure class="foto">[\s\S]*?<\/figure>/)[0], /<figcaption>[^<]*conceitual/);
+  assert.match(css, /\.foto video/);
+  assert.match(js, /video-materialidade[\s\S]*?removeAttribute\("autoplay"\)/);
 });
 test("pré-carga e botão Pular estático", () => {
   for (const m of ["main.js", "scroll.mjs", "figures/casa-live.mjs", "lib/whatsapp.mjs", "lib/galeria.mjs", "lib/abertura.mjs", "lib/trajeto.mjs", "figures/out/figures.js"]) {

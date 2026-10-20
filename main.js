@@ -115,6 +115,12 @@ function injetarFiguras(F) {
 
 const querMenosMovimento = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
+// Quem pede menos movimento vê só a capa (poster) do vídeo da materialidade.
+if (querMenosMovimento()) {
+  const video = document.getElementById("video-materialidade");
+  if (video) { video.removeAttribute("autoplay"); video.pause(); }
+}
+
 function depoisDaAbertura(fn) {
   if (document.documentElement.dataset.abertura === "fim") fn();
   else document.addEventListener("alencar:abertura-fim", fn, { once: true });
