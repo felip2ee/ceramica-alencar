@@ -38,3 +38,8 @@ test("ids e ganchos de interface das tasks seguintes", () => {
   assert.ok(/<script type="module" src="main\.js">/.test(html));
   assert.equal((html.match(/<script defer src="https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/gsap\/3\.12\.5\//g) || []).length, 3);
 });
+test("skip link aponta para o main; texto pequeno não usa --clay", () => {
+  assert.match(html, /class="pular" href="#conteudo"/);
+  assert.match(html, /<main id="conteudo">/);
+  assert.doesNotMatch(css.replace(/--clay:[^;]+;/, ""), /color:\s*var\(--clay\)/);
+});
