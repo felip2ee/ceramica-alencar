@@ -18,7 +18,7 @@ const CINTA = 7; // viga recuada que forma a fresta de sombra sob a cobertura
 const BEIRAL = 8;
 const COBERTURA = 7;
 const COB_Z = PE + CINTA;
-const PAINEIS = [0, 1, 2].flatMap((i) => [0, 1].map((j) => ({ x: 34 + i * 37, y: 16 + j * 26, w: 34, d: 23, r: 0 })));
+const CLARABOIA = { x: 70, y: 46, w: 48, d: 30, r: 0 };
 const PLANO_COB = { x: -BEIRAL, y: -BEIRAL, w: PLANTA.w + 2 * BEIRAL, d: PLANTA.d + 2 * BEIRAL, r: 0 };
 
 // Juntas verticais (peças de 24): pares cruzam meia peça com os ímpares; a quina alterna de dono.
@@ -148,19 +148,20 @@ export function casa() {
     caixa({ x: PLANTA.w - ESP, y: ESP, w: ESP, d: RETORNO - ESP, r: 0 }, 92, PE - 92, escuro),
     { prof: prof([VIDRO.x, 54, 47]), svg: k.solidSvg(k.slabOf(VIDRO, 2, 90, P), { tone: "mid", className: "mat-vidro", inner: k.lineSvg(montantes, { tone: "mid" }) }) },
     caixa({ x: PLANTA.w - ESP, y: RETORNO - 3, w: ESP, d: 3, r: 0 }, 0, PE, escuro),
-    { ...caixa({ x: PLANTA.w - 1, y: 56, w: 1.2, d: 1.2, r: 0 }, 26, 36, escuro), prof: Infinity }, // puxador da porta, por fora do vidro
+    { ...caixa({ x: PLANTA.w - 1, y: 55, w: 1, d: 1, r: 0 }, 38, 8, escuro), prof: Infinity }, // puxador curto no montante da porta, por fora do vidro
   ]), { class: "vidro" }));
 
-  // 7 · cobertura com rufo, por cima de tudo que é estrutura.
-  const celulas = (pl, z) => [
-    ...[1, 2].map((i) => k.lineOnTop([pl.x + (pl.w * i) / 3, pl.y], [pl.x + (pl.w * i) / 3, pl.y + pl.d], z, P)),
-    k.lineOnTop([pl.x, pl.y + pl.d / 2], [pl.x + pl.w, pl.y + pl.d / 2], z, P),
-  ].join("");
-  camadas.push(k.groupSvg([k.solidSvg(k.slabOf(PLANO_COB, COB_Z, COBERTURA, P), {
-    tone: "mid", className: "mat-cobertura", inner: k.lineSvg(k.planOutline(k.insetPlan(PLANO_COB, 4), COB_Z + COBERTURA, P, 2), { tone: "faint" }),
-  }), ordenar(PAINEIS.map((pl) => caixa(pl, COB_Z + COBERTURA, 1.5, {
-    tone: "mid", className: "mat-solar", inner: k.lineSvg(celulas(pl, COB_Z + COBERTURA + 1.5), { tone: "lo" }),
-  })))], { class: "estrutura", "data-parte": "cobertura" }));
+  // 7 · cobertura neutra; o único acento vermelho é a linha da testeira em volta do beiral. Clarabóia em cinza quente.
+  const topo = COB_Z + COBERTURA;
+  camadas.push(k.groupSvg([
+    k.solidSvg(k.slabOf(PLANO_COB, COB_Z, COBERTURA, P), {
+      tone: "mid", className: "mat-cobertura",
+      inner: k.lineSvg(k.sideSeam(PLANO_COB, COB_Z + COBERTURA / 2, P, 2), { tone: "red" })
+        + k.lineSvg(k.planOutline(k.insetPlan(PLANO_COB, 4), topo, P, 2), { tone: "faint" }),
+    }),
+    k.solidSvg(k.slabOf(CLARABOIA, topo, 3, P), { tone: "mid" }),
+    k.solidSvg(k.slabOf(k.insetPlan(CLARABOIA, 3), topo + 3, 0.6, P), { tone: "lo", className: "mat-vidro" }),
+  ], { class: "estrutura", "data-parte": "cobertura" }));
 
   // 8 · jardim na frente do muro e arandela no retorno.
   camadas.push(k.groupSvg(ordenar([

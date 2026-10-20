@@ -5,11 +5,12 @@ const FILEIRA_MS = 70;
 const MOVEL_MS = 90;
 const OVERSHOOT = "cubic-bezier(.2,.9,.2,1.2)";
 const ASSENTA = "cubic-bezier(.2,.8,.2,1)";
-const PARALAXE = { estrutura: 2, vidro: 2, fileira: 4, movel: 6 }; // px do viewBox no extremo do ponteiro
+// px do viewBox no extremo do ponteiro: casca inteira junta (piso, paredes, vidro, cobertura), móveis à parte.
+const PARALAXE = { estrutura: 2, vidro: 2, fileira: 2, movel: 4 };
 const TAU = 0.25;
 const OCIOSO_MS = 1400;
 const TOUR_PERIODO = 9;
-const TOUR_AMPLITUDE = 0.5; // × 6 px dos móveis = 3 px
+const TOUR_AMPLITUDE = 0.75; // × 4 px dos móveis = 3 px
 
 export function animarCasa(svgRoot, { reduceMotion }) {
   const palco = svgRoot.parentElement;

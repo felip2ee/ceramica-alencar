@@ -148,13 +148,12 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .amostra svg { display: block; width: 100%; height: auto; }
 /* recolore sólidos do kit Anatomy via variáveis CSS */
 .mat-plaqueta { --anatomy-shade-0: #8E4529; --anatomy-shade-1: #A85D3A; --anatomy-shade-2: #B65E3C; --anatomy-shade-3: #C9896A; --anatomy-top: #C9896A; --anatomy-face: #B65E3C; }
-.mat-cobertura { --anatomy-top: #D93612; --anatomy-shade-0: #8E2A0E; --anatomy-shade-1: #A32E10; --anatomy-shade-2: #B82E12; --anatomy-shade-3: #C9411F; --anatomy-face: #B82E12; }
+.mat-cobertura { --anatomy-top: #E8DCC6; --anatomy-shade-0: #B9AA92; --anatomy-shade-1: #C9BBA6; --anatomy-shade-2: #D8CCB8; --anatomy-shade-3: #E0D5C1; --anatomy-face: #D8CCB8; }
 .mat-vidro { --anatomy-top: #DCE7EC; --anatomy-shade-0: #B9CBD3; --anatomy-shade-1: #C6D6DD; --anatomy-shade-2: #D3E0E6; --anatomy-shade-3: #DCE7EC; --anatomy-face: #D3E0E6; opacity: .55; }
 .mat-escuro { --anatomy-top: #6B4330; --anatomy-shade-0: #3F2418; --anatomy-shade-1: #4A2B1D; --anatomy-shade-2: #5A3423; --anatomy-shade-3: #6B4330; --anatomy-face: #5A3423; }
 .mat-madeira { --anatomy-top: #C08A5B; --anatomy-shade-0: #7E5232; --anatomy-shade-1: #8E5E3A; --anatomy-shade-2: #A06C45; --anatomy-shade-3: #B27B50; --anatomy-face: #A06C45; }
-.mat-tecido { --anatomy-top: #EBC15E; --anatomy-shade-0: #B8892A; --anatomy-shade-1: #C9972F; --anatomy-shade-2: #D9A636; --anatomy-shade-3: #E7B43D; --anatomy-face: #D9A636; }
+.mat-tecido { --anatomy-top: #D9CDB8; --anatomy-shade-0: #B9AA92; --anatomy-shade-1: #BFB097; --anatomy-shade-2: #C4B59C; --anatomy-shade-3: #CEC1AA; --anatomy-face: #C4B59C; }
 .mat-tapete { --anatomy-top: #EFE6D6; --anatomy-shade-0: #CFC2AC; --anatomy-shade-1: #D9CDB8; --anatomy-shade-2: #E3D8C5; --anatomy-shade-3: #EADFCD; --anatomy-face: #E3D8C5; }
-.mat-solar { --anatomy-top: #3E5C7A; --anatomy-shade-0: #22344A; --anatomy-shade-1: #293D54; --anatomy-shade-2: #30475F; --anatomy-shade-3: #37526C; --anatomy-face: #30475F; }
 .mat-folha { --anatomy-top: #6E9A63; --anatomy-shade-0: #3E6139; --anatomy-shade-1: #466C40; --anatomy-shade-2: #4F7A4A; --anatomy-shade-3: #5E8A57; --anatomy-face: #4F7A4A; }
 .tom h3 { margin: var(--s-2) 0 0; }
 .tom--medida .ph { border-top: 1px solid var(--clay); }
