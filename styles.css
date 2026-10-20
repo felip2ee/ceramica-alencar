@@ -134,6 +134,7 @@ main { padding-top: var(--header); }
   background: var(--surface); color: var(--ink);
   font: 500 14px/1.4 var(--font-text); letter-spacing: .08em; text-transform: uppercase; text-align: center;
 }
+.foto img, .galeria img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text); color: var(--ink); }
 
 /* materialidade */
