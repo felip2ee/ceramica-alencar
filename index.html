@@ -22,16 +22,25 @@
   <link rel="icon" href="assets/logo/favicon.ico" sizes="48x48">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="modulepreload" href="main.js">
+  <link rel="modulepreload" href="scroll.mjs">
+  <link rel="modulepreload" href="figures/casa-live.mjs">
+  <link rel="modulepreload" href="lib/whatsapp.mjs">
+  <link rel="modulepreload" href="lib/galeria.mjs">
+  <link rel="modulepreload" href="lib/abertura.mjs">
+  <link rel="modulepreload" href="lib/trajeto.mjs">
+  <link rel="modulepreload" href="figures/out/figures.js">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=DM+Sans:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js" integrity="sha384-lgP6SKZeYZwy7E1FNW3+rGRX/lkJF6ipUUkyET+ZdEhxkLidIF0aewQq2LZaOJ2x" crossorigin="anonymous"></script>
   <noscript><style>#abertura{display:none}</style></noscript>
   <script type="module" src="main.js"></script>
 </head>
 <body data-whatsapp="WHATSAPP_NUMERO">
-  <div id="abertura" tabindex="-1" role="dialog" aria-label="Abertura"></div>
+  <div id="abertura" tabindex="-1" role="dialog" aria-label="Abertura"><button class="abertura__pular" type="button">Pular</button></div>
   <a class="pular" href="#conteudo">Ir para o conteúdo</a>
 
   <header class="topo" id="topo">
@@ -96,7 +105,8 @@
     <section class="section" id="materialidade">
       <div class="container duas-colunas">
         <figure class="foto">
-          <img src="assets/flow/flow-materialidade-1.jpg" srcset="assets/flow/flow-materialidade-1-800.jpg 800w, assets/flow/flow-materialidade-1.jpg 1200w" sizes="(min-width: 960px) 50vw, 100vw" alt="Foto aproximada da superfície da plaqueta de barro, com luz rasante" width="1200" height="896" loading="lazy" decoding="async">
+          <img src="assets/flow/flow-materialidade-1.jpg" srcset="assets/flow/flow-materialidade-1-800.jpg 800w, assets/flow/flow-materialidade-1.jpg 1200w" sizes="(min-width: 960px) 50vw, 100vw" alt="Imagem conceitual da superfície da plaqueta de barro, com luz rasante" width="1200" height="896" loading="lazy" decoding="async">
+          <figcaption>Materialidade · imagem conceitual</figcaption>
         </figure>
         <div>
           <h2>A luz revela a <em>textura.</em></h2>
@@ -126,7 +136,7 @@
             <p class="ficha">7 × 24 cm · lisa · natural</p>
           </article>
           <article class="tom tom--medida">
-            <div class="ph" role="img" aria-label="Espaço reservado para o cartão Sob medida">Sob medida</div>
+            <div class="ph" aria-hidden="true">Sob medida</div>
             <h3>Sob medida</h3>
             <p class="ficha">Tom, lote ou corte feito para o projeto, sob consulta.</p>
           </article>
@@ -157,6 +167,7 @@
           </div>
         </div>
         <div id="galeria" class="galeria">
+          <p class="galeria__vazio" aria-live="polite" hidden>Nenhuma imagem para essa combinação ainda. Fale com a gente sobre o seu ambiente.</p>
           <figure data-ambiente="fachada" data-tom="escuro">
             <img src="assets/flow/flow-fachada-1.jpg" srcset="assets/flow/flow-fachada-1-800.jpg 800w, assets/flow/flow-fachada-1.jpg 1200w" sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" alt="Fachada residencial em plaqueta de barro escura, luz forte de cerrado" width="1200" height="896" loading="lazy" decoding="async">
             <figcaption>Fachada · escuro · imagem conceitual</figcaption>

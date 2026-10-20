@@ -12,9 +12,9 @@ Cada bloco corresponde a um placeholder da página. Regras comuns: luz quente na
 - **Luz:** luz quente natural de fim de tarde, direcional, sombras suaves
 - **Arquitetura e vegetação:** arquitetura e vegetação compatíveis com o Tocantins (cerrado, buriti, ipê, solo avermelhado, luz forte)
 - **Contraste e cor:** contraste moderado, cores fiéis ao barro queimado, sem filtro envelhecido, sem textura pesada, sem texto na imagem
-- **Formato e proporção:** Horizontal 4:3, 2400 × 1800 px (exportar em WebP/AVIF)
+- **Formato e proporção:** Horizontal 4:3, entregue em 1200 × 896 px, JPG (mais uma variante de 800 px)
 
-**Prompt para o Higgsfield:**
+**Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
 Macro photograph of a smooth fired clay brick tile, 7x24 cm, mid terracotta tone, running bond pattern, raking warm natural light revealing subtle surface texture and natural firing variation, shallow depth of field, moderate contrast, faithful colors, no text, no watermark
@@ -22,7 +22,7 @@ Macro photograph of a smooth fired clay brick tile, 7x24 cm, mid terracotta tone
 
 ## Galeria 1: Fachada
 
-- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-fachada-1.jpg` (variante 800 px: `flow-fachada-1-800.jpg`). Alternativa: `assets/flow/flow-fachada-2.jpg`.
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-fachada-1.jpg` (variante 800 px: `flow-fachada-1-800.jpg`). Alternativa (fora do site): `midia/flow/flow-fachada-2.jpg`.
 
 - **Ambiente:** Fachada residencial
 - **Tom da plaqueta:** escuro
@@ -30,9 +30,9 @@ Macro photograph of a smooth fired clay brick tile, 7x24 cm, mid terracotta tone
 - **Luz:** luz quente natural de fim de tarde, direcional, sombras suaves
 - **Arquitetura e vegetação:** arquitetura e vegetação compatíveis com o Tocantins (cerrado, buriti, ipê, solo avermelhado, luz forte)
 - **Contraste e cor:** contraste moderado, cores fiéis ao barro queimado, sem filtro envelhecido, sem textura pesada, sem texto na imagem
-- **Formato e proporção:** Horizontal 4:3, 2400 × 1800 px (exportar em WebP/AVIF)
+- **Formato e proporção:** Horizontal 4:3, entregue em 1200 × 896 px, JPG (mais uma variante de 800 px)
 
-**Prompt para o Higgsfield:**
+**Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
 Modern single-story house facade clad in dark brown smooth clay brick tiles 7x24 cm in running bond, wooden gate, cerrado garden with ipê and native grasses, strong warm late-afternoon sun, red soil sidewalk, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no text
@@ -40,7 +40,7 @@ Modern single-story house facade clad in dark brown smooth clay brick tiles 7x24
 
 ## Galeria 2: Sala
 
-- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-sala-1.jpg` (variante 800 px: `flow-sala-1-800.jpg`). Alternativa: `assets/flow/flow-sala-2.jpg`.
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-sala-1.jpg` (variante 800 px: `flow-sala-1-800.jpg`). Alternativa (fora do site): `midia/flow/flow-sala-2.jpg`.
 
 - **Ambiente:** Sala de estar
 - **Tom da plaqueta:** médio
@@ -48,9 +48,9 @@ Modern single-story house facade clad in dark brown smooth clay brick tiles 7x24
 - **Luz:** luz quente natural de fim de tarde, direcional, sombras suaves
 - **Arquitetura e vegetação:** arquitetura e vegetação compatíveis com o Tocantins (cerrado, buriti, ipê, solo avermelhado, luz forte)
 - **Contraste e cor:** contraste moderado, cores fiéis ao barro queimado, sem filtro envelhecido, sem textura pesada, sem texto na imagem
-- **Formato e proporção:** Horizontal 4:3, 2400 × 1800 px (exportar em WebP/AVIF)
+- **Formato e proporção:** Horizontal 4:3, entregue em 1200 × 896 px, JPG (mais uma variante de 800 px)
 
-**Prompt para o Higgsfield:**
+**Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
 Brazilian living room with a feature wall in mid-tone terracotta smooth clay brick tiles 7x24 cm running bond, linen sofa, wooden side table, large window with warm natural side light, plants, calm warm interior, architectural photography, moderate contrast, faithful colors, no text
@@ -58,7 +58,7 @@ Brazilian living room with a feature wall in mid-tone terracotta smooth clay bri
 
 ## Galeria 3: Cozinha
 
-- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-cozinha-2.jpg` (variante 800 px: `flow-cozinha-2-800.jpg`). Alternativa: `assets/flow/flow-cozinha-1.jpg`.
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-cozinha-2.jpg` (variante 800 px: `flow-cozinha-2-800.jpg`). Alternativa (fora do site): `midia/flow/flow-cozinha-1.jpg`.
 
 - **Ambiente:** Cozinha
 - **Tom da plaqueta:** claro
@@ -66,9 +66,9 @@ Brazilian living room with a feature wall in mid-tone terracotta smooth clay bri
 - **Luz:** luz quente natural de fim de tarde, direcional, sombras suaves
 - **Arquitetura e vegetação:** arquitetura e vegetação compatíveis com o Tocantins (cerrado, buriti, ipê, solo avermelhado, luz forte)
 - **Contraste e cor:** contraste moderado, cores fiéis ao barro queimado, sem filtro envelhecido, sem textura pesada, sem texto na imagem
-- **Formato e proporção:** Horizontal 4:3, 2400 × 1800 px (exportar em WebP/AVIF)
+- **Formato e proporção:** Horizontal 4:3, entregue em 1200 × 896 px, JPG (mais uma variante de 800 px)
 
-**Prompt para o Higgsfield:**
+**Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
 Bright Brazilian kitchen with a backsplash wall in light sand-colored smooth clay brick tiles 7x24 cm running bond, wooden countertop, open shelves, warm natural daylight from a window, plants, architectural photography, moderate contrast, faithful colors, no text
@@ -76,7 +76,7 @@ Bright Brazilian kitchen with a backsplash wall in light sand-colored smooth cla
 
 ## Galeria 4: Gourmet
 
-- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-gourmet-2.jpg` (variante 800 px: `flow-gourmet-2-800.jpg`). Alternativa: `assets/flow/flow-gourmet-1.jpg`.
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-gourmet-2.jpg` (variante 800 px: `flow-gourmet-2-800.jpg`). Alternativa (fora do site): `midia/flow/flow-gourmet-1.jpg`.
 
 - **Ambiente:** Área gourmet
 - **Tom da plaqueta:** médio
@@ -84,9 +84,9 @@ Bright Brazilian kitchen with a backsplash wall in light sand-colored smooth cla
 - **Luz:** luz quente natural de fim de tarde, direcional, sombras suaves
 - **Arquitetura e vegetação:** arquitetura e vegetação compatíveis com o Tocantins (cerrado, buriti, ipê, solo avermelhado, luz forte)
 - **Contraste e cor:** contraste moderado, cores fiéis ao barro queimado, sem filtro envelhecido, sem textura pesada, sem texto na imagem
-- **Formato e proporção:** Horizontal 4:3, 2400 × 1800 px (exportar em WebP/AVIF)
+- **Formato e proporção:** Horizontal 4:3, entregue em 1200 × 896 px, JPG (mais uma variante de 800 px)
 
-**Prompt para o Higgsfield:**
+**Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
 Brazilian outdoor gourmet area, barbecue and counter clad in mid-tone terracotta smooth clay brick tiles 7x24 cm running bond, rustic wooden table, open to a backyard with cerrado vegetation, strong warm natural light, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no text
@@ -94,7 +94,7 @@ Brazilian outdoor gourmet area, barbecue and counter clad in mid-tone terracotta
 
 ## Galeria 5: Comercial
 
-- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-comercial-2.jpg` (variante 800 px: `flow-comercial-2-800.jpg`). Alternativa: `assets/flow/flow-comercial-1.jpg`.
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-comercial-2.jpg` (variante 800 px: `flow-comercial-2-800.jpg`). Alternativa (fora do site): `midia/flow/flow-comercial-1.jpg`.
 
 - **Ambiente:** Fachada comercial
 - **Tom da plaqueta:** escuro
@@ -102,9 +102,9 @@ Brazilian outdoor gourmet area, barbecue and counter clad in mid-tone terracotta
 - **Luz:** luz quente natural de fim de tarde, direcional, sombras suaves
 - **Arquitetura e vegetação:** arquitetura e vegetação compatíveis com o Tocantins (cerrado, buriti, ipê, solo avermelhado, luz forte)
 - **Contraste e cor:** contraste moderado, cores fiéis ao barro queimado, sem filtro envelhecido, sem textura pesada, sem texto na imagem
-- **Formato e proporção:** Horizontal 4:3, 2400 × 1800 px (exportar em WebP/AVIF)
+- **Formato e proporção:** Horizontal 4:3, entregue em 1200 × 896 px, JPG (mais uma variante de 800 px)
 
-**Prompt para o Higgsfield:**
+**Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
 Small commercial storefront in a Brazilian interior town, facade clad in dark smooth clay brick tiles 7x24 cm running bond, large glass window, blank sign, potted plants, strong warm sunlight, red soil street, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no readable text
@@ -112,7 +112,7 @@ Small commercial storefront in a Brazilian interior town, facade clad in dark sm
 
 ## Galeria 6: Varanda
 
-- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-varanda-1.jpg` (variante 800 px: `flow-varanda-1-800.jpg`). Alternativa: `assets/flow/flow-varanda-2.jpg`.
+- **Status:** gerada (Google Flow). Usada: `assets/flow/flow-varanda-1.jpg` (variante 800 px: `flow-varanda-1-800.jpg`). Alternativa (fora do site): `midia/flow/flow-varanda-2.jpg`.
 
 - **Ambiente:** Varanda
 - **Tom da plaqueta:** claro
@@ -120,9 +120,9 @@ Small commercial storefront in a Brazilian interior town, facade clad in dark sm
 - **Luz:** luz quente natural de fim de tarde, direcional, sombras suaves
 - **Arquitetura e vegetação:** arquitetura e vegetação compatíveis com o Tocantins (cerrado, buriti, ipê, solo avermelhado, luz forte)
 - **Contraste e cor:** contraste moderado, cores fiéis ao barro queimado, sem filtro envelhecido, sem textura pesada, sem texto na imagem
-- **Formato e proporção:** Horizontal 4:3, 2400 × 1800 px (exportar em WebP/AVIF)
+- **Formato e proporção:** Horizontal 4:3, entregue em 1200 × 896 px, JPG (mais uma variante de 800 px)
 
-**Prompt para o Higgsfield:**
+**Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
 Covered Brazilian veranda with side wall in light sand-colored smooth clay brick tiles 7x24 cm running bond, hammock, potted plants, open view to a cerrado garden, warm natural light with soft shadows, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no text

@@ -1,6 +1,8 @@
 # Site Cerâmicas Alencar
 
-Página única, estática, sem build: HTML, CSS e JavaScript com módulos ES. GSAP vem do cdnjs. Node 20+ só para os testes e para regenerar as figuras.
+Página única, estática, sem build: HTML, CSS e JavaScript com módulos ES. GSAP vem do cdnjs. Node ≥ 20.10 (atributos de import em JSON) só para os testes e para regenerar as figuras.
+
+A pasta a publicar é `site/`. `midia/` (na raiz do repositório) guarda mídia bruta e não publicada: vídeos do Flow e alternativas de imagem. As capturas de verificação ficam em `docs/capturas-site/`.
 
 ## Servir
 
@@ -47,7 +49,7 @@ As figuras (casa, caminhão, amostras, símbolo da abertura) são SVG gerado em 
 node site/figures/build.mjs
 ```
 
-O script lê o kit da logo em `Ceramica_Alencar_Kit_Web/`, que não é versionado: o `figures.js` commitado é a fonte da verdade. As capturas de verificação por largura estão em `figures/shots/` (`360`, `390`, `768`, `1280`, `1440` e as da seção Fábrica).
+O script lê o símbolo versionado em `assets/logo/alencar-simbolo-terracota-transparente.svg`. As capturas de verificação por largura estão em `docs/capturas-site/` (`360`, `390`, `768`, `1280`, `1440` e as da seção Fábrica).
 
 ## Verificação feita
 

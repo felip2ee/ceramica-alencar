@@ -153,7 +153,7 @@ function narrar(gsap, ScrollTrigger, svg, veiculo, carroceria) {
     const bb = carga.getBBox();
     const destino = new DOMPoint(bb.x + bb.width / 2, bb.y + bb.height / 2).matrixTransform(m);
     const t = suave(p);
-    const { x, y } = noArco(pontosTrajeto(dentro(origem), [], dentro(destino), vw).map(dentro), t);
+    const { x, y } = noArco(pontosTrajeto(dentro(origem), [], dentro(destino), { mobile: vw < 768, viewportW: vw }).map(dentro), t);
     const escala = origem.escala + ((bb.width * m.a) / w - origem.escala) * t;
     no.style.transform = `translate(${x - w / 2}px, ${y - h / 2}px) scale(${escala})`;
   }

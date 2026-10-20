@@ -59,3 +59,19 @@ test("ajustes da Task 8: og:image absoluto, anti-flash, flutuante e áreas de to
   assert.match(css, /\.link\s*\{[^}]*min-height:\s*44px/);
   assert.equal((html.match(/<img [^>]*assets\/flow\/[^>]*srcset=/g) || []).length, 7);
 });
+test("toda imagem gerada (assets/flow/) vem com a legenda \"imagem conceitual\"", () => {
+  const figuras = [...html.matchAll(/<figure[\s\S]*?<\/figure>/g)].map((m) => m[0]);
+  const flow = [...html.matchAll(/<img [^>]*src="assets\/flow\/[^>]*>/g)];
+  assert.equal(flow.length, 7);
+  for (const [img] of flow) {
+    const fig = figuras.find((f) => f.includes(img));
+    assert.ok(fig, `img sem <figure>: ${img}`);
+    assert.match(fig.match(/<figcaption>([\s\S]*?)<\/figcaption>/)?.[1] ?? "", /imagem conceitual/, img);
+  }
+});
+test("pré-carga e botão Pular estático", () => {
+  for (const m of ["main.js", "scroll.mjs", "figures/casa-live.mjs", "lib/whatsapp.mjs", "lib/galeria.mjs", "lib/abertura.mjs", "lib/trajeto.mjs", "figures/out/figures.js"]) {
+    assert.ok(html.includes(`<link rel="modulepreload" href="${m}">`), m);
+  }
+  assert.match(html, /<div id="abertura"[^>]*><button class="abertura__pular" type="button">Pular<\/button><\/div>/);
+});

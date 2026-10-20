@@ -39,3 +39,14 @@ test("rota: pontos a partir da partida, relativos a ela", () => {
   assert.deepEqual(rotaDesde("M414.9 107.6L350.6 227.9L342.8 281.8L307.5 387.7", [350.6, 227.9]),
     [{x:0, y:0}, {x:-7.8, y:53.9}, {x:-43.1, y:159.8}]);
 });
+test("trajeto no celular: desce pela calha direita e só curva para o destino no fim", () => {
+  const pts = pontosTrajeto({x:195,y:100}, [], {x:200,y:900}, {mobile:true, viewportW:390});
+  assert.equal(pts.length, 7);
+  assert.ok(pts.slice(1, 6).every((p) => p.x >= 360), "controles e calha na borda direita");
+  assert.deepEqual(pts.at(-1), {x:200,y:900,rot:0});
+  for (let t = 0.05; t <= 0.7; t += 0.05) assert.ok(noArco(pts, t).x > 360, `t=${t}: na calha`);
+  assert.ok(noArco(pts, 0.03).x > 300, "já quase na calha antes de o texto passar por baixo");
+  assert.ok(Math.abs(noArco(pts, 1).x - 200) < 1e-9 && Math.abs(noArco(pts, 1).y - 900) < 1e-9);
+  assert.deepEqual(noArco(pts, 0.7), {x:378,y:660}, "emenda dos dois arcos na calha, a 70% do caminho vertical");
+  assert.deepEqual(pontosTrajeto({x:0,y:0}, [], {x:100,y:0}, {mobile:false, viewportW:1000}), pontosTrajeto({x:0,y:0}, [], {x:100,y:0}, 1000), "≥ 768 px: arco único");
+});

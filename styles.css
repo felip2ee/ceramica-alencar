@@ -167,7 +167,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 #rota-principal { stroke-width: 1.6; }
 .rotulo-mapa { font: 500 15px var(--font-text); fill: var(--anatomy-hi); paint-order: stroke; stroke: var(--anatomy-paper); stroke-linejoin: round; }
 /* o svg (viewBox 643) escala com a largura do #caminhao (limitada a 640 px): rótulo efetivo fica em 12–15 px */
-#caminhao { container-type: inline-size; }
+#caminhao { container-type: inline-size; aspect-ratio: 643 / 700; max-width: 640px; }
 #caminhao svg { max-width: 640px; }
 .rotulo-mapa { --u: 13.5; font-size: calc(var(--u) * 1px); stroke-width: calc(var(--u) * .2px); }
 @container (max-width: 599px) { .rotulo-mapa { --u: 15; } }
@@ -195,6 +195,8 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 @media (min-width: 768px) { .galeria { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1280px) { .galeria { grid-template-columns: repeat(3, 1fr); } }
 .galeria figure[hidden] { display: none; }
+.galeria__vazio { grid-column: 1 / -1; margin: 0; font: 400 16px/1.5 var(--font-text); color: var(--ink); }
+.galeria__vazio[hidden] { display: none; }
 
 /* fábrica */
 .fabrica__grade { display: grid; gap: var(--s-6); align-items: center; }

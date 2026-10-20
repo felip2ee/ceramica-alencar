@@ -1,5 +1,5 @@
-// Gera figures/out/figures.js a partir do kit da logo. Uso: node site/figures/build.mjs
-// Ceramica_Alencar_Kit_Web/ não está versionado: o figures.js commitado é a fonte da verdade.
+// Gera figures/out/figures.js a partir do símbolo da logo. Uso: node site/figures/build.mjs
+// Lê o símbolo versionado em site/assets/logo/.
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,7 +11,7 @@ import mapaTO from "./mapa-to.json" with { type: "json" };
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const raiz = join(aqui, "..", "..");
-const svg = readFileSync(join(raiz, "Ceramica_Alencar_Kit_Web/simbolo/alencar-simbolo-terracota-transparente.svg"), "utf8");
+const svg = readFileSync(join(raiz, "site/assets/logo/alencar-simbolo-terracota-transparente.svg"), "utf8");
 
 const paths = (svg.match(/<(?:ns0:)?path\b[^>]*\/>/g) ?? [])
   .map((p) => p.replace(/ xmlns:ns0="[^"]*"/, "").replace(/ fill="currentColor"/, "").replace(/ns0:/g, ""));

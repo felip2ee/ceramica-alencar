@@ -1,5 +1,5 @@
 import { linkWhatsapp, MENSAGEM_PADRAO } from "./lib/whatsapp.mjs";
-import { filtrarGaleria } from "./lib/galeria.mjs";
+import { filtrarGaleria, todosOcultos } from "./lib/galeria.mjs";
 import { gradePlaquetas, cronograma, deveRodarAbertura } from "./lib/abertura.mjs";
 import { animarCasa } from "./figures/casa-live.mjs";
 import { iniciarScroll } from "./scroll.mjs";
@@ -28,8 +28,11 @@ function ligarFiltros() {
       botao, chave, valor: botao.getAttribute(`data-filtro-${chave}`),
     })));
 
+  const vazio = document.querySelector("#galeria .galeria__vazio");
   const atualizar = () => {
-    filtrarGaleria(itens, filtro).forEach((visivel, i) => { figuras[i].hidden = !visivel; });
+    const visiveis = filtrarGaleria(itens, filtro);
+    visiveis.forEach((visivel, i) => { figuras[i].hidden = !visivel; });
+    if (vazio) vazio.hidden = !todosOcultos(visiveis);
     for (const { botao, chave, valor } of botoes) {
       botao.setAttribute("aria-pressed", String((filtro[chave] ?? "todos") === valor));
     }
@@ -75,6 +78,7 @@ const VIEWBOX_ABERTURA = "297 35 481 420";
 const FIM_ABERTURA_MS = 4600;
 const LIMITE_ABERTURA_MS = 8000;
 const CORTINA_MS = 600;
+const ATRASO_MAX_MS = 3000; // depois disso a abertura já não faz sentido
 
 // Avisa o resto da página que a abertura acabou (ou nem rodou). Microtask: quem
 // registrar o ouvinte de forma síncrona neste módulo ainda recebe o evento.
@@ -135,13 +139,16 @@ function iniciarAbertura() {
   const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
   let storage = null;
   try { storage = window.localStorage; } catch { /* modo privado: segue sem storage */ }
-  if (!deveRodarAbertura({ search: location.search, storage, reduceMotion })) {
+  // Abertura tardia (CDN lento) ou já escondida pelo failsafe de 10 s do CSS: não roda, nem bloqueia a página.
+  const tarde = performance.now() > ATRASO_MAX_MS || getComputedStyle(no).visibility === "hidden";
+  if (tarde || !deveRodarAbertura({ search: location.search, storage, reduceMotion })) {
     no.remove();
     return avisarFimAbertura();
   }
 
   delete document.documentElement.dataset.abertura; // o script do <head> só adianta o "pular"; aqui a regra é deveRodarAbertura
   const fundo = document.querySelectorAll("header, main");
+  const pular = no.querySelector(".abertura__pular"); // já existe no HTML estático: o innerHTML abaixo o troca, então volta ao fim
   const timers = [];
   let encerrada = false;
   const agendar = (fn, ms) => timers.push(setTimeout(fn, ms));
@@ -197,8 +204,8 @@ function iniciarAbertura() {
       </svg>
       <p class="abertura__contador" aria-hidden="true"><b id="pct">0</b>assentando</p>
       <ul class="abertura__rotulos" aria-hidden="true"><li>Barro próprio</li><li>Queima própria</li><li>Tocantinópolis · TO</li></ul>
-      <div class="abertura__assinatura"><img src="assets/logo/alencar-horizontal-terracota-transparente.svg" alt="Cerâmica Alencar"></div>
-      <button class="abertura__pular" type="button">Pular</button>`;
+      <div class="abertura__assinatura"><img src="assets/logo/alencar-horizontal-terracota-transparente.svg" alt="Cerâmica Alencar"></div>`;
+    if (pular) no.append(pular);
 
     const bricks = no.querySelectorAll(".bk");
     const contador = no.querySelector("#pct");
