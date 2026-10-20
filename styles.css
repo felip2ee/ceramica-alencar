@@ -198,15 +198,19 @@ html.abrindo { overflow: hidden; }
 #abertura {
   position: fixed; inset: 0; z-index: 200; overflow: hidden;
   background: var(--background); cursor: pointer; will-change: transform;
+  /* último recurso: se o JS não encerrar, some sozinho depois de 10 s */
+  animation: abertura-failsafe 0s 10s forwards;
 }
-#abertura svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.bk { opacity: 0; transform: translateY(10px); transition: opacity .22s ease, transform .38s cubic-bezier(.2, .8, .2, 1); }
-.bk.on { opacity: 1; transform: none; }
-.outline {
+#abertura:focus { outline: none; }
+@keyframes abertura-failsafe { to { visibility: hidden; pointer-events: none; } }
+#abertura svg { position: absolute; top: 7vh; left: 0; width: 100%; height: 86vh; }
+#abertura .bk { opacity: 0; transform: translateY(10px); transition: opacity .22s ease, transform .38s cubic-bezier(.2, .8, .2, 1); }
+#abertura .bk.on { opacity: 1; transform: none; }
+#abertura .outline {
   fill: none; stroke: #BC4420; stroke-width: 1.2;
   stroke-dasharray: 2400; stroke-dashoffset: 2400; transition: stroke-dashoffset 1.6s ease;
 }
-.outline.on { stroke-dashoffset: 0; }
+#abertura .outline.on { stroke-dashoffset: 0; }
 .abertura__contador {
   position: absolute; left: var(--gutter); bottom: var(--s-3); margin: 0;
   font: 500 14px/1.2 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
@@ -216,7 +220,7 @@ html.abrindo { overflow: hidden; }
   font: 400 54px/1 var(--font-display); color: var(--brand);
 }
 .abertura__rotulos {
-  position: absolute; right: var(--gutter); bottom: var(--s-3); margin: 0; padding: 0; list-style: none; text-align: right;
+  position: absolute; right: var(--gutter); bottom: 64px; margin: 0; padding: 0; list-style: none; text-align: right;
   font: 500 14px/1.6 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
 }
 .abertura__rotulos li { opacity: 0; animation: abertura-entra .5s ease forwards; }
@@ -230,4 +234,10 @@ html.abrindo { overflow: hidden; }
 }
 .abertura__assinatura.on { opacity: 1; }
 .abertura__assinatura img { width: min(70vw, 560px); height: auto; }
+.abertura__pular {
+  position: absolute; right: var(--gutter); bottom: var(--s-1); min-height: 44px; padding: 0;
+  border: 0; background: none; cursor: pointer;
+  font: 500 14px/1 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
+}
+.abertura__pular:hover { text-decoration: underline; }
 @media (prefers-reduced-motion: reduce) { #abertura { display: none; } html.abrindo { overflow: auto; } }
