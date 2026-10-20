@@ -70,6 +70,19 @@ function avisarFimAbertura() {
   });
 }
 
+// Um único import, compartilhado pela abertura e pela injeção. Dinâmico de propósito: se falhar, a página segue sem figuras.
+const figuras = import("./figures/out/figures.js");
+
+function injetarFiguras(F) {
+  const estilo = document.createElement("style");
+  estilo.id = "iso-css";
+  estilo.textContent = F.ISO_CSS_MARCA;
+  document.head.append(estilo);
+  for (const no of document.querySelectorAll(".amostra[data-tom]")) {
+    no.innerHTML = F.AMOSTRAS[no.dataset.tom] ?? "";
+  }
+}
+
 function iniciarAbertura() {
   const no = document.getElementById("abertura");
   if (!no) return avisarFimAbertura();
@@ -121,7 +134,7 @@ function iniciarAbertura() {
   // Teto armado já, antes do import: se o import travar, ainda assim a página é liberada.
   agendar(() => (montada ? encerrar() : abortar("limite de tempo antes de montar")), LIMITE_ABERTURA_MS);
 
-  import("./figures/out/figures.js").then(({ LOGO_PATHS }) => {
+  figuras.then(({ LOGO_PATHS }) => {
     if (encerrada) return;
     montada = true;
     const pecas = gradePlaquetas({ cols: 11, rows: 25, larg: 48, alt: 14, gap: 3, x0: 280, y0: 440 });
@@ -173,6 +186,7 @@ try { iniciarAbertura(); } catch (erro) {
   document.querySelectorAll("header, main").forEach((el) => el.removeAttribute("inert"));
   avisarFimAbertura();
 }
+figuras.then(injetarFiguras).catch((erro) => console.warn("figuras indisponíveis", erro));
 aplicarCtas();
 ligarFiltros();
 ligarCabecalhoCompacto();

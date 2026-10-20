@@ -141,7 +141,10 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .tons { display: grid; gap: var(--s-4); margin-bottom: var(--s-6); }
 @media (min-width: 768px) { .tons { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1280px) { .tons { grid-template-columns: repeat(4, 1fr); } }
-.amostra { width: 100%; aspect-ratio: 4 / 3; background: var(--surface); }
+.amostra { width: 100%; aspect-ratio: 8 / 5; background: var(--surface); }
+.amostra svg { display: block; width: 100%; height: auto; }
+/* recolore sólidos do kit Anatomy via variáveis CSS */
+.mat-plaqueta { --anatomy-shade-0: #8E4529; --anatomy-shade-1: #A85D3A; --anatomy-shade-2: #B65E3C; --anatomy-shade-3: #C9896A; --anatomy-top: #C9896A; --anatomy-face: #B65E3C; }
 .tom h3 { margin: var(--s-2) 0 0; }
 .tom--medida .ph { border-top: 1px solid var(--clay); }
 
