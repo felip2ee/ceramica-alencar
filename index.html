@@ -128,48 +128,70 @@
       </ul>
     </section>
 
-    <section class="section" id="materialidade">
-      <div class="container duas-colunas">
-        <figure class="foto">
+    <section class="section materialidade" id="materialidade" aria-labelledby="materialidade-titulo">
+      <div class="grade mat__grade">
+        <figure class="foto celula mat__moldura">
+          <p class="rotulo rotulo--par mat__legenda"><span>[03] Materialidade</span><span>Fig. 03</span></p>
           <video id="video-materialidade" autoplay muted loop playsinline preload="metadata" poster="assets/flow/flow-materialidade-1.jpg" width="1280" height="720" aria-label="Vídeo conceitual da superfície da plaqueta de barro, com luz rasante em movimento">
             <source src="assets/flow/flow-materialidade-1.mp4" type="video/mp4">
           </video>
-          <figcaption>Materialidade · vídeo conceitual, imagem conceitual como capa</figcaption>
+          <figcaption class="rotulo">Vídeo conceitual</figcaption>
         </figure>
-        <div>
-          <h2>A luz revela a <em>textura.</em></h2>
-          <p>É barro de verdade, extrudado e queimado em Tocantinópolis, no mesmo forno que faz o tijolo da fábrica há anos. Não é porcelanato imitando tijolo: a superfície muda com a luz do dia, e cada peça carrega a variação natural da queima.</p>
+        <div class="celula mat__titulo">
+          <h2 id="materialidade-titulo">A luz revela a <em>textura.</em></h2>
+        </div>
+        <div class="celula mat__texto">
+          <p class="rotulo rotulo--par"><span>Barro de verdade</span><span>03.1</span></p>
+          <p class="mat__copy">É barro queimado, não porcelanato imitando tijolo. A luz rasante mostra a aresta de cada peça e a variação natural da&nbsp;queima.</p>
+        </div>
+        <div class="celula mat__texto">
+          <p class="rotulo rotulo--par"><span>Da nossa fábrica</span><span>03.2</span></p>
+          <p class="mat__copy">Barro, extrusão e forno nossos, em Tocantinópolis, desde 1991. A parede muda de leitura ao longo do&nbsp;dia.</p>
         </div>
       </div>
     </section>
 
-    <section class="section" id="revestimentos">
-      <div class="container">
-        <h2>Um formato. Três <em>tons.</em></h2>
-        <p class="lead">Uma única plaqueta, 7,5 × 19 × 2 cm, lisa e natural, em três tons de barro queimado.</p>
-        <div class="tons">
-          <article class="tom">
-            <div class="amostra" data-tom="claro"></div>
-            <h3>TOM_CLARO_NOME</h3>
-            <p class="ficha">7,5 × 19 × 2 cm · lisa · natural</p>
-          </article>
-          <article class="tom">
-            <div class="amostra" data-tom="medio"></div>
-            <h3>TOM_MEDIO_NOME</h3>
-            <p class="ficha">7,5 × 19 × 2 cm · lisa · natural</p>
-          </article>
-          <article class="tom">
-            <div class="amostra" data-tom="escuro"></div>
-            <h3>TOM_ESCURO_NOME</h3>
-            <p class="ficha">7,5 × 19 × 2 cm · lisa · natural</p>
-          </article>
-          <article class="tom tom--medida">
-            <div class="ph" aria-hidden="true">Sob medida</div>
-            <h3>Sob medida</h3>
-            <p class="ficha">Tom, lote ou corte feito para o projeto, sob consulta.</p>
-          </article>
+    <section class="section revestimentos" id="revestimentos" aria-labelledby="revestimentos-titulo">
+      <div class="grade rev__grade">
+        <div class="celula rev__titulo">
+          <p class="rotulo">[04] Revestimentos</p>
+          <h2 id="revestimentos-titulo">Um formato de barro, três <em>tons.</em></h2>
         </div>
-        <a class="btn" data-cta href="#contato">Conversar sobre meu projeto</a>
+        <div class="celula rev__texto">
+          <p class="rotulo rotulo--par"><span>Três queimas</span><span>04.0</span></p>
+          <p class="rev__lead">Uma só plaqueta lisa, nos três tons que o nosso forno tira do mesmo&nbsp;barro.</p>
+        </div>
+        <article class="celula rev__tom">
+          <p class="rotulo rotulo--par"><span data-nome="TOM_CLARO_NOME">TOM_CLARO</span><span>04.1</span></p>
+          <div class="amostra" data-tom="claro"></div>
+          <p class="rev__ficha">7,5 × 19 × 2 cm · lisa · natural</p>
+        </article>
+        <article class="celula rev__tom">
+          <p class="rotulo rotulo--par"><span data-nome="TOM_MEDIO_NOME">TOM_MEDIO</span><span>04.2</span></p>
+          <div class="amostra" data-tom="medio"></div>
+          <p class="rev__ficha">7,5 × 19 × 2 cm · lisa · natural</p>
+        </article>
+        <article class="celula rev__tom">
+          <p class="rotulo rotulo--par"><span data-nome="TOM_ESCURO_NOME">TOM_ESCURO</span><span>04.3</span></p>
+          <div class="amostra" data-tom="escuro"></div>
+          <p class="rev__ficha">7,5 × 19 × 2 cm · lisa · natural</p>
+        </article>
+        <article class="celula rev__medida">
+          <p class="rotulo rotulo--par"><span>Sob medida</span><span>04.4</span></p>
+          <svg class="rev__cota" viewBox="0 0 340 200" role="img" aria-label="Desenho técnico da plaqueta: frente de 19 por 7,5 centímetros e espessura de 2 centímetros">
+            <defs><pattern id="hachura-cota" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V6"/></pattern></defs>
+            <rect class="cota__peca" x="64" y="56" width="220" height="87"/>
+            <rect class="cota__peca" x="304" y="56" width="23" height="87"/>
+            <rect class="cota__hachura" x="304" y="56" width="23" height="87"/>
+            <path class="cota__linha" d="M64 48V22M284 48V22M64 30H284M56 56H30M56 143H30M38 56V143M304 151V178M327 151V178M294 170H304M327 170H337"/>
+            <path class="cota__seta" d="M64 30l9-3v6zM284 30l-9-3v6zM38 56l-3 9h6zM38 143l-3-9h6zM304 170l-9-3v6zM327 170l9-3v6z"/>
+            <text class="cota__texto" x="174" y="18" text-anchor="middle">19 cm</text>
+            <text class="cota__texto" x="0" y="0" text-anchor="middle" transform="translate(26 99.5) rotate(-90)">7,5 cm</text>
+            <text class="cota__texto" x="315.5" y="196" text-anchor="middle">2 cm</text>
+          </svg>
+          <p class="rev__copy">Tom, lote ou corte feitos para o seu projeto, sob&nbsp;consulta.</p>
+          <a class="btn" data-cta href="#contato">Quero revender</a>
+        </article>
       </div>
     </section>
 

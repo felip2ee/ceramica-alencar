@@ -73,7 +73,7 @@ test("materialidade: vídeo em loop, mudo, com a foto como poster e pausado sem 
   const video = html.match(/<video [^>]*id="video-materialidade"[^>]*>/)?.[0] ?? "";
   for (const attr of ["autoplay", "muted", "loop", "playsinline", 'poster="assets/flow/flow-materialidade-1.jpg"', 'aria-label="']) assert.match(video, new RegExp(attr), attr);
   assert.match(html, /<source src="assets\/flow\/flow-materialidade-1\.mp4" type="video\/mp4">/);
-  assert.match(html.match(/<figure class="foto">[\s\S]*?<\/figure>/)[0], /<figcaption>[^<]*conceitual/);
+  assert.match(html.match(/<figure class="foto[^"]*">[\s\S]*?<\/figure>/)[0], /<figcaption[^>]*>[^<]*conceitual/);
   assert.match(css, /\.foto video/);
   assert.match(js, /video-materialidade[\s\S]*?removeAttribute\("autoplay"\)/);
 });
