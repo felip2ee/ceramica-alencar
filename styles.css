@@ -90,6 +90,9 @@ h1 em, h2 em, h3 em { font-style: italic; }
 }
 .btn:hover { background: var(--ink); }
 .btn--grande { min-height: 64px; padding: 0 var(--s-6); font-size: 18px; }
+/* botão de contorno em tinta (secundário): não conta como acento; "Quero revender" em parceiros e o WhatsApp flutuante */
+.btn--contorno { background: var(--background); color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.btn--contorno:hover { background: var(--surface); }
 .link { display: inline-flex; align-items: center; min-height: 44px; font: 500 16px/1.2 var(--font-text); }
 .acoes { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); }
 
@@ -477,6 +480,15 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   .apl__foto:nth-child(3n+1) { border-left: 0; }
   .apl__foto:nth-child(n+4) { border-top: 1px solid var(--line); }
   .apl__foto img { aspect-ratio: auto; }
+  /* "+" de 11 px centrado em cada cruzamento dos fios da galeria (fio de baixo de cada célula com o fio vertical à esquerda);
+     nas bordas da tela, a 16 px, como nas molduras */
+  .apl__foto { position: relative; --mais: linear-gradient(var(--ink), var(--ink)); }
+  .apl__foto::after, .apl__foto:nth-child(3n)::before {
+    content: ""; position: absolute; z-index: 1; bottom: -6px; left: -6px; width: 11px; height: 11px; pointer-events: none;
+    background: var(--mais) 0 5px / 11px 1px no-repeat, var(--mais) 5px 0 / 1px 11px no-repeat;
+  }
+  .apl__foto:nth-child(3n+1)::after { left: 11px; }
+  .apl__foto:nth-child(3n)::before { left: auto; right: 11px; }
   .apl__foto:nth-child(n) figcaption { padding: 12px var(--s-3); }
   .apl__foto:nth-child(3n+1) figcaption { padding-left: var(--gutter); }
   .apl__foto:nth-child(3n) figcaption { padding-right: var(--gutter); }
@@ -495,8 +507,10 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .par__ganho { display: grid; gap: 4px; margin: 0; max-width: 520px; }
 .par__ganho :is(dt, dd) { display: inline; margin: 0; }
 .par__ganho dt { margin-right: 8px; }
-.par__texto .btn { justify-self: start; margin-top: var(--s-1); }
-.par__fig { width: 100%; max-width: 520px; height: auto; margin: var(--s-2) 0; overflow: visible; justify-self: center; }
+.par__texto .btn { justify-self: start; }
+.par__fig { width: 100%; height: auto; margin: var(--s-2) 0; overflow: visible; justify-self: center; }
+/* cotas dos desenhos em 14 px na tela: main.js põe --u = 14 / escala do svg */
+.par__fig .cota__texto { font-size: calc(var(--u, 14) * 1px); }
 .par__peca { fill: var(--surface); stroke: rgba(90, 52, 35, .75); stroke-width: 1; }
 .par__peca--topo { fill: #E8DCC6; }
 .par__estrado { fill: #E0D5C1; stroke: rgba(90, 52, 35, .75); stroke-width: 1; }
@@ -524,7 +538,9 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   /* 900 em 1440: as duas colunas enchem a dobra; o fio entre desenho e texto cai em ≈ 450 */
   .par__grade { height: max(720px, calc(100svh - var(--header) - 1px)); }
   .par__desenho { grid-template-rows: auto minmax(0, 1fr); padding-top: var(--s-2); }
-  .par__texto { padding: var(--s-3) var(--s-3) var(--s-6) var(--gutter); }
+  /* faixa do desenho ≥ 55 % da dobra: o texto aperta o respiro vertical, não o corpo */
+  .par__texto { gap: 12px; padding: var(--s-2) var(--s-3) var(--s-3) var(--gutter); }
+  .par__ganho { max-width: none; }
   #lojas .par__texto { padding-left: var(--s-3); padding-right: var(--gutter); }
   .par__texto h3 { font-size: 56px; }
   .par__fig { align-self: center; margin: 0; }
@@ -546,8 +562,10 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .fim__celula h2 { margin: 0; font-size: clamp(40px, 6.7vw, 96px); line-height: 1.02; }
 .fim__copy { margin: 0 auto var(--s-2); max-width: 34ch; text-wrap: balance; }
 @media (min-width: 1200px) {
-  /* frase única em tela cheia (mecanismo 6): a célula enche a dobra; o rodapé vem na rolagem seguinte */
-  .fim__celula { min-height: max(600px, calc(100svh - var(--header) - 1px)); padding-block: var(--s-8); }
+  /* frase única que, com a grade do rodapé, enche a dobra (mecanismo 6): a célula termina no fio de cima do rodapé,
+     sem papel sobrando; --rodape-grade é a altura da grade de 4 colunas com corpo de 18 px */
+  :root { --rodape-grade: 241px; }
+  .fim__celula { min-height: max(520px, calc(100svh - var(--header) - var(--rodape-grade) - 1px)); padding-block: var(--s-8); }
   .fim__rotulo { top: var(--s-2); }
 }
 
@@ -561,11 +579,12 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .rodape a:hover { text-decoration: underline; }
 .rodape__marca {
   margin: 0; max-width: none; padding: var(--s-4) 0 0; overflow: hidden;
-  font: 400 11.2vw/1.12 var(--font-display); letter-spacing: -.035em; white-space: nowrap; text-align: center; color: #DDD2C0;
+  font: 400 11.8vw/1.12 var(--font-display); letter-spacing: -.035em; white-space: nowrap; text-align: center; color: #DDD2C0;
 }
 .rodape__legal { border-top: 1px solid var(--line); border-bottom: 0; }
 .legal { display: flex; align-items: center; gap: 12px; margin: 0; padding-block: 28px; /* 80 px: o botão flutuante (24 + 48) fica dentro da faixa legal, sem cruzar o fio */ font-size: 14px; color: var(--ink); }
 .legal img { height: 24px; width: auto; }
+@media (max-width: 767px) { .legal { flex-direction: column; align-items: flex-start; } } /* símbolo numa linha, razão social e CNPJ na outra */
 @media (min-width: 768px) {
   .rodape__grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .rodape__grade > .celula + .celula { border-top: 0; }
@@ -587,17 +606,19 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 @media (max-width: 767px) { #plaqueta-narradora { width: 44px; } }
 @media (prefers-reduced-motion: reduce) { #plaqueta-narradora { display: none; } }
 
-/* WhatsApp flutuante: botão de contorno em tinta, não acento (o --action fica para os CTAs do conteúdo) */
+/* WhatsApp flutuante: .btn--contorno, não acento (o --action fica para os CTAs do conteúdo) */
 #whatsapp-flutuante {
-  position: fixed; z-index: 60; background: var(--background); color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink);
+  position: fixed; z-index: 60;
   right: max(var(--s-3), env(safe-area-inset-right)); bottom: max(var(--s-3), calc(env(safe-area-inset-bottom) + var(--s-2)));
   transition: opacity var(--t), background-color var(--t);
 }
 /* some durante a abertura e enquanto outro CTA do conteúdo está na tela (classe via IntersectionObserver em main.js) */
 html.abrindo #whatsapp-flutuante, #whatsapp-flutuante.is-oculto { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity var(--t), visibility 0s var(--t); }
-#whatsapp-flutuante:hover { background: var(--surface); }
-/* a faixa legal (28 px embaixo) + 48 px deixam o texto acima do botão flutuante (24 + 48 px) */
-@media (max-width: 767px) { .rodape { padding-bottom: calc(48px + env(safe-area-inset-bottom)); } }
+/* no celular o botão ocupa a largura entre as margens; a faixa legal (28 px embaixo) + 64 px deixam o texto 20 px acima dele (24 + 48 px) */
+@media (max-width: 767px) {
+  #whatsapp-flutuante { left: max(var(--gutter), env(safe-area-inset-left)); right: max(var(--gutter), env(safe-area-inset-right)); }
+  .rodape { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

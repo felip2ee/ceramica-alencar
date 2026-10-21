@@ -227,6 +227,16 @@ try { iniciarAbertura(); } catch (erro) {
   avisarFimAbertura();
 }
 figuras.then(injetarFiguras).catch((erro) => console.warn("figuras indisponíveis", erro));
+// cotas dos desenhos de parceiros em 14 px na tela, como os rótulos do mapa: o corpo em unidades do viewBox é 14 / escala do svg
+function ligarCotas() {
+  for (const svg of document.querySelectorAll(".par__fig")) {
+    const corpo = () => { const m = svg.getScreenCTM(); if (m?.a) svg.style.setProperty("--u", (14 / m.a).toFixed(2)); };
+    corpo();
+    new ResizeObserver(corpo).observe(svg);
+  }
+}
+
 aplicarCtas();
+ligarCotas();
 ligarCabecalhoCompacto();
 ligarWhatsappFlutuante();
