@@ -499,7 +499,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .par__celula + .par__celula { border-top: 1px solid var(--line); }
 .par__desenho, .par__texto { display: grid; align-content: start; gap: var(--s-2); border-left: 0; padding: var(--s-3) var(--gutter); }
 .par__texto { position: relative; border-top: 1px solid var(--line); padding-bottom: var(--s-4); }
-.par__texto h3 { margin: 0; font-size: var(--h2); line-height: 1.04; }
+.par__texto h3 { margin: 0; font-size: var(--h2); line-height: 1.04; text-wrap: balance; }
 .par__ganho { display: grid; gap: 4px; margin: 0; max-width: 60ch; } /* parágrafo ≤ 60ch */
 .par__ganho :is(dt, dd) { display: inline; margin: 0; }
 .par__ganho dt { margin-right: 8px; }
@@ -537,13 +537,13 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 }
 @media (min-width: 1200px) {
   /* 900 em 1440: as duas colunas enchem a dobra; o fio entre desenho e texto cai em ≈ 450 */
-  .par__grade { height: max(720px, calc(100svh - var(--header) - 1px)); }
+  .par__grade { min-height: max(720px, calc(100svh - var(--header) - 1px)); } /* mínimo, não fixo: título de três linhas cresce a célula em vez de estourar sobre o desenho */
   .par__desenho { grid-template-rows: auto minmax(0, 1fr); padding-top: var(--s-2); }
   /* faixa do desenho ≥ 55 % da dobra: o texto aperta o respiro vertical, não o corpo */
   .par__texto { gap: 12px; padding: var(--s-2) var(--s-3) var(--s-3) var(--gutter); }
   .par__ganho { max-width: 60ch; }
   #lojas .par__texto { padding-left: var(--s-3); padding-right: var(--gutter); }
-  .par__texto h3 { font-size: 56px; }
+  .par__texto h3 { font-size: clamp(44px, 3.9vw, 56px); } /* 50 em 1280, 56 a partir de 1440: "O preço mais competitivo" cabe em duas linhas */
   .par__fig { align-self: center; margin: 0; }
 }
 

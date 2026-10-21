@@ -53,7 +53,7 @@ test("acessibilidade estática", () => {
   assert.match(html, /#plaqueta-narradora[^>]*aria-hidden="true"|id="plaqueta-narradora"[^>]*aria-hidden="true"/);
 });
 test("ajustes da Task 8: og:image absoluto, anti-flash, flutuante e áreas de toque", () => {
-  assert.match(html, /property="og:image" content="https:\/\/SITE_DOMINIO\/assets\/kit\/kit-areia-trio\.jpg"/);
+  assert.match(html, /property="og:image" content="https:\/\/ceramicaalencar\.dgtnova\.com\/assets\/kit\/kit-areia-trio\.jpg"/);
   assert.ok(html.indexOf('dataset.abertura = "skip"') > 0 && html.indexOf('dataset.abertura = "skip"') < html.indexOf('href="styles.css"'));
   assert.match(css, /html\[data-abertura="skip"\] #abertura\s*\{\s*display:\s*none/);
   assert.match(css, /#whatsapp-flutuante\.is-oculto/);
