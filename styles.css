@@ -21,7 +21,7 @@
   --s-16: 128px;
 
   --gutter: 24px;
-  --section: 64px;
+  --section: 96px; /* respiro entre seções (dono, 2026-10-21): 96 / 144 / 176 */
   --header: 64px;
   --t: 200ms;
 
@@ -31,13 +31,13 @@
 }
 
 @media (min-width: 768px) {
-  :root { --gutter: 48px; --section: 96px; --h2: clamp(48px, 5vw, 56px); --h3: 28px; }
+  :root { --gutter: 48px; --section: 144px; --h2: clamp(48px, 5vw, 56px); --h3: 28px; }
 }
 @media (min-width: 960px) {
   :root { --h1: clamp(56px, 5vw, 72px); --h2: clamp(48px, 4.4vw, 64px); --h3: clamp(28px, 2.4vw, 36px); }
 }
 @media (min-width: 1280px) {
-  :root { --gutter: 64px; --section: 128px; }
+  :root { --gutter: 64px; --section: 176px; }
 }
 
 *, *::before, *::after { box-sizing: border-box; }

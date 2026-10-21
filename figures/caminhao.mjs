@@ -11,11 +11,11 @@ const ROTULO = "Caminhão carregado de plaquetas percorrendo o mapa do Tocantins
 const CABE = [420, 560]; // o estado cabe nesta caixa do chão
 const LAJE = 3; // espessura da placa do mapa: borda visível (~8 px na escala da célula), hachurada em toda a frente
 const ROTA_Z = LAJE + 0.2;
-const ESCALA = 1.65; // o caminhão é desenhado em 60 × 22 × 26 e ampliado (licença cartográfica): ~120 px de altura em 1440
+const ESCALA = 2.1; // o caminhão é desenhado em 60 × 22 × 26 e ampliado (licença cartográfica): com o estado inteiro no quadro, ~130 px de altura em 1440
 // viewBox fixo na proporção da célula da figura (largura total, ~60 % da tela); o svg usa slice e corta o excesso
 const LARGURA = 1440;
 const ALTURA = 540; // a célula da figura em 1440 × 900 tem ~1440 × 534 (a faixa de rótulos fecha a dobra)
-const GRUPO_LARGURA = 0.66; // do fundo da fábrica à frente do caminhão parado em Palmas, em fração da largura
+const GRUPO_LARGURA = 0.94; // o estado inteiro (mais fábrica e caminhão em Palmas) em fração da largura do quadro
 const ANGULO_MAX = 15;
 // Giro do chão (graus) depois de pôr o norte para cima: a rota Tocantinópolis → Palmas desce na diagonal,
 // da esquerda alta para a direita baixa, e o caminhão aparece de lado em 3/4 (cabine, lateral e rodas).
@@ -195,20 +195,21 @@ export function caminhao(mapa) {
     return { uf, linha: [...pts.map(([x, y]) => [x, y, ROTA_Z]), [...borda, ROTA_Z], [...borda, 0], [...fim, 0]], fim, d };
   });
 
-  // Enquadramento: o conjunto (fábrica, estrada, caminhão parado em Palmas) ocupa GRUPO_LARGURA da largura,
-  // centrado na célula. O mapa é o chão e passa da moldura onde precisar.
+  // Enquadramento: o estado inteiro, a fábrica e o caminhão parado em Palmas cabem no quadro (GRUPO_LARGURA da largura,
+  // 88 % da altura), centrados. Pedido do dono em 2026-10-21: ver o mapa de fora a fora e o caminhão inteiro.
   const unidade3 = { origin: [0, 0], scale: 1, azimuth: AZIMUTE, elevation: ELEVACAO };
   const emPalmas = (u, v, z) => [palmas[0] + ESCALA * (u * rumo[0] + v * lado[0]), palmas[1] + ESCALA * (u * rumo[1] + v * lado[1]), z];
   const grupo = [
     ...[-FAB.L / 2, FAB.L / 2].flatMap((a) => [-FAB.W / 2, FAB.W / 2].flatMap((b) => [fabMundo(a, b, LAJE), fabMundo(a, b, LAJE + FAB.H + FAB.t)])),
     fabMundo(-FAB.L / 2 + 5, FAB.W / 2 + 5, LAJE + FAB.c + 2),
     ...[-31, 30].flatMap((u) => [-11, 11].flatMap((v) => [emPalmas(u, v, LAJE), emPalmas(u, v, alt(26))])),
+    ...anel.flatMap(([x, y]) => [[x, y, 0], [x, y, LAJE]]),
   ].map((q) => k.iso(q, unidade3));
   const [gx, gy] = [grupo.map(([x]) => x), grupo.map(([, y]) => y)];
-  // pela largura, sem passar de 82 % da altura; centro a 57 % da altura: o caminhão parado em Palmas cabe inteiro
-  const escalaTela = Math.min((GRUPO_LARGURA * LARGURA) / (Math.max(...gx) - Math.min(...gx)), (0.82 * ALTURA) / (Math.max(...gy) - Math.min(...gy)));
+  // pela largura, sem passar de 88 % da altura; centro a 52 % da altura (um pouco abaixo, por causa da legenda em cima)
+  const escalaTela = Math.min((GRUPO_LARGURA * LARGURA) / (Math.max(...gx) - Math.min(...gx)), (0.88 * ALTURA) / (Math.max(...gy) - Math.min(...gy)));
   const meio = [((Math.max(...gx) + Math.min(...gx)) / 2) * escalaTela, ((Math.max(...gy) + Math.min(...gy)) / 2) * escalaTela];
-  const P = { origin: [LARGURA / 2 - meio[0], ALTURA * 0.57 - meio[1]], scale: escalaTela, azimuth: AZIMUTE, elevation: ELEVACAO };
+  const P = { origin: [LARGURA / 2 - meio[0], ALTURA * 0.52 - meio[1]], scale: escalaTela, azimuth: AZIMUTE, elevation: ELEVACAO };
 
   // Rótulos de pé, na tela, ancorados no ponto e afastados em em (dx, dy): o corpo muda com a largura
   // (main.js mantém 14 px na tela), então o afastamento acompanha o corpo e não a escala do mapa.

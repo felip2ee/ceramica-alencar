@@ -84,6 +84,12 @@ function injetarFiguras(F) {
     caminhao.innerHTML = F.CAMINHAO;
     // rótulos do mapa em 14 px na tela: o corpo em unidades do viewBox é 14 / escala do svg
     const svg = caminhao.querySelector("svg");
+    // em 1200+ o mapa aparece inteiro (meet: o estado de fora a fora); abaixo, a célula corta os lados (slice) para o
+    // caminhão não ficar minúsculo
+    const largo = matchMedia("(min-width: 1200px)");
+    const enquadrar = () => svg?.setAttribute("preserveAspectRatio", largo.matches ? "xMidYMid meet" : "xMidYMid slice");
+    enquadrar();
+    largo.addEventListener("change", enquadrar);
     const corpo = () => { const m = svg?.getScreenCTM(); if (m?.a) caminhao.style.setProperty("--u", (14 / m.a).toFixed(2)); };
     corpo();
     new ResizeObserver(corpo).observe(caminhao);
