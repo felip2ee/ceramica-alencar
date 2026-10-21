@@ -17,7 +17,7 @@ Cada bloco corresponde a um placeholder da página. Regras comuns: luz quente na
 **Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
-Macro photograph of a smooth fired clay brick tile, 7x24 cm, mid terracotta tone, running bond pattern, raking warm natural light revealing subtle surface texture and natural firing variation, shallow depth of field, moderate contrast, faithful colors, no text, no watermark
+Macro photograph of a smooth fired clay brick tile, 7.5x19 cm, mid terracotta tone, running bond pattern, raking warm natural light revealing subtle surface texture and natural firing variation, shallow depth of field, moderate contrast, faithful colors, no text, no watermark
 ```
 
 ## Galeria 1: Fachada
@@ -35,7 +35,7 @@ Macro photograph of a smooth fired clay brick tile, 7x24 cm, mid terracotta tone
 **Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
-Modern single-story house facade clad in dark brown smooth clay brick tiles 7x24 cm in running bond, wooden gate, cerrado garden with ipê and native grasses, strong warm late-afternoon sun, red soil sidewalk, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no text
+Modern single-story house facade clad in dark brown smooth clay brick tiles 7.5x19 cm in running bond, wooden gate, cerrado garden with ipê and native grasses, strong warm late-afternoon sun, red soil sidewalk, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no text
 ```
 
 ## Galeria 2: Sala
@@ -53,7 +53,7 @@ Modern single-story house facade clad in dark brown smooth clay brick tiles 7x24
 **Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
-Brazilian living room with a feature wall in mid-tone terracotta smooth clay brick tiles 7x24 cm running bond, linen sofa, wooden side table, large window with warm natural side light, plants, calm warm interior, architectural photography, moderate contrast, faithful colors, no text
+Brazilian living room with a feature wall in mid-tone terracotta smooth clay brick tiles 7.5x19 cm running bond, linen sofa, wooden side table, large window with warm natural side light, plants, calm warm interior, architectural photography, moderate contrast, faithful colors, no text
 ```
 
 ## Galeria 3: Cozinha
@@ -71,7 +71,7 @@ Brazilian living room with a feature wall in mid-tone terracotta smooth clay bri
 **Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
-Bright Brazilian kitchen with a backsplash wall in light sand-colored smooth clay brick tiles 7x24 cm running bond, wooden countertop, open shelves, warm natural daylight from a window, plants, architectural photography, moderate contrast, faithful colors, no text
+Bright Brazilian kitchen with a backsplash wall in light sand-colored smooth clay brick tiles 7.5x19 cm running bond, wooden countertop, open shelves, warm natural daylight from a window, plants, architectural photography, moderate contrast, faithful colors, no text
 ```
 
 ## Galeria 4: Gourmet
@@ -89,7 +89,7 @@ Bright Brazilian kitchen with a backsplash wall in light sand-colored smooth cla
 **Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
-Brazilian outdoor gourmet area, barbecue and counter clad in mid-tone terracotta smooth clay brick tiles 7x24 cm running bond, rustic wooden table, open to a backyard with cerrado vegetation, strong warm natural light, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no text
+Brazilian outdoor gourmet area, barbecue and counter clad in mid-tone terracotta smooth clay brick tiles 7.5x19 cm running bond, rustic wooden table, open to a backyard with cerrado vegetation, strong warm natural light, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no text
 ```
 
 ## Galeria 5: Comercial
@@ -107,7 +107,7 @@ Brazilian outdoor gourmet area, barbecue and counter clad in mid-tone terracotta
 **Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
-Small commercial storefront in a Brazilian interior town, facade clad in dark smooth clay brick tiles 7x24 cm running bond, large glass window, blank sign, potted plants, strong warm sunlight, red soil street, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no readable text
+Small commercial storefront in a Brazilian interior town, facade clad in dark smooth clay brick tiles 7.5x19 cm running bond, large glass window, blank sign, potted plants, strong warm sunlight, red soil street, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no readable text
 ```
 
 ## Galeria 6: Varanda
@@ -125,5 +125,5 @@ Small commercial storefront in a Brazilian interior town, facade clad in dark sm
 **Prompt (gerado no Google Flow / Nano Banana; serve em qualquer gerador de imagem):**
 
 ```
-Covered Brazilian veranda with side wall in light sand-colored smooth clay brick tiles 7x24 cm running bond, hammock, potted plants, open view to a cerrado garden, warm natural light with soft shadows, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no text
+Covered Brazilian veranda with side wall in light sand-colored smooth clay brick tiles 7.5x19 cm running bond, hammock, potted plants, open view to a cerrado garden, warm natural light with soft shadows, Tocantins Brazil, architectural photography, moderate contrast, faithful colors, no text
 ```

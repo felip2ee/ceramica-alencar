@@ -38,7 +38,8 @@ test("caminhão: figura com mapa, rota e carroceria", () => {
   assert.ok(solidos >= 40 && solidos <= 80, `solidos=${solidos}`);
   assert.ok(F.CAMINHAO_META.inicio[1] < F.CAMINHAO_META.fim[1], "Tocantinópolis fica acima de Palmas na tela");
   assert.deepEqual([...F.CAMINHAO.matchAll(/data-uf="(\w+)"/g)].map(m=>m[1]).sort(), ["GO","MA","PA","PI"]);
-  assert.equal((F.CAMINHAO.match(/mat-plaqueta/g)||[]).length, 12);
+  // 12 fardos de plaqueta na carga (a fábrica do mapa também é de plaqueta, por isso só dentro do veículo)
+  assert.equal((F.CAMINHAO.split('id="caminhao-veiculo"')[1].match(/mat-plaqueta/g)||[]).length, 12);
   assert.equal(F.CAMINHAO_META.partida.length, 2);
   assert.ok(F.CAMINHAO_META.carroceria.w > 0);
 });
