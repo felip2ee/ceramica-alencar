@@ -1,8 +1,12 @@
 Dockerfile
 .dockerignore
 docker-stack.yml
-deploy/
+deploy/publicar.sh
 tests/
 README.md
-figures/*.mjs
-figures/*.json
+figures/build.mjs
+figures/baixar-mapa.mjs
+figures/caminhao.mjs
+figures/casa.mjs
+figures/mapa-to.json
+figures/kit/
