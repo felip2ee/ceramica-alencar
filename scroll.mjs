@@ -23,6 +23,9 @@ export function iniciarScroll({ F, reduceMotion }) {
     return;
   }
   gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+  // No celular a barra de endereço muda a altura da janela a cada rolada; sem isto o ScrollTrigger refaz todas as
+  // medidas no meio da rolagem e os pins pulam (espaço em branco, seção aparecendo duas vezes).
+  ScrollTrigger.config({ ignoreMobileResize: true });
   // O refresh rola para 0 e mede; com html { scroll-behavior: smooth } essa rolagem vira animação
   // e todo start/end sai deslocado pelo scroll atual. Desliga o smooth só durante o refresh.
   const raiz = document.documentElement;
@@ -82,6 +85,7 @@ const ALTURA_CABECALHO = () => parseFloat(getComputedStyle(document.documentElem
 // inteira de rolagem com só o mapa à vista (a moldura tem a altura da tela), e é nesse trecho que o caminhão desce
 // a rota até Palmas, no desktop e no celular. Título e texto da seção só aparecem depois, com a rolagem normal.
 function dirigir(gsap, svg, veiculo, meta) {
+  const { ScrollTrigger } = window;
   const secao = document.getElementById("fabrica");
   const rota = svg.querySelector("#rota-principal");
   if (!rota) return;
@@ -100,8 +104,9 @@ function dirigir(gsap, svg, veiculo, meta) {
     defaults: { ease: "none" },
     // scrub sem atraso: até o ponto da entrega o caminhão está exatamente na partida, onde a plaqueta pousa.
     scrollTrigger: {
-      trigger: secao, start: () => `top ${ALTURA_CABECALHO()}px`, end: "+=100%", scrub: true,
-      pin: true, pinSpacing: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1,
+      // fim pela altura da moldura (svh, estável), não pela da janela, que muda com a barra de endereço
+      trigger: secao, start: () => `top ${ALTURA_CABECALHO()}px`, end: () => `+=${secao.querySelector(".fabrica__moldura").offsetHeight}`, scrub: true,
+      pin: true, pinSpacing: true, anticipatePin: ScrollTrigger.isTouch === 1 ? 0 : 1, invalidateOnRefresh: true, refreshPriority: 1,
     },
   })
     .to(veiculo, { motionPath: { path: pontos, autoRotate: false, curviness: 0, fromCurrent: false }, duration: 1 }, 0)
@@ -237,14 +242,15 @@ function titulos(gsap) {
 // Interlúdios: a seção fica presa por uma tela e meia de rolagem com a foto andando devagar (paralaxe); a primeira
 // frase fica, sobe e some, a segunda sobe no lugar e fica até a página seguir.
 function interludios(gsap) {
+  const { ScrollTrigger } = window;
   for (const sec of gsap.utils.toArray(".interludio")) {
     const foto = sec.querySelector(".interludio__foto");
     const [primeira, segunda] = sec.querySelectorAll(".interludio__frase");
     const tl = gsap.timeline({
       defaults: { ease: "none" },
       scrollTrigger: {
-        trigger: sec, start: () => `top ${ALTURA_CABECALHO()}px`, end: "+=150%", scrub: 0.3,
-        pin: true, pinSpacing: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1,
+        trigger: sec, start: () => `top ${ALTURA_CABECALHO()}px`, end: () => `+=${sec.offsetHeight * 1.5}`, scrub: 0.3,
+        pin: true, pinSpacing: true, anticipatePin: ScrollTrigger.isTouch === 1 ? 0 : 1, invalidateOnRefresh: true, refreshPriority: 1,
       },
     });
     if (foto) tl.fromTo(foto, { yPercent: -6 }, { yPercent: 6, duration: 10 }, 0);
