@@ -122,10 +122,10 @@ h1 em, h2 em, h3 em { font-style: italic; }
 .topo__nav { display: none; }
 .topo__nav a { display: flex; align-items: flex-start; padding: var(--s-2) var(--s-3) 0 var(--s-2); }
 .topo__nav a:hover, .topo__nav a:focus-visible { background: var(--surface); }
-/* o CTA do topo é o 1º dos dois usos do acento na dobra; texto exato, em caixa de frase.
+/* CTA do topo em tinta, texto exato em caixa de frase; só a seta leva o acento (o marcador da dobra; o fundo vermelho é só do botão).
    Some abaixo de 768 px: o botão do hero vem logo abaixo e o WhatsApp flutuante cobre o resto. */
-.topo__cta { display: none; padding: var(--s-2) var(--s-3); font: 500 16px/1.2 var(--font-text); color: var(--action); text-decoration: none; }
-.topo__cta .seta { white-space: pre; }
+.topo__cta { display: none; padding: var(--s-2) var(--s-3); font: 500 16px/1.2 var(--font-text); color: var(--ink); text-decoration: none; }
+.topo__cta .seta { white-space: pre; color: var(--action); }
 .topo__cta:hover { background: var(--surface); }
 @media (min-width: 768px) {
   .topo__linha { grid-template-columns: minmax(0, 1fr) auto; }
@@ -155,7 +155,10 @@ main { padding-top: var(--header); }
 .hero__titulo, .hero__produto, .hero__acao { border-left: 0; padding-left: var(--gutter); }
 .hero__titulo h1 { margin: 0; max-width: 9.5em; font-size: var(--h1); line-height: 1.04; }
 .hero__copy { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }
-.hero__ganho { display: grid; gap: var(--s-1); margin-top: var(--s-2); text-wrap: balance; }
+/* ganhos por público: rótulo curto em caixa alta + frase em caixa de frase; rótulo à esquerda, frase à direita */
+.hero__ganho { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 12px; align-items: baseline; margin: 12px 0 0; }
+.hero__ganho > div { display: contents; }
+.hero__ganho dd { margin: 0; font: 400 15px/1.4 var(--font-text); color: var(--ink); }
 .hero__produto, .hero__acao { border-top: 1px solid var(--line); }
 /* três tons lado a lado: retângulos na proporção 7:24 da plaqueta, cores das plaquetas da casa */
 .tons-mini { display: grid; grid-template-columns: repeat(3, minmax(0, 112px)); gap: var(--s-1); margin: 12px 0 var(--s-2); }
@@ -182,16 +185,16 @@ main { padding-top: var(--header); }
   .hero__casa { width: min(100%, calc((100svh - var(--header) - 320px) * 900 / 306)); }
 }
 @media (min-width: 1200px) {
-  :root { --col-acao: 424px; --banda: 205px; --faixa: 46px; }
+  :root { --col-acao: 436px; --banda: 205px; --faixa: 46px; }
   /* a dobra inteira (900 px em 1440): cabeçalho 64 + moldura ≥ 585 (65 %) + banda do título 205 + faixa 46 */
-  .hero__grade { grid-template-columns: minmax(0, 1fr) 360px var(--col-acao); grid-template-rows: minmax(0, 1fr) var(--banda); height: calc(100svh - var(--header) - var(--faixa)); min-height: 640px; }
+  .hero__grade { grid-template-columns: minmax(0, 1fr) 348px var(--col-acao); grid-template-rows: minmax(0, 1fr) var(--banda); height: calc(100svh - var(--header) - var(--faixa)); min-height: 640px; }
   .hero__moldura { padding-block: var(--s-2); }
   .hero__legenda { top: var(--s-2); }
   .hero__titulo { grid-column: auto; padding-block: var(--s-3); padding-right: var(--s-2); }
   .tons-mini { margin-top: var(--s-1); }
   .hero__titulo h1 { max-width: none; }
-  .hero__ganho { white-space: nowrap; }
   .hero__produto, .hero__acao { border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--s-3); }
+  .hero__acao { padding-block: 12px; } /* botão + três ganhos cabem na banda de 205 px */
   /* a casa centra na moldura com folga igual em cima e embaixo; a largura manda (desenho ≈ 2,9 : 1) */
   .hero__casa { width: min(82%, calc((100svh - var(--header) - var(--faixa) - var(--banda) - 2 * var(--s-12)) * 900 / 306)); }
 }
