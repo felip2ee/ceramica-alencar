@@ -69,12 +69,8 @@ h1 em, h2 em, h3 em { font-style: italic; }
 
 .container { max-width: 1280px; margin-inline: auto; padding-inline: var(--gutter); }
 .section { position: relative; padding-top: var(--section); }
-/* fio de 1 px no meio do respiro entre seções: não soma altura; o hero já fecha com o fio da .faixa */
-.section:not(.hero):not(#fabrica):not(#materialidade):not(#revestimentos)::before {
-  content: ""; position: absolute; top: calc(var(--section) / 2); left: var(--gutter); right: var(--gutter);
-  max-width: calc(1280px - 2 * var(--gutter)); margin-inline: auto; height: 1px; background: var(--line); pointer-events: none;
-}
-#contato { padding-bottom: var(--section); }
+/* título só para leitores de tela (a seção de parceiros mostra um título por célula) */
+.so-leitor { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .lead { font-size: 18px; margin-bottom: var(--s-6); }
 
 .pular {
@@ -242,7 +238,7 @@ main { padding-top: var(--header); }
   background: var(--surface); color: var(--ink);
   font: 500 14px/1.4 var(--font-text); letter-spacing: .08em; text-transform: uppercase; text-align: center;
 }
-.foto img, .foto video, .galeria img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.foto img, .foto video { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text); color: var(--ink); }
 
 /* recolore sólidos do kit Anatomy via variáveis CSS */
@@ -301,11 +297,6 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 #caminhao .roda-face { fill: #E4DAC8; }
 #caminhao .roda-aro { fill: #F6F0E4; }
 .mat-folha { --anatomy-top: #6E9A63; --anatomy-shade-0: #3E6139; --anatomy-shade-1: #466C40; --anatomy-shade-2: #4F7A4A; --anatomy-shade-3: #5E8A57; --anatomy-face: #4F7A4A; }
-
-/* galeria */
-.galeria { display: grid; gap: var(--s-4) var(--s-3); }
-@media (min-width: 768px) { .galeria { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1280px) { .galeria { grid-template-columns: repeat(3, 1fr); } }
 
 /* fábrica: a mesma família do hero. Moldura da figura em largura total em cima (o mapa é o chão e passa da moldura,
    o svg corta com slice); banda título | texto | ação nas colunas do hero (1fr | 348 | 436); faixa de rótulos numerados embaixo, como a do hero */
@@ -450,19 +441,125 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   .rev__texto { grid-column: 3; grid-row: 2; border-top: 0; border-bottom: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--s-3); }
 }
 
-/* parceiros e fechamento */
-.parceiros { display: grid; gap: var(--s-8); margin-top: var(--s-6); }
-@media (min-width: 768px) { .parceiros { grid-template-columns: 1fr 1fr; gap: var(--s-12); } }
-.fechamento { display: grid; justify-items: start; }
-.fechamento h2 { max-width: 16ch; margin-bottom: var(--s-6); }
+/* aplicações: galeria em células de fio a fio (a foto enche a célula, canto reto; a legenda é um rótulo na base),
+   banda título | texto embaixo, alinhada às colunas da galeria. No celular e no tablet a banda vem antes das fotos */
+.aplicacoes, .parceiros, .contato { padding-top: 0; }
+.apl__grade { grid-template-columns: minmax(0, 1fr); }
+.apl__titulo, .apl__texto { display: grid; align-content: start; gap: var(--s-2); border-left: 0; padding-left: var(--gutter); }
+.apl__texto { gap: 12px; border-top: 1px solid var(--line); }
+.apl__titulo h2 { margin: 0; font-size: var(--h2); line-height: 1.04; }
+.apl__copy { margin: 0; max-width: 300px; text-wrap: pretty; }
+.apl__galeria { display: grid; border-top: 1px solid var(--line); }
+.apl__foto { display: grid; grid-template-rows: minmax(0, 1fr) auto; padding: 0; border-left: 0; }
+.apl__foto + .apl__foto { border-top: 1px solid var(--line); }
+.apl__foto img { width: 100%; height: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0; }
+.apl__foto figcaption {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: var(--s-2); margin: 0; padding: 12px var(--gutter);
+  border-top: 1px solid var(--line); font: 500 14px/1.4 var(--font-text); letter-spacing: .08em; text-transform: uppercase;
+}
+@media (min-width: 768px) {
+  .apl__galeria { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .apl__foto + .apl__foto { border-top: 0; }
+  .apl__foto:nth-child(even) { border-left: 1px solid var(--line); }
+  .apl__foto:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .apl__foto:nth-child(even) figcaption { padding-left: var(--s-3); }
+  .apl__foto:nth-child(odd) figcaption { padding-right: var(--s-3); }
+}
+@media (min-width: 1200px) {
+  .apl__titulo h2 { font-size: 56px; }
+}
+@media (min-width: 1280px) {
+  /* 900 em 1440: cabeçalho 64 + galeria 2 × 3 + banda 200 */
+  :root { --banda-apl: 200px; }
+  .apl__grade { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: max(560px, calc(100svh - var(--header) - var(--banda-apl) - 1px)) var(--banda-apl); }
+  .apl__galeria { grid-column: 1 / -1; grid-row: 1; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); border-top: 0; border-bottom: 1px solid var(--line); }
+  .apl__foto:nth-child(n) { border-top: 0; border-left: 1px solid var(--line); }
+  .apl__foto:nth-child(3n+1) { border-left: 0; }
+  .apl__foto:nth-child(n+4) { border-top: 1px solid var(--line); }
+  .apl__foto img { aspect-ratio: auto; }
+  .apl__foto:nth-child(n) figcaption { padding: 12px var(--s-3); }
+  .apl__foto:nth-child(3n+1) figcaption { padding-left: var(--gutter); }
+  .apl__foto:nth-child(3n) figcaption { padding-right: var(--gutter); }
+  .apl__titulo { grid-column: 1 / 3; grid-row: 2; padding: var(--s-2) var(--s-3) var(--s-3) var(--gutter); }
+  .apl__texto { grid-column: 3; grid-row: 2; border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--gutter) var(--s-2) var(--s-3); }
+}
 
-/* rodapé */
-.rodape { padding-block: var(--s-8); border-top: 1px solid var(--line); font-size: 16px; }
-.rodape__grade { display: grid; gap: var(--s-4); align-items: start; }
-.rodape img { height: 56px; width: auto; }
-.rodape address strong { display: block; margin-bottom: var(--s-1); }
-.legal { margin: 0; font-size: 14px; color: var(--ink); }
-@media (min-width: 768px) { .rodape__grade { grid-template-columns: auto 1fr auto; gap: var(--s-8); } }
+/* para quem vende: duas células grandes lado a lado; rótulo, desenho técnico em tinta, título (classe do título, 56),
+   três ganhos (rótulo + frase, como no hero) e o botão: os dois botões são as duas ocorrências do acento */
+.par__grade { grid-template-columns: minmax(0, 1fr); }
+.par__celula { display: grid; align-content: start; gap: var(--s-2); border-left: 0; padding: var(--s-3) var(--gutter) var(--s-4); }
+.par__celula + .par__celula { border-top: 1px solid var(--line); }
+.par__celula h3 { margin: var(--s-1) 0 0; font-size: var(--h2); line-height: 1.04; }
+.par__ganho { display: grid; gap: 4px; margin: 0; max-width: 520px; }
+.par__ganho :is(dt, dd) { display: inline; margin: 0; }
+.par__ganho dt { margin-right: 8px; }
+.par__celula .btn { justify-self: start; margin-top: var(--s-1); }
+.par__fig { width: 100%; max-width: 520px; height: auto; margin: var(--s-2) 0; overflow: visible; }
+.par__peca { fill: var(--surface); stroke: rgba(90, 52, 35, .75); stroke-width: 1; }
+.par__peca--topo { fill: #E8DCC6; }
+.par__estrado { fill: #E0D5C1; stroke: rgba(90, 52, 35, .75); stroke-width: 1; }
+.par__hachura { fill: url(#hachura-cota); stroke: none; }
+.par__linha { fill: none; stroke: rgba(90, 52, 35, .6); stroke-width: .75; }
+.par__seta { fill: var(--ink); }
+.par__texto { font: 500 14px var(--font-text); letter-spacing: .08em; text-transform: uppercase; fill: var(--ink); }
+@media (min-width: 768px) {
+  .par__grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .par__celula + .par__celula { border-top: 0; border-left: 1px solid var(--line); padding-left: var(--s-3); }
+}
+@media (min-width: 1200px) {
+  /* 900 em 1440: as duas células enchem a dobra; o desenho fica no meio, o texto embaixo */
+  .par__celula { grid-template-rows: auto minmax(0, 1fr) auto auto auto; height: max(720px, calc(100svh - var(--header) - 1px)); padding-block: var(--s-2) var(--s-6); }
+  .par__celula h3 { font-size: 56px; }
+  .par__fig { align-self: center; justify-self: center; margin: 0; }
+}
+
+/* fechamento: uma frase só, centrada numa célula alta com as marcas "+" nos cantos; o botão é o único acento da tela */
+.fim__grade { grid-template-columns: minmax(0, 1fr); }
+.fim__celula {
+  position: relative; display: grid; justify-items: center; align-content: center; gap: var(--s-3);
+  min-height: 560px; padding: var(--s-12) var(--gutter); text-align: center;
+  --mais: linear-gradient(var(--ink), var(--ink));
+  background:
+    var(--mais) left 11px top 16px / 11px 1px no-repeat, var(--mais) left 16px top 11px / 1px 11px no-repeat,
+    var(--mais) right 11px top 16px / 11px 1px no-repeat, var(--mais) right 16px top 11px / 1px 11px no-repeat,
+    var(--mais) left 11px bottom 16px / 11px 1px no-repeat, var(--mais) left 16px bottom 11px / 1px 11px no-repeat,
+    var(--mais) right 11px bottom 16px / 11px 1px no-repeat, var(--mais) right 16px bottom 11px / 1px 11px no-repeat;
+}
+.fim__rotulo { position: absolute; top: var(--s-4); left: var(--gutter); right: var(--gutter); }
+.fim__celula h2 { margin: 0; font-size: clamp(40px, 6.7vw, 96px); line-height: 1.02; }
+.fim__copy { margin: 0 auto var(--s-2); max-width: 34ch; text-wrap: balance; }
+@media (min-width: 1200px) {
+  /* frase única em tela cheia (mecanismo 6): a célula enche a dobra; o rodapé vem na rolagem seguinte */
+  .fim__celula { min-height: max(600px, calc(100svh - var(--header) - 1px)); padding-block: var(--s-8); }
+  .fim__rotulo { top: var(--s-2); }
+}
+
+/* rodapé: grade de quatro colunas com rótulos; embaixo, o nome em Bodoni na largura da tela, em tom claro; linha legal */
+.rodape { font-size: 16px; line-height: 1.6; }
+.rodape__grade { grid-template-columns: minmax(0, 1fr); }
+.rodape__grade > .celula { display: grid; align-content: start; gap: 12px; border-left: 0; padding: var(--s-3) var(--gutter) var(--s-4); }
+.rodape__grade > .celula + .celula { border-top: 1px solid var(--line); }
+.rodape p { margin: 0; }
+.rodape a { color: var(--ink); text-decoration: none; }
+.rodape a:hover { text-decoration: underline; }
+.rodape__marca {
+  margin: 0; max-width: none; padding: var(--s-4) 0 0; overflow: hidden;
+  font: 400 11.2vw/1.12 var(--font-display); letter-spacing: -.035em; white-space: nowrap; text-align: center; color: #DDD2C0;
+}
+.rodape__legal { border-top: 1px solid var(--line); border-bottom: 0; }
+.legal { display: flex; align-items: center; gap: 12px; margin: 0; padding-block: 28px; /* 80 px: o botão flutuante (24 + 48) fica dentro da faixa legal, sem cruzar o fio */ font-size: 14px; color: var(--ink); }
+.legal img { height: 24px; width: auto; }
+@media (min-width: 768px) {
+  .rodape__grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rodape__grade > .celula + .celula { border-top: 0; }
+  .rodape__grade > .celula:nth-child(even) { border-left: 1px solid var(--line); padding-left: var(--s-3); }
+  .rodape__grade > .celula:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
+@media (min-width: 1200px) {
+  .rodape__grade { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .rodape__grade > .celula:nth-child(n) { border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--s-3) var(--s-6); }
+  .rodape__grade > .celula:first-child { border-left: 0; padding-left: var(--gutter); }
+}
 
 /* plaqueta narradora: fixa e dirigida pelo scroll (scroll.mjs), escondida até sair da casa */
 #plaqueta-narradora {
@@ -473,15 +570,17 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 @media (max-width: 767px) { #plaqueta-narradora { width: 44px; } }
 @media (prefers-reduced-motion: reduce) { #plaqueta-narradora { display: none; } }
 
-/* WhatsApp flutuante */
+/* WhatsApp flutuante: botão de contorno em tinta, não acento (o --action fica para os CTAs do conteúdo) */
 #whatsapp-flutuante {
-  position: fixed; z-index: 60;
+  position: fixed; z-index: 60; background: var(--background); color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink);
   right: max(var(--s-3), env(safe-area-inset-right)); bottom: max(var(--s-3), calc(env(safe-area-inset-bottom) + var(--s-2)));
   transition: opacity var(--t), background-color var(--t);
 }
 /* some durante a abertura e enquanto outro CTA do conteúdo está na tela (classe via IntersectionObserver em main.js) */
 html.abrindo #whatsapp-flutuante, #whatsapp-flutuante.is-oculto { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity var(--t), visibility 0s var(--t); }
-@media (max-width: 767px) { .rodape { padding-bottom: calc(var(--s-8) + 72px + env(safe-area-inset-bottom)); } }
+#whatsapp-flutuante:hover { background: var(--surface); }
+/* a faixa legal (28 px embaixo) + 48 px deixam o texto acima do botão flutuante (24 + 48 px) */
+@media (max-width: 767px) { .rodape { padding-bottom: calc(48px + env(safe-area-inset-bottom)); } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
