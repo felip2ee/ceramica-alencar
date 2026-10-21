@@ -39,14 +39,16 @@ const SOLTA = { x: SOLTA_X, y: PLANTA.d - ESP, w: PECA, d: ESP, r: 0 };
 
 // Fachada longa (y = PLANTA.d): duas janelas altas e um vão de entrada envidraçado perto da ponta x = 0.
 const JANELAS = [420, 640].map((x) => ({ x, w: 60, z: 40, h: 220 }));
-const ENTRADA = { x: 70, w: 170, z: 0, h: 260 };
+const ENTRADA = { x: 70, w: 170, z: 0, h: 240 }; // 240 cm = 30 fiadas de 8 cm
 // Mureta de plaqueta de 64 cm à frente da fachada, aberta no caminho da entrada. Na câmera rasa a mureta
 // (130 cm à frente) aparece ~84 cm à esquerda do que tapa: a abertura vai de 130 a 330 para cair diante do vão.
 const MURETA_Y = PLANTA.d + 130;
 const MURETA = [{ x: -60, w: 190 }, { x: 330, w: 540 }].map(({ x, w }) => ({ x, y: MURETA_Y, w, d: 15, r: 0 }));
 const MURETA_H = 64; // 8 fiadas
-// Placa de chão na mesma projeção: 150 cm além da casa, do deck e da mureta, em todos os lados.
-const PLACA = { x: -150, y: -150, w: PLANTA.w + DECK.w + 300, d: MURETA_Y + 15 + 150 + 150, r: 0 };
+// Placa de chão na mesma projeção: 80 cm além da casa, do deck e da mureta (margem curta: a casa enche a célula).
+const MARGEM = 80;
+const PLACA = { x: -60 - MARGEM, y: -MARGEM, w: PLANTA.w + DECK.w + 60 + 2 * MARGEM, d: MURETA_Y + 15 + 2 * MARGEM, r: 0 };
+const HACHURA = 6; // cm entre linhas de hachura, medidos no plano da superfície
 const PLACA_Z = PISO_Z - 2;
 // Sombra projetada no plano da placa: luz vinda da direita e de trás, sombra para a esquerda e para a frente.
 // Sol alto: sombra curta e chata, rente à base, dentro da placa.
@@ -54,6 +56,38 @@ const SOMBRA = [-0.16, 0.18]; // deslocamento em planta por cm de altura
 
 const r1 = (n) => Math.round(n * 10) / 10;
 const PEGADA = k.boxCorners(PLACA, PLACA_Z, PISO_Z);
+
+// Recorta o segmento a–b ao polígono convexo (Cyrus–Beck); null se ficar fora.
+function recorta(a, b, poli) {
+  const giro = (o, p, q) => (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0]);
+  const s = poli.reduce((acc, p, i) => acc + giro([0, 0], p, poli[(i + 1) % poli.length]), 0) > 0 ? 1 : -1;
+  let [t0, t1] = [0, 1];
+  for (let i = 0; i < poli.length; i++) {
+    const [e, f] = [poli[i], poli[(i + 1) % poli.length]];
+    const num = s * giro(e, f, a);
+    const den = s * ((f[0] - e[0]) * (b[1] - a[1]) - (f[1] - e[1]) * (b[0] - a[0]));
+    if (Math.abs(den) < 1e-9) { if (num < 0) return null; continue; }
+    const t = -num / den;
+    if (den > 0) t0 = Math.max(t0, t); else t1 = Math.min(t1, t);
+    if (t0 >= t1) return null;
+  }
+  const em = (t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  return [em(t0), em(t1)];
+}
+// Hachura a 45° dentro de um polígono convexo 2D: linhas paralelas a cada `passo`, terminando nas bordas.
+function hachura(poli, passo) {
+  const c = poli.map(([u, v]) => u - v);
+  const [lo, hi] = [Math.min(...c), Math.max(...c)];
+  const ext = Math.max(...poli.flat().map(Math.abs)) * 4;
+  const linhas = [];
+  for (let k0 = Math.ceil(lo / passo) * passo; k0 <= hi; k0 += passo) {
+    const seg = recorta([k0 - ext, -ext], [k0 + ext, ext], poli);
+    if (seg) linhas.push(seg);
+  }
+  return linhas;
+}
+console.assert(recorta([-1, 0.5], [2, 0.5], [[0, 0], [1, 0], [1, 1], [0, 1]]).flat().join() === "0,0.5,1,0.5", "recorta");
+console.assert(hachura([[0, 0], [10, 0], [10, 10], [0, 10]], 2).length === 9, "hachura");
 
 // Casco convexo (cadeia monótona) dos pontos de planta: contorno da sombra.
 function casco(pts) {
@@ -115,6 +149,8 @@ export function casa() {
   camadas.push(k.groupSvg([
     k.solidSvg(k.slabOf(PLACA, PLACA_Z, PISO_Z - PLACA_Z, P), { tone: "lo", className: "mat-chao" }),
     `<path class="sombra" d="${caminho(sombra)}${sombraMureta.map(caminho).join("")}"/>`,
+    k.lineSvg([sombra, ...sombraMureta].flatMap((pl) => hachura(pl, HACHURA))
+      .map(([a, b]) => k.segment([...a, PISO_Z], [...b, PISO_Z], P)).join(""), { className: "hachura" }),
     ordenar([
       caixa(PLANTA, PISO_Z, -PISO_Z, { tone: "mid" }),
       caixa(DECK, PISO_Z, -PISO_Z, { tone: "mid", className: "mat-cobertura", inner: k.lineSvg(tabuas, { tone: "lo" }) }),
@@ -193,6 +229,12 @@ export function casa() {
     const b = k.solidSvg(k.slabOf(retorno, z0, FIADA, P), estilo(juntasRetorno));
     camadas.push(`<g class="fileira mat-plaqueta" data-fileira="${n}">${par ? b + a : a + b}</g>`);
   }
+
+  // 5a · hachura de sombra na face curta de plaqueta (x = PLANTA.w), em (y, z), por cima das fiadas.
+  const faceCurta = [[RETORNO, 0], [PLANTA.d, 0], [PLANTA.d, PE], [RETORNO, PE]];
+  camadas.push(k.groupSvg(k.lineSvg(hachura(faceCurta, HACHURA)
+    .map(([a, b]) => k.segment([PLANTA.w, a[0], a[1]], [PLANTA.w, b[0], b[1]], P)).join(""), { className: "hachura" }),
+  { class: "estrutura", "data-parte": "paredes" }));
 
   // 5b · vãos da fachada longa, à frente das fiadas: requadro em tinta, vidro neutro e peitoril.
   const vaos = [];
