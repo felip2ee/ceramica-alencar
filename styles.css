@@ -46,9 +46,10 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--ink);
-  font: 400 18px/1.6 var(--font-text);
+  font: 400 16px/1.6 var(--font-text); /* corpo: 16 px no celular, 18 px a partir de 1024 (escala do designer) */
   overflow-x: hidden;
 }
+@media (min-width: 1024px) { body { font-size: 18px; } }
 img, svg { display: block; max-width: 100%; }
 figure, address { margin: 0; font-style: normal; }
 ul { list-style: none; margin: 0; padding: 0; }
@@ -154,9 +155,9 @@ main { padding-top: var(--header); }
 }
 .hero__titulo, .hero__produto, .hero__acao { border-left: 0; padding-left: var(--gutter); }
 .hero__titulo h1 { margin: 0; max-width: 9.5em; font-size: var(--h1); line-height: 1.04; }
-.hero__copy { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }
+.hero__copy { margin: 0; max-width: 300px; text-wrap: pretty; }
 /* ganhos por público: rótulo curto em caixa alta (14) seguido da frase (16), em linha, como parágrafo com entrada */
-.hero__ganho { display: grid; gap: 4px; margin: 12px 0 0; font: 400 16px/1.35 var(--font-text); color: var(--ink); }
+.hero__ganho { display: grid; gap: 4px; margin: 12px 0 0; line-height: 1.35; color: var(--ink); }
 .hero__ganho :is(dt, dd) { display: inline; margin: 0; }
 .hero__ganho dt { margin-right: 8px; }
 .hero__produto, .hero__acao { border-top: 1px solid var(--line); }
@@ -185,7 +186,7 @@ main { padding-top: var(--header); }
   .hero__casa { width: min(100%, calc((100svh - var(--header) - 320px) * 900 / 325)); }
 }
 @media (min-width: 1200px) {
-  :root { --col-acao: 436px; --banda: 205px; --faixa: 47px; }
+  :root { --col-acao: 436px; --banda: 228px; --faixa: 47px; } /* banda com corpo de 18 px */
   /* a dobra inteira (900 px em 1440): cabeçalho 64 + moldura ≥ 585 (65 %) + banda do título 205 + faixa 46 */
   .hero__grade { grid-template-columns: minmax(0, 1fr) 348px var(--col-acao); grid-template-rows: minmax(0, 1fr) var(--banda); height: calc(100svh - var(--header) - var(--faixa)); min-height: 640px; }
   .hero__moldura { padding-block: var(--s-2); }
@@ -304,58 +305,60 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 @media (min-width: 768px) { .galeria { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1280px) { .galeria { grid-template-columns: repeat(3, 1fr); } }
 
-/* fábrica: em ≥ 1024, figura à esquerda (58 %, altura da tela menos cabeçalho e números) e, à direita, células
-   empilhadas: rótulo e título, texto, ganho das lojas com o botão, ganho dos arquitetos. A faixa de números
-   abaixo divide os mesmos 58 % em duas colunas, então o fio entre figura e texto continua até o fim da seção. */
+/* fábrica: a mesma família do hero. Moldura da figura em largura total em cima (o mapa é o chão e passa da moldura,
+   o svg corta com slice); banda título | texto | ação nas colunas do hero (1fr | 348 | 436); quatro números iguais embaixo */
 .fabrica { padding-top: 0; }
 .fabrica__grade { grid-template-columns: minmax(0, 1fr); }
 .fabrica__moldura {
-  position: relative; display: flex; align-items: center; justify-content: center;
-  padding: 56px var(--s-2) var(--s-3);
+  position: relative; height: 360px; overflow: hidden; border-bottom: 1px solid var(--line);
   --mais: linear-gradient(var(--ink), var(--ink));
+}
+/* marcas "+" por cima do desenho, nos quatro cantos */
+.fabrica__moldura::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
   background:
     var(--mais) left 11px top 16px / 11px 1px no-repeat, var(--mais) left 16px top 11px / 1px 11px no-repeat,
     var(--mais) right 11px top 16px / 11px 1px no-repeat, var(--mais) right 16px top 11px / 1px 11px no-repeat,
     var(--mais) left 11px bottom 16px / 11px 1px no-repeat, var(--mais) left 16px bottom 11px / 1px 11px no-repeat,
     var(--mais) right 11px bottom 16px / 11px 1px no-repeat, var(--mais) right 16px bottom 11px / 1px 11px no-repeat;
 }
-.fabrica__legenda { position: absolute; top: 24px; left: 32px; right: 32px; }
-/* norte no canto de baixo da célula; a seta gira com o mapa (main.js põe --norte, de CAMINHAO_META.norte) */
-.fabrica__norte { position: absolute; left: 32px; bottom: 24px; display: flex; align-items: center; gap: 8px; margin: 0; }
-.fabrica__norte svg { display: block; transform: rotate(var(--norte, 0deg)); }
-.fabrica__grade > .celula:not(.fabrica__moldura) { display: grid; align-content: start; gap: 12px; border-left: 0; border-top: 1px solid var(--line); padding: var(--s-3) var(--gutter); }
-.fabrica__titulo h2 { margin: 4px 0 0; max-width: 10em; font-size: var(--h2); line-height: 1.04; text-wrap: balance; }
-.fabrica__copy { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }
-.fabrica__ganho .btn { justify-self: start; margin-top: 4px; }
-#caminhao { width: 100%; }
-#caminhao svg { width: 100%; height: auto; }
+.fabrica__legenda { position: absolute; z-index: 1; top: 24px; left: 32px; right: 32px; }
+.fabrica__legenda span { background: var(--background); padding: 2px 4px; margin: -2px -4px; }
+.fabrica__grade > .fabrica__moldura.celula { padding: 52px 0 0; } /* o desenho vai de fio a fio; no celular, abaixo da legenda */
+#caminhao, #caminhao svg { width: 100%; height: 100%; }
+#caminhao svg { overflow: hidden; }
+.fabrica__titulo, .fabrica__texto, .fabrica__acao { border-left: 0; padding-left: var(--gutter); }
+.fabrica__titulo h2 { margin: 0; max-width: 10em; font-size: var(--h2); line-height: 1.04; text-wrap: balance; }
+.fabrica__texto, .fabrica__acao { display: grid; align-content: start; gap: 12px; border-top: 1px solid var(--line); }
+.fabrica__copy { margin: 0; max-width: 300px; text-wrap: pretty; }
+.fabrica__acao .btn { justify-self: start; }
+.fabrica__ganho { display: grid; gap: 4px; margin: 4px 0 0; }
+.fabrica__ganho :is(dt, dd) { display: inline; margin: 0; }
+.fabrica__ganho dt { margin-right: 8px; }
 .fabrica__numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .fabrica__numeros > .celula { display: grid; align-content: start; gap: 8px; padding-block: var(--s-2) 20px; }
 .fabrica__numeros > .celula:nth-child(odd) { border-left: 0; padding-left: var(--gutter); }
 .fabrica__numeros > .celula:nth-child(n+3) { border-top: 1px solid var(--line); }
 /* números em tinta: o vermelho fica para o título; o acento, para o botão */
 .fabrica__numeros strong { font: 400 var(--h2)/1 var(--font-display); letter-spacing: -.025em; color: var(--ink); white-space: nowrap; }
-.fabrica__numeros span { font-size: 16px; line-height: 1.4; }
-.fabrica__numeros .rotulo span { font-size: 14px; }
-@media (min-width: 1024px) {
-  :root { --fig: 58%; --numeros-fab: 168px; }
-  .fabrica__grade {
-    grid-template-columns: var(--fig) minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto auto 1fr;
-    height: calc(100svh - var(--header) - var(--numeros-fab) - 2px); min-height: 600px;
-  }
-  .fabrica__moldura { grid-row: 1 / -1; padding: 56px 24px 24px; }
-  .fabrica__grade > .celula:not(.fabrica__moldura) { border-left: 1px solid var(--line); padding: var(--s-2) var(--gutter) var(--s-2) var(--s-3); }
-  .fabrica__titulo, .fabrica__texto { grid-column: 2 / -1; }
-  .fabrica__titulo { border-top: 0 !important; }
-  /* os dois ganhos lado a lado: o fio entre eles cai sobre o fio da faixa de números (79 %) */
-  .fabrica__ganho { padding-right: var(--s-3) !important; }
-  .fabrica__ganho:last-child { padding-right: var(--gutter) !important; }
+.fabrica__numeros > .celula > span { line-height: 1.4; }
+@media (min-width: 768px) {
+  .fabrica__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .fabrica__moldura, .fabrica__titulo { grid-column: 1 / -1; }
+  .fabrica__moldura { height: 520px; }
+  .fabrica__acao { border-left: 1px solid var(--line); padding-left: var(--s-3); }
+}
+@media (min-width: 1200px) {
+  :root { --banda-fab: 254px; }
+  /* 900 em 1440: cabeçalho 64 + moldura ≥ 540 (60 %) + banda; a faixa de números fica logo abaixo da dobra */
+  .fabrica__grade { grid-template-columns: minmax(0, 1fr) 348px var(--col-acao); grid-template-rows: auto var(--banda-fab); }
+  .fabrica__moldura { grid-column: 1 / -1; height: max(540px, calc(100svh - var(--header) - var(--banda-fab) - 1px)); }
+  .fabrica__grade > .fabrica__moldura.celula { padding: 0; } /* em 1440 a legenda fica sobre o papel do desenho */
+  .fabrica__titulo { grid-column: auto; padding-block: var(--s-3); padding-right: var(--s-2); }
   .fabrica__titulo h2 { max-width: none; font-size: 56px; }
-  /* a figura enche a moldura; o svg centra o desenho mantendo a proporção */
-  #caminhao, #caminhao svg { width: 100%; height: 100%; }
-  .fabrica__numeros { grid-template-columns: calc(var(--fig) / 2) calc(var(--fig) / 2) minmax(0, 1fr) minmax(0, 1fr); }
-  .fabrica__numeros > .celula { min-height: var(--numeros-fab); }
+  .fabrica__texto, .fabrica__acao { border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--s-3); }
+  .fabrica__acao { padding: 12px var(--gutter) 12px var(--s-3); }
+  .fabrica__numeros { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .fabrica__numeros > .celula:nth-child(odd) { border-left: 1px solid var(--line); padding-left: var(--s-3); }
   .fabrica__numeros > .celula:first-child { border-left: 0; padding-left: var(--gutter); }
   .fabrica__numeros > .celula:nth-child(n+3) { border-top: 0; }

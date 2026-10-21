@@ -11,8 +11,11 @@ const ROTULO = "Caminhão carregado de plaquetas percorrendo o mapa do Tocantins
 const CABE = [420, 560]; // o estado cabe nesta caixa do chão
 const LAJE = 3; // espessura da placa do mapa: chão fino, contorno de 1 px e borda hachurada
 const ROTA_Z = LAJE + 0.2;
-const ESCALA = 2.2; // o caminhão é desenhado em 60 × 22 × 26 e ampliado (licença cartográfica): ~120 px de altura em 1440
-const MARGEM = 24; // em volta de tudo o que a figura desenha, no recorte do viewBox
+const ESCALA = 1.75; // o caminhão é desenhado em 60 × 22 × 26 e ampliado (licença cartográfica): ~120 px de altura em 1440
+// viewBox fixo na proporção da célula da figura (largura total, ~60 % da tela); o svg usa slice e corta o excesso
+const LARGURA = 1440;
+const ALTURA = 600;
+const ROTA_ALTURA = 0.7;
 const ANGULO_MAX = 15;
 // Giro do chão (graus) depois de pôr o norte para cima: a rota Tocantinópolis → Palmas desce na diagonal,
 // da esquerda alta para a direita baixa, e o caminhão aparece de lado em 3/4 (cabine, lateral e rodas).
@@ -24,16 +27,15 @@ const SOL = (() => {
   return [0.6484 * s + 0.1031 * c, -0.6484 * c + 0.1031 * s];
 })();
 const HACHURA = 2.4; // passo da hachura de sombra, em unidades do chão (≈ 3 px na tela, como na casa) // graus, na tela, entre cada trecho da rota principal e a corda partida → Palmas
-const LETRA = 28; // corpo do rótulo usado só para reservar espaço no recorte (main.js aumenta o rótulo no celular)
 
 // Rotas vizinhas saem de Tocantinópolis e seguem em linha reta (rumo geográfico) até a borda do mapa.
 // Goiás segue a rota principal (o tracejado fica sob o vermelho) e desce de Palmas.
 const VIZINHAS = [
 // `alem`: quanto cada rota anda no chão depois da borda do mapa; as laterais vão longe para a figura abrir na largura da célula.
   { uf: "PA", rumo: [-0.9, -0.45], alem: 55 },
-  { uf: "MA", rumo: [0.7, -0.7], alem: 45 },
+  { uf: "MA", rumo: [0.7, -0.7], alem: 22 }, // curta: o terminal fica abaixo da legenda da figura
   { uf: "PI", rumo: [1, 0.2], alem: 55 },
-  { uf: "GO", rumo: [0, 1], pelaRota: true, alem: 45 },
+  { uf: "GO", rumo: [0, 1], pelaRota: true, alem: 400 }, // sai pela borda de baixo da moldura
 ];
 
 const r1 = (n) => Math.round(n * 10) / 10;
@@ -156,51 +158,47 @@ export function caminhao(mapa) {
     return { uf, linha: [...pts.map(([x, y]) => [x, y, ROTA_Z]), [...borda, ROTA_Z], [...borda, 0], [...fim, 0]], fim, d };
   });
 
-  const cantosCaminhao = [[-31, -14], [30, -14], [30, 14], [-31, 14]].flatMap(([u, v]) => [mundo(u, v, alt(26)), mundo(u, v, 0)]);
-  const P0 = k.fitProjection(
-    [...anel.flatMap(([x, y]) => [[x, y, 0], [x, y, LAJE]]), ...vizinhas.map((r) => [...r.fim, 0]), ...cantosCaminhao],
-    1000, 820, { azimuth: AZIMUTE, elevation: ELEVACAO, pad: 40 },
-  );
+  // Enquadramento de planta de obra: o mapa é o chão e passa da moldura. A rota Tocantinópolis → Palmas ocupa
+  // ROTA_ALTURA da altura do viewBox, centrada; o resto do estado (o sul, e os lados se precisar) sai do quadro.
+  const unidade3 = { origin: [0, 0], scale: 1, azimuth: AZIMUTE, elevation: ELEVACAO };
+  const [t0, p0] = [toc, palmas].map(([x, y]) => k.iso([x, y, ROTA_Z], unidade3));
+  const escalaTela = (ROTA_ALTURA * ALTURA) / (p0[1] - t0[1]);
+  const meio = [((t0[0] + p0[0]) / 2) * escalaTela, ((t0[1] + p0[1]) / 2) * escalaTela];
+  const P = { origin: [LARGURA / 2 - meio[0], ALTURA * 0.5 - meio[1]], scale: escalaTela, azimuth: AZIMUTE, elevation: ELEVACAO };
 
   // Rótulos de pé, na tela, ancorados no ponto e afastados em em (dx, dy): o corpo muda com a largura
   // (main.js mantém 14 px na tela), então o afastamento acompanha o corpo e não a escala do mapa.
-  const sudoeste = chao([-49.5, -12.0]); // o nome do estado no miolo sul, longe da rota e do caminhão
+  const oeste = chao([-48.9, -8.7]); // o nome do estado no miolo a oeste da rota, onde nem o caminhão chega
   const rotulos = (P) => {
     const ponto = ([x, y], z) => k.iso([x, y, z], P);
-    const [ti, tf, ce] = [ponto(toc, ROTA_Z), ponto(palmas, ROTA_Z), ponto(sudoeste, LAJE)];
+    const [ti, tf, ce] = [ponto(toc, ROTA_Z), ponto(palmas, ROTA_Z), ponto(oeste, LAJE)];
     const lista = [
-      // acima e à esquerda, entre a rota do Pará e a do Maranhão: embaixo fica a partida do caminhão
-      { texto: "Tocantinópolis", x: ti[0], y: ti[1], dx: -1.6, dy: -0.5, ancora: "end", classe: "rotulo-mapa--largo" },
+      // à esquerda, sobre o papel: à direita e embaixo fica a partida do caminhão
+      { texto: "Tocantinópolis", x: ti[0], y: ti[1], dx: -1.2, dy: -0.4, ancora: "end", classe: "rotulo-mapa--largo" },
       // abaixo e à esquerda: o caminhão para em cima do ponto, com a frente para baixo e à direita
-      { texto: "Palmas", x: tf[0], y: tf[1], dx: -3.2, dy: 1.2, ancora: "end" },
+      { texto: "Palmas", x: tf[0], y: tf[1], dx: -5, dy: 2.4, ancora: "end" },
       { texto: "Tocantins", x: ce[0], y: ce[1], dx: 0, dy: 0, ancora: "middle", classe: "rotulo-mapa--estado" },
     ];
-    for (const { uf, fim, d } of vizinhas) {
+    for (const { uf, fim, d, linha } of vizinhas) {
       const a = ponto(fim, 0);
       const b = ponto([fim[0] + d[0], fim[1] + d[1]], 0);
       const [ux, uy] = unit(menos(b, a));
+      if (a[1] > ALTURA - 30) {
+        // a rota sai pela borda de baixo (GO): o rótulo fica onde ela cruza a faixa junto à borda
+        const borda = ALTURA - 26;
+        const pts = [palmas, ...linha.slice(-3)].map((q) => ponto(q, q[2] ?? ROTA_Z));
+        const i = pts.findIndex((q, j) => j && pts[j - 1][1] <= borda && q[1] > borda);
+        if (i < 1) continue;
+        const [q0, q1] = [pts[i - 1], pts[i]];
+        const t = (borda - q0[1]) / (q1[1] - q0[1]);
+        lista.push({ texto: uf, x: q0[0] + (q1[0] - q0[0]) * t, y: borda, dx: 10, dy: -0.2, ancora: "start" }); // além da sombra do caminhão parado em Palmas
+        continue;
+      }
       lista.push({ texto: uf, x: a[0], y: a[1], dx: ux * 0.6, dy: uy * 0.6 + (Math.abs(ux) < 0.4 ? Math.sign(uy) * 0.4 : 0), ancora: ux > 0.4 ? "start" : ux < -0.4 ? "end" : "middle" });
     }
     return lista;
   };
 
-  // Recorte: caixa de tudo o que se desenha (laje, terminais, caminhão, rótulos) + MARGEM.
-  const pontosTela = [
-    ...anel.flatMap(([x, y]) => [k.iso([x, y, 0], P0), k.iso([x, y, LAJE], P0)]),
-    ...vizinhas.map((r) => k.iso([...r.fim, 0], P0)),
-    ...cantosCaminhao.map((p) => k.iso(p, P0)),
-    ...rotulos(P0).flatMap(({ texto, x, y, dx, dy, ancora }) => {
-      const w = texto.length * LETRA * 0.62;
-      const [xa, ya] = [x + dx * LETRA, y + dy * LETRA];
-      const x0 = ancora === "end" ? xa - w : ancora === "middle" ? xa - w / 2 : xa;
-      return [[x0, ya - LETRA * 0.7], [x0 + w, ya + LETRA * 0.7]];
-    }),
-  ];
-  const minX = Math.min(...pontosTela.map(([x]) => x));
-  const minY = Math.min(...pontosTela.map(([, y]) => y));
-  const LARGURA = Math.ceil(Math.max(...pontosTela.map(([x]) => x)) - minX + 2 * MARGEM);
-  const ALTURA = Math.ceil(Math.max(...pontosTela.map(([, y]) => y)) - minY + 2 * MARGEM);
-  const P = { ...P0, origin: [P0.origin[0] - minX + MARGEM, P0.origin[1] - minY + MARGEM] };
   const prof = (p) => k.depthOf(p, P);
   const tela = (p) => k.iso(p, P).map(r1);
 
@@ -442,7 +440,8 @@ export function caminhao(mapa) {
   const ys = topo.map(([, y]) => y);
 
   return {
-    svg: k.figureSvg({ width: LARGURA, height: ALTURA, label: ROTULO, body: grupoMapa + grupoCaminhao }),
+    // slice: a célula corta o chão que passa do quadro (no celular, os lados), sem achatar o desenho
+    svg: k.figureSvg({ width: LARGURA, height: ALTURA, label: ROTULO, body: grupoMapa + grupoCaminhao }).replace("<svg ", '<svg preserveAspectRatio="xMidYMid slice" '),
     meta: {
       inicio: tela([...toc, ROTA_Z]),
       fim: tela([...palmas, ROTA_Z]),
