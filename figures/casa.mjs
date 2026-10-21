@@ -37,12 +37,35 @@ const JUNTAS_RETORNO = [juntas(PLANTA.d, RETORNO, 0), juntas(PLANTA.d, RETORNO, 
 const SOLTA_X = JUNTAS_FRENTE[(FILEIRAS - 1) % 2][23];
 const SOLTA = { x: SOLTA_X, y: PLANTA.d - ESP, w: PECA, d: ESP, r: 0 };
 
-const r1 = (n) => Math.round(n * 10) / 10;
-// Pegada no chão (casa e deck): define a linha de chão e entra no enquadramento.
-const PEGADA = [...k.boxCorners(PLANTA, PISO_Z, PISO_Z), ...k.boxCorners(DECK, PISO_Z, PISO_Z)];
+// Fachada longa (y = PLANTA.d): duas janelas altas e um vão de entrada envidraçado perto da ponta x = 0.
+const JANELAS = [420, 640].map((x) => ({ x, w: 60, z: 40, h: 220 }));
+const ENTRADA = { x: 70, w: 170, z: 0, h: 260 };
+// Mureta de plaqueta de 60 cm à frente da fachada, aberta no caminho da entrada.
+const MURETA_Y = PLANTA.d + 130;
+const MURETA = [{ x: -60, w: 150 }, { x: 230, w: 640 }].map(({ x, w }) => ({ x, y: MURETA_Y, w, d: 15, r: 0 }));
+const MURETA_H = 64; // 8 fiadas
+// Placa de chão na mesma projeção: 150 cm além da casa, do deck e da mureta, em todos os lados.
+const PLACA = { x: -150, y: -150, w: PLANTA.w + DECK.w + 300, d: MURETA_Y + 15 + 150 + 150, r: 0 };
+const PLACA_Z = PISO_Z - 2;
+// Sombra projetada no plano da placa: luz vinda da direita e de trás, sombra para a esquerda e para a frente.
+// Comprimento escolhido para a sombra do beiral (351 cm acima da placa) ficar dentro da placa.
+const SOMBRA = [-0.28, 0.32]; // deslocamento em planta por cm de altura
 
-// Câmera baixa e girada para o muro comprido: a casa precisa caber larga (≥ 65 % da célula) numa faixa baixa da dobra.
-const CAMERA = { azimuth: 50, elevation: 13 };
+const r1 = (n) => Math.round(n * 10) / 10;
+const PEGADA = k.boxCorners(PLACA, PLACA_Z, PISO_Z);
+
+// Casco convexo (cadeia monótona) dos pontos de planta: contorno da sombra.
+function casco(pts) {
+  const p = [...pts].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const giro = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const meia = (lista) => lista.reduce((h, q) => { while (h.length > 1 && giro(h[h.length - 2], h[h.length - 1], q) <= 0) h.pop(); h.push(q); return h; }, []);
+  const baixo = meia(p);
+  const cima = meia([...p].reverse());
+  return [...baixo.slice(0, -1), ...cima.slice(0, -1)];
+}
+
+// Câmera girada para o muro comprido e baixa o bastante para a casa com a placa de chão caber larga (≥ 65 % da célula) na dobra.
+const CAMERA = { azimuth: 50, elevation: 20 };
 const PAD = 4;
 const ENQUADRA = [...k.boxCorners(PLANTA, PISO_Z, PE), ...k.boxCorners(PLANO_COB, COB_Z, COB_Z + COBERTURA), ...PEGADA];
 // Altura do viewBox justa ao desenho: o svg não carrega folga própria, quem centra é a célula.
@@ -76,13 +99,20 @@ export function casa() {
 
   const camadas = [];
 
-  // 0 · linha de chão, piso e deck (o deck é o degrau da porta).
-  // Sem sombra: a casa apoia num fio de 1 px (cor do fio da grade, via CSS .chao) na cota do vértice mais baixo.
-  const chaoY = r1(Math.max(...PEGADA.map((p) => k.iso(p, P)[1])));
+  // 0 · placa de chão, sombra projetada, piso e deck (o deck é o degrau da porta). A base da casa assenta na placa.
+  const topoCob = COB_Z + COBERTURA;
+  const projeta = ([x, y], h) => [x + SOMBRA[0] * h, y + SOMBRA[1] * h];
+  const cantosPlanta = (pl) => [[pl.x, pl.y], [pl.x + pl.w, pl.y], [pl.x + pl.w, pl.y + pl.d], [pl.x, pl.y + pl.d]];
+  const sombra = casco([
+    ...cantosPlanta(PLANTA), ...cantosPlanta(PLANO_COB).map((q) => projeta(q, topoCob - PISO_Z)),
+  ]);
+  const sombraMureta = MURETA.map((m) => casco([...cantosPlanta(m), ...cantosPlanta(m).map((q) => projeta(q, MURETA_H))]));
+  const caminho = (pts) => k.pathOf(pts.map(([x, y]) => k.iso([x, y, PISO_Z], P)), true);
   const tabuas = Array.from({ length: Math.floor(DECK.d / 15) - 1 }, (_, i) =>
     k.lineOnTop([DECK.x, DECK.y + 15 * (i + 1)], [DECK.x + DECK.w, DECK.y + 15 * (i + 1)], 0, P)).join("");
   camadas.push(k.groupSvg([
-    `<line class="chao" x1="0" y1="${chaoY}" x2="${LARGURA}" y2="${chaoY}"/>`,
+    k.solidSvg(k.slabOf(PLACA, PLACA_Z, PISO_Z - PLACA_Z, P), { tone: "lo", className: "mat-chao" }),
+    `<path class="sombra" d="${caminho(sombra)}${sombraMureta.map(caminho).join("")}"/>`,
     ordenar([
       caixa(PLANTA, PISO_Z, -PISO_Z, { tone: "mid" }),
       caixa(DECK, PISO_Z, -PISO_Z, { tone: "mid", className: "mat-cobertura", inner: k.lineSvg(tabuas, { tone: "lo" }) }),
@@ -162,7 +192,21 @@ export function casa() {
     camadas.push(`<g class="fileira mat-plaqueta" data-fileira="${n}">${par ? b + a : a + b}</g>`);
   }
 
-  // 6 · pano de vidro de 2,5 m: montantes de quina e de arranque, verga, peitoril, vidro com montantes e puxador da porta.
+  // 5b · vãos da fachada longa, à frente das fiadas: requadro em tinta, vidro neutro e peitoril.
+  const vaos = [];
+  for (const j of JANELAS) {
+    vaos.push(k.solidSvg(k.slabOf({ x: j.x, y: PLANTA.d, w: j.w, d: 3, r: 0 }, j.z, j.h, P), { tone: "mid", className: "mat-escuro" }));
+    vaos.push(k.solidSvg(k.slabOf({ x: j.x + 6, y: PLANTA.d + 3, w: j.w - 12, d: 1, r: 0 }, j.z + 6, j.h - 12, P), { tone: "mid", className: "mat-vidro" }));
+    vaos.push(k.solidSvg(k.slabOf({ x: j.x - 6, y: PLANTA.d, w: j.w + 12, d: 8, r: 0 }, j.z - 5, 5, P), { tone: "mid", className: "mat-cobertura" }));
+  }
+  const portaY = PLANTA.d + 3;
+  const travessas = [ENTRADA.x + 90].map((x) => k.segment([x, portaY + 1, ENTRADA.z + 6], [x, portaY + 1, ENTRADA.h - 6], P)).join("");
+  vaos.push(k.solidSvg(k.slabOf({ x: ENTRADA.x, y: PLANTA.d, w: ENTRADA.w, d: 3, r: 0 }, ENTRADA.z, ENTRADA.h, P), { tone: "mid", className: "mat-escuro" }));
+  vaos.push(k.solidSvg(k.slabOf({ x: ENTRADA.x + 6, y: portaY, w: ENTRADA.w - 12, d: 1, r: 0 }, ENTRADA.z + 6, ENTRADA.h - 12, P),
+    { tone: "mid", className: "mat-vidro", inner: k.lineSvg(travessas, { tone: "mid" }) }));
+  camadas.push(k.groupSvg(vaos.join(""), { class: "vidro" }));
+
+  // 6 · pano de vidro de 2,6 m: montantes de quina e de arranque, verga, peitoril, vidro com montantes e puxador da porta.
   const VIDRO = { x: PLANTA.w - 8, y: ESP, w: 4, d: RETORNO - 8 - ESP, r: 0 };
   const montantes = [95, 175, 255].map((y) => k.rise([VIDRO.x + VIDRO.w, y], 4, VAO - 4, P)).join("");
   const escuro = { tone: "mid", className: "mat-escuro" };
@@ -187,11 +231,18 @@ export function casa() {
     k.solidSvg(k.slabOf(k.insetPlan(CLARABOIA, 10), topo + 10, 2, P), { tone: "lo", className: "mat-vidro" }),
   ], { class: "estrutura", "data-parte": "cobertura" }));
 
-  // 8 · arandela no retorno, a 1,8 m do chão.
-  camadas.push(k.groupSvg(ordenar([
-    caixa({ x: PLANTA.w, y: 400, w: 8, d: 14, r: 1 }, 180, 26, escuro),
-    caixa({ x: PLANTA.w, y: 440, w: 3, d: 24, r: 0 }, 140, 16, escuro),
-  ]), { class: "estrutura", "data-parte": "jardim" }));
+  // 8 · mureta de plaqueta (8 fiadas) à frente da fachada, aberta no caminho da entrada.
+  const fiadasMureta = (m) => {
+    const yF = m.y + m.d;
+    const horiz = Array.from({ length: MURETA_H / FIADA - 1 }, (_, i) => k.segment([m.x, yF, (i + 1) * FIADA], [m.x + m.w, yF, (i + 1) * FIADA], P));
+    const vert = Array.from({ length: MURETA_H / FIADA }, (_, i) => juntas(m.x + m.w, m.x, i % 2 ? PECA / 2 : 0)
+      .map((x) => k.segment([x, yF, i * FIADA], [x, yF, (i + 1) * FIADA], P))).flat();
+    return [...horiz, ...vert].join("");
+  };
+  camadas.push(k.groupSvg(ordenar(MURETA.map((m) => ({
+    prof: prof(meio(m, PISO_Z, MURETA_H)),
+    svg: k.solidSvg(k.slabOf(m, PISO_Z, MURETA_H - PISO_Z, P), { tone: "lo", className: "mat-plaqueta", inner: k.lineSvg(fiadasMureta(m), { tone: "faint" }) }),
+  }))), { class: "estrutura", "data-parte": "jardim" }));
 
   const cantos = k.boxCorners(SOLTA, PE - FIADA, PE).map((p) => k.iso(p, P));
   const xs = cantos.map(([x]) => x);

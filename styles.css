@@ -139,11 +139,11 @@ main { padding-top: var(--header); }
 .hero__grade { grid-template-columns: minmax(0, 1fr); }
 .hero__moldura { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--s-6) var(--s-3) var(--s-3); border-bottom: 1px solid var(--line); }
 .hero__legenda { position: absolute; top: var(--s-2); left: var(--gutter); right: var(--gutter); }
-.hero__casa { aspect-ratio: 900 / 435; width: 100%; }
+.hero__casa { aspect-ratio: 900 / 449; width: 100%; }
 .hero__titulo, .hero__produto, .hero__acao { border-left: 0; padding-left: var(--gutter); }
 .hero__titulo h1 { margin: 0; max-width: 9.5em; font-size: var(--h1); line-height: 1.04; }
 .hero__copy { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }
-.hero__ganho { display: grid; gap: var(--s-1); margin-top: var(--s-2); }
+.hero__ganho { display: grid; gap: var(--s-1); margin-top: var(--s-2); text-wrap: balance; }
 .hero__produto, .hero__acao { border-top: 1px solid var(--line); }
 /* três tons lado a lado: retângulos na proporção 7:24 da plaqueta, cores das plaquetas da casa */
 .tons-mini { display: grid; grid-template-columns: repeat(3, minmax(0, 112px)); gap: var(--s-1); margin: 12px 0 var(--s-2); }
@@ -167,20 +167,23 @@ main { padding-top: var(--header); }
   .hero__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .hero__moldura, .hero__titulo { grid-column: 1 / -1; }
   .hero__acao { border-left: 1px solid var(--line); padding-left: var(--s-3); }
-  .hero__casa { width: min(100%, calc((100svh - var(--header) - 320px) * 900 / 435)); }
+  .hero__casa { width: min(100%, calc((100svh - var(--header) - 320px) * 900 / 449)); }
 }
 @media (min-width: 1200px) {
   /* a dobra inteira: a moldura fica com o que sobra da tela (≥ 55 % da altura) */
   .hero__grade { grid-template-columns: minmax(0, 1fr) 400px 360px; grid-template-rows: minmax(55svh, 1fr) auto; min-height: calc(100svh - var(--header) - 51px); } /* 1 px: sentinela do cabeçalho compacto no topo do main */
-  .hero__moldura { padding-block: var(--s-3); }
+  .hero__moldura { padding-block: var(--s-2); }
   .hero__titulo { grid-column: auto; padding-block: var(--s-3) var(--s-4); }
   .hero__produto, .hero__acao { border-top: 0; border-left: 1px solid var(--line); padding-left: var(--s-3); }
   /* a casa usa a altura que sobra da dobra: cabeçalho, faixa de produto (≈ 260 px), régua de rótulos e a folga da moldura */
-  .hero__casa { width: min(100%, calc((100svh - var(--header) - 52px - 260px - 2 * var(--s-3)) * 900 / 435)); }
+  .hero__casa { width: min(100%, calc((100svh - var(--header) - 52px - 260px - 2 * var(--s-2)) * 900 / 449)); }
 }
 #casa svg { width: 100%; height: auto; }
-/* a casa apoia num fio de chão igual aos da grade; vidro em neutro quente (só a plaqueta tem cor) */
-#casa .chao { stroke: var(--line); stroke-width: 1px; vector-effect: non-scaling-stroke; }
+/* vidro em neutro quente (só a plaqueta tem cor) */
+/* placa de chão na mesma projeção: areia (família --surface), contorno no fio da grade; sombra chapada em tinta a 8 % */
+#casa .mat-chao { --anatomy-top: #F0E8DA; --anatomy-face: #E8DECC; --anatomy-shade-0: #E4DAC8; --anatomy-shade-1: #E8DECC; --anatomy-shade-2: #EBE2D2; --anatomy-shade-3: #EDE4D4; }
+#casa .mat-chao > .iso-edge { stroke: var(--line); }
+#casa .sombra { fill: var(--ink); fill-opacity: .08; stroke: none; }
 #casa .mat-vidro { --anatomy-top: #F3ECDF; --anatomy-shade-0: #DDD2C0; --anatomy-shade-1: #E4DAC8; --anatomy-shade-2: #EDE4D4; --anatomy-shade-3: #F0E8DA; --anatomy-face: #EDE4D4; opacity: .7; }
 /* até a construção começar, as partes da casa ficam ocultas (o JS revela uma a uma) */
 #casa:not(.is-ready) :is(.fileira, .movel, .estrutura, .vidro, #plaqueta-solta) { opacity: 0; }
