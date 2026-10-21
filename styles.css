@@ -577,7 +577,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 }
 
 /* rodapé: grade de quatro colunas com rótulos; embaixo, o nome em Bodoni na largura da tela, em tom claro; linha legal */
-.rodape { line-height: 1.6; } /* corpo da página: 16 px no celular, 18 px a partir de 1024 */
+.rodape { line-height: 1.6; container-type: inline-size; } /* cqi: a marca mede pela largura útil, sem a barra de rolagem */ /* corpo da página: 16 px no celular, 18 px a partir de 1024 */
 .rodape__grade { grid-template-columns: minmax(0, 1fr); }
 .rodape__grade > .celula { display: grid; align-content: start; gap: 12px; border-left: 0; padding: var(--s-3) var(--gutter) var(--s-4); }
 .rodape__grade > .celula + .celula { border-top: 1px solid var(--line); }
@@ -586,19 +586,27 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .rodape a:hover { text-decoration: underline; }
 .rodape__marca {
   margin: 0; max-width: none; padding: var(--s-4) 0 0; overflow: hidden;
-  font: 400 11.8vw/1.12 var(--font-display); letter-spacing: -.035em; white-space: nowrap; text-align: center; color: #DDD2C0;
+  font: 400 12.4cqi/1.12 var(--font-display); letter-spacing: -.035em; white-space: nowrap; text-align: center; color: #DDD2C0;
 }
-.rodape__legal { border-top: 1px solid var(--line); border-bottom: 0; grid-template-columns: 1fr auto; }
+.rodape__legais { grid-template-columns: auto auto 1fr; border-top: 1px solid var(--line); }
+.rodape__legais a { padding-block: 20px; text-decoration: none; }
+.rodape__legais a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.rodape__legal { border-top: 1px solid var(--line); border-bottom: 0; grid-template-columns: 1fr auto auto; }
 .legal { display: flex; align-items: center; gap: 16px; padding-block: 28px; }
+.direitos { display: flex; align-items: center; margin: 0; }
 .legal img { height: 32px; width: auto; flex: none; }
 .legal .rotulo { line-height: 1.6; }
-.legal .rotulo a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .credito { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin: 0; }
 .credito img { height: 30px; width: auto; mix-blend-mode: multiply; } /* fundo branco do PNG some sobre o marfim */
 @media (max-width: 767px) {
+  .rodape__legais { grid-template-columns: 1fr; }
+  .rodape__legais a + a { border-left: 0; border-top: 1px solid var(--line); }
   .rodape__legal { grid-template-columns: 1fr; }
   .rodape__legal > .celula { border-left: 0; padding-left: var(--gutter); }
+  .rodape__legal > .celula + .celula { border-top: 1px solid var(--line); }
+  .direitos, .credito { padding-block: 20px; }
   .credito { justify-content: flex-start; }
+  .par__texto::before { display: none; } /* em uma coluna não há fio vertical para a cruz do cruzamento */
 }
 @media (min-width: 768px) {
   .rodape__grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
