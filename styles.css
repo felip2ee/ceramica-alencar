@@ -265,7 +265,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 /* no celular o mapa tem ~360 px e os rótulos de 14 px não cabem todos: saem o nome do estado (encosta em Palmas) e
    Tocantinópolis (à esquerda sai da tela, à direita fica sob o caminhão); a legenda da figura nomeia a cidade */
 /* .fabrica .fabrica__norte: vence o display: flex da regra da célula, declarada mais abaixo */
-@media (max-width: 767px) { .rotulo-mapa--largo, .fabrica .fabrica__norte { display: none; } }
+@media (max-width: 767px) { .rotulo-mapa--largo { display: none; } }
 @media (min-width: 768px) { .rotulo-mapa--estreito { display: none; } }
 /* caminhão e mapa: o mesmo acabamento da casa. Silhueta 2 px (laje do mapa; no caminhão, a base em tinta de 4 px
    por baixo das peças deixa 2 px de borda), arestas 1 px, juntas e hachura 0,5 px; sombra projetada pelo mesmo sol */
@@ -323,13 +323,17 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 /* norte no canto de baixo da célula; a seta gira com o mapa (main.js põe --norte, de CAMINHAO_META.norte) */
 .fabrica__norte { position: absolute; z-index: 1; left: 32px; bottom: 28px; display: flex; align-items: center; gap: 8px; margin: 0; }
 .fabrica__norte svg { display: block; transform: rotate(var(--norte, 0deg)); }
-.fabrica__grade > .fabrica__moldura.celula { padding: 52px 0 0; } /* o desenho vai de fio a fio; no celular, abaixo da legenda */
-/* abaixo de 1200 a figura mostra uma janela de 1200 × 600 do desenho (fábrica, caminhão e Palmas dentro); em 1200+ enche a moldura */
-#caminhao { width: 100%; aspect-ratio: 1200 / 600; }
+/* a moldura é a tela inteira abaixo do cabeçalho, em qualquer largura: durante o pin só o mapa aparece, e o caminhão
+   desce a rota com a rolagem antes de a página seguir (pedido do dono em 2026-10-21) */
+.fabrica__grade > .fabrica__moldura.celula { padding: 0; height: calc(100svh - var(--header)); } /* o desenho vai de fio a fio; a legenda fica sobre ele */
+#caminhao { width: 100%; height: 100%; }
 #caminhao svg { width: 100%; height: 100%; }
 #caminhao svg { overflow: hidden; }
 .fabrica__titulo, .fabrica__texto, .fabrica__acao { border-left: 0; padding-left: var(--gutter); }
 .fabrica__titulo h2 { margin: 0; max-width: 10em; font-size: var(--h2); line-height: 1.04; text-wrap: balance; }
+/* abaixo de 1200 o título vem sozinho depois da moldura de tela cheia: ocupa quase uma tela, centrado, com respiro
+   entre o fim do mapa e a ficha "Frete próprio" (pedido do dono em 2026-10-21) */
+@media (max-width: 1199px) { .fabrica__titulo { min-height: calc(88svh - var(--header)); display: grid; align-content: center; } }
 .fabrica__texto, .fabrica__acao { display: grid; align-content: start; gap: 12px; border-top: 1px solid var(--line); }
 .fabrica__copy { margin: 0; max-width: 300px; text-wrap: pretty; }
 .fabrica__acao .btn { justify-self: start; }
@@ -347,9 +351,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   :root { --banda-fab: 254px; }
   /* 900 em 1440: cabeçalho 64 + moldura (≥ 55 %) + banda + faixa de rótulos 47: a faixa fecha a dobra */
   .fabrica__grade { grid-template-columns: minmax(0, 1fr) 348px var(--col-acao); grid-template-rows: auto var(--banda-fab); }
-  .fabrica__moldura { grid-column: 1 / -1; height: max(500px, calc(100svh - var(--header) - var(--banda-fab) - var(--faixa) - 1px)); }
-  .fabrica__grade > .fabrica__moldura.celula { padding: 0; } /* em 1440 a legenda fica sobre o papel do desenho */
-  #caminhao { height: 100%; aspect-ratio: auto; }
+  .fabrica__moldura { grid-column: 1 / -1; }
   .fabrica__titulo { grid-column: auto; padding-block: var(--s-3); padding-right: var(--s-2); }
   .fabrica__titulo h2 { max-width: none; font-size: 56px; }
   .fabrica__texto, .fabrica__acao { border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--s-3); }
@@ -643,13 +645,18 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 #whatsapp-flutuante {
   position: fixed; z-index: 60;
   right: max(var(--s-3), env(safe-area-inset-right)); bottom: max(var(--s-3), calc(env(safe-area-inset-bottom) + var(--s-2)));
+  /* menor e translúcido (pedido do dono em 2026-10-21): papel a 70 % com desfoque, contorno em tinta a meia força */
+  min-height: 40px; padding: 10px 16px; font-size: 14px;
+  background: color-mix(in srgb, var(--background) 70%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 60%, transparent);
   transition: opacity var(--t), background-color var(--t);
 }
+#whatsapp-flutuante:hover { background: color-mix(in srgb, var(--background) 92%, transparent); }
 /* some durante a abertura e enquanto outro CTA do conteúdo está na tela (classe via IntersectionObserver em main.js) */
 html.abrindo #whatsapp-flutuante, #whatsapp-flutuante.is-oculto { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity var(--t), visibility 0s var(--t); }
-/* no celular o botão ocupa a largura entre as margens; a faixa legal (28 px embaixo) + 64 px deixam o texto 20 px acima dele (24 + 48 px) */
+/* no celular o botão fica no canto direito; o rodapé ganha 64 px embaixo para o texto legal não ficar sob ele */
 @media (max-width: 767px) {
-  #whatsapp-flutuante { left: max(var(--gutter), env(safe-area-inset-left)); right: max(var(--gutter), env(safe-area-inset-right)); }
+  #whatsapp-flutuante { right: max(var(--gutter), env(safe-area-inset-right)); }
   .rodape { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 }
 

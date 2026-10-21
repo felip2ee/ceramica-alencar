@@ -11,15 +11,14 @@ const ROTULO = "Caminhão carregado de plaquetas percorrendo o mapa do Tocantins
 const CABE = [420, 560]; // o estado cabe nesta caixa do chão
 const LAJE = 3; // espessura da placa do mapa: borda visível (~8 px na escala da célula), hachurada em toda a frente
 const ROTA_Z = LAJE + 0.2;
-const ESCALA = 2.1; // o caminhão é desenhado em 60 × 22 × 26 e ampliado (licença cartográfica): com o estado inteiro no quadro, ~130 px de altura em 1440
-// viewBox fixo na proporção da célula da figura (largura total, ~60 % da tela); o svg usa slice e corta o excesso
-const LARGURA = 1440;
-const ALTURA = 540; // a célula da figura em 1440 × 900 tem ~1440 × 534 (a faixa de rótulos fecha a dobra)
-const GRUPO_LARGURA = 0.94; // o estado inteiro (mais fábrica e caminhão em Palmas) em fração da largura do quadro
+const ESCALA_PADRAO = 2.1; // o caminhão é desenhado em 60 × 22 × 26 e ampliado (licença cartográfica): com o estado inteiro no quadro, ~130 px de altura em 1440
+// Quadro padrão (paisagem, célula de tela cheia no desktop); caminhao(mapa, opcoes) aceita outro quadro e outro giro
+// do chão: o retrato do celular (720 × 1440) gira o chão para a rota descer a tela.
+// enquadrar: "estado" (o estado inteiro de fora a fora) ou "rota" (só fábrica e caminhão em Palmas, para a rota encher o quadro).
+const QUADRO = { largura: 1440, altura: 540, giro: -52, grupoLargura: 0.94, grupoAltura: 0.88, centroY: 0.52, enquadrar: "estado", escala: ESCALA_PADRAO, elevacao: ELEVACAO };
 const ANGULO_MAX = 15;
-// Giro do chão (graus) depois de pôr o norte para cima: a rota Tocantinópolis → Palmas desce na diagonal,
-// da esquerda alta para a direita baixa, e o caminhão aparece de lado em 3/4 (cabine, lateral e rodas).
-const GIRO = -52;
+// Giro do chão (graus, QUADRO.giro) depois de pôr o norte para cima: com −52 a rota Tocantinópolis → Palmas desce na
+// diagonal, da esquerda alta para a direita baixa, e o caminhão aparece de lado em 3/4 (cabine, lateral e rodas).
 // Sol único, o mesmo da casa (casa.mjs, SOMBRA): relativo à câmera, a sombra anda 0,648 para a direita da tela
 // e 0,103 na direção do observador por unidade de altura (sol alto, à frente e à esquerda). Aqui em x, y do chão.
 const SOL = (() => {
@@ -42,10 +41,12 @@ const r1 = (n) => Math.round(n * 10) / 10;
 const unit = ([x, y]) => { const l = Math.hypot(x, y); return [x / l, y / l]; };
 // Gira o chão para o norte (0, −1) cair em −towardViewer: com azimute 35° sem giro, o estado deitaria de lado na tela.
 const [SA, CA] = [Math.sin((AZIMUTE * Math.PI) / 180), Math.cos((AZIMUTE * Math.PI) / 180)];
-const [SG, CG] = [Math.sin((GIRO * Math.PI) / 180), Math.cos((GIRO * Math.PI) / 180)];
-const gira = ([x, y]) => {
-  const [a, b] = [x * SA + y * CA, -x * CA + y * SA];
-  return [a * CG - b * SG, a * SG + b * CG];
+const giraChao = (giro) => {
+  const [SG, CG] = [Math.sin((giro * Math.PI) / 180), Math.cos((giro * Math.PI) / 180)];
+  return ([x, y]) => {
+    const [a, b] = [x * SA + y * CA, -x * CA + y * SA];
+    return [a * CG - b * SG, a * SG + b * CG];
+  };
 };
 
 function dentro([x, y], anel) {
@@ -85,7 +86,9 @@ function saida(p, d, anel) {
  */
 const menos = (a, b) => [a[0] - b[0], a[1] - b[1]];
 
-export function caminhao(mapa) {
+export function caminhao(mapa, opcoes = {}) {
+  const { largura: LARGURA, altura: ALTURA, giro, grupoLargura: GRUPO_LARGURA, grupoAltura, centroY, enquadrar, escala: ESCALA, elevacao } = { ...QUADRO, ...opcoes };
+  const gira = giraChao(giro);
   const lons = mapa.anel.map((p) => p[0]);
   const lats = mapa.anel.map((p) => p[1]);
   const lonMin = Math.min(...lons);
@@ -117,7 +120,7 @@ export function caminhao(mapa) {
   const palmas = chao(mapa.cidades.palmas);
 
   // Ângulo na tela entre dois vetores do chão (independe da escala e da origem da projeção).
-  const unidade = { origin: [0, 0], scale: 1, azimuth: AZIMUTE, elevation: ELEVACAO };
+  const unidade = { origin: [0, 0], scale: 1, azimuth: AZIMUTE, elevation: elevacao };
   const angulo = (a, b) => {
     const [p, q] = [a, b].map(([x, y]) => k.iso([x, y, 0], unidade));
     return (Math.abs(Math.atan2(p[0] * q[1] - p[1] * q[0], p[0] * q[0] + p[1] * q[1])) * 180) / Math.PI;
@@ -197,19 +200,19 @@ export function caminhao(mapa) {
 
   // Enquadramento: o estado inteiro, a fábrica e o caminhão parado em Palmas cabem no quadro (GRUPO_LARGURA da largura,
   // 88 % da altura), centrados. Pedido do dono em 2026-10-21: ver o mapa de fora a fora e o caminhão inteiro.
-  const unidade3 = { origin: [0, 0], scale: 1, azimuth: AZIMUTE, elevation: ELEVACAO };
+  const unidade3 = { origin: [0, 0], scale: 1, azimuth: AZIMUTE, elevation: elevacao };
   const emPalmas = (u, v, z) => [palmas[0] + ESCALA * (u * rumo[0] + v * lado[0]), palmas[1] + ESCALA * (u * rumo[1] + v * lado[1]), z];
   const grupo = [
     ...[-FAB.L / 2, FAB.L / 2].flatMap((a) => [-FAB.W / 2, FAB.W / 2].flatMap((b) => [fabMundo(a, b, LAJE), fabMundo(a, b, LAJE + FAB.H + FAB.t)])),
     fabMundo(-FAB.L / 2 + 5, FAB.W / 2 + 5, LAJE + FAB.c + 2),
     ...[-31, 30].flatMap((u) => [-11, 11].flatMap((v) => [emPalmas(u, v, LAJE), emPalmas(u, v, alt(26))])),
-    ...anel.flatMap(([x, y]) => [[x, y, 0], [x, y, LAJE]]),
+    ...(enquadrar === "estado" ? anel.flatMap(([x, y]) => [[x, y, 0], [x, y, LAJE]]) : []),
   ].map((q) => k.iso(q, unidade3));
   const [gx, gy] = [grupo.map(([x]) => x), grupo.map(([, y]) => y)];
   // pela largura, sem passar de 88 % da altura; centro a 52 % da altura (um pouco abaixo, por causa da legenda em cima)
-  const escalaTela = Math.min((GRUPO_LARGURA * LARGURA) / (Math.max(...gx) - Math.min(...gx)), (0.88 * ALTURA) / (Math.max(...gy) - Math.min(...gy)));
+  const escalaTela = Math.min((GRUPO_LARGURA * LARGURA) / (Math.max(...gx) - Math.min(...gx)), (grupoAltura * ALTURA) / (Math.max(...gy) - Math.min(...gy)));
   const meio = [((Math.max(...gx) + Math.min(...gx)) / 2) * escalaTela, ((Math.max(...gy) + Math.min(...gy)) / 2) * escalaTela];
-  const P = { origin: [LARGURA / 2 - meio[0], ALTURA * 0.52 - meio[1]], scale: escalaTela, azimuth: AZIMUTE, elevation: ELEVACAO };
+  const P = { origin: [LARGURA / 2 - meio[0], ALTURA * centroY - meio[1]], scale: escalaTela, azimuth: AZIMUTE, elevation: elevacao };
 
   // Rótulos de pé, na tela, ancorados no ponto e afastados em em (dx, dy): o corpo muda com a largura
   // (main.js mantém 14 px na tela), então o afastamento acompanha o corpo e não a escala do mapa.
@@ -565,8 +568,8 @@ export function caminhao(mapa) {
   const ys = topo.map(([, y]) => y);
 
   return {
-    // slice: a célula corta o chão que passa do quadro (no celular, os lados), sem achatar o desenho
-    svg: k.figureSvg({ width: LARGURA, height: ALTURA, label: ROTULO, body: grupoMapa + grupoCaminhao }).replace("<svg ", '<svg preserveAspectRatio="xMidYMid slice" '),
+    // meet: o quadro inteiro na célula (o dono quer o estado de fora a fora), sem achatar o desenho
+    svg: k.figureSvg({ width: LARGURA, height: ALTURA, label: ROTULO, body: grupoMapa + grupoCaminhao }).replace("<svg ", '<svg preserveAspectRatio="xMidYMid meet" '),
     meta: {
       inicio: tela([...toc, ROTA_Z]),
       fim: tela([...palmas, ROTA_Z]),

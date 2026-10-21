@@ -80,23 +80,21 @@ function injetarFiguras(F) {
     iniciarCasa(casa);
   }
   const caminhao = document.getElementById("caminhao");
+  // A célula do mapa é a tela inteira: em pé (celular) entra o retrato, com a rota descendo a tela; deitado, a paisagem
+  // com o estado de fora a fora. shortcut: escolhido uma vez no carregamento, virar o aparelho não troca o desenho.
+  const retrato = matchMedia("(orientation: portrait)").matches && F.CAMINHAO_RETRATO;
+  const metaCaminhao = retrato ? F.CAMINHAO_RETRATO_META : F.CAMINHAO_META;
   if (caminhao && F.CAMINHAO) {
-    caminhao.innerHTML = F.CAMINHAO;
+    caminhao.innerHTML = retrato ? F.CAMINHAO_RETRATO : F.CAMINHAO;
     // rótulos do mapa em 14 px na tela: o corpo em unidades do viewBox é 14 / escala do svg
     const svg = caminhao.querySelector("svg");
-    // em 1200+ o mapa aparece inteiro (meet: o estado de fora a fora); abaixo, a célula corta os lados (slice) para o
-    // caminhão não ficar minúsculo
-    const largo = matchMedia("(min-width: 1200px)");
-    const enquadrar = () => svg?.setAttribute("preserveAspectRatio", largo.matches ? "xMidYMid meet" : "xMidYMid slice");
-    enquadrar();
-    largo.addEventListener("change", enquadrar);
     const corpo = () => { const m = svg?.getScreenCTM(); if (m?.a) caminhao.style.setProperty("--u", (14 / m.a).toFixed(2)); };
     corpo();
     new ResizeObserver(corpo).observe(caminhao);
-    caminhao.parentElement.style.setProperty("--norte", `${F.CAMINHAO_META?.norte ?? 0}deg`);
+    caminhao.parentElement.style.setProperty("--norte", `${metaCaminhao?.norte ?? 0}deg`);
   }
   depoisDaAbertura(() => {
-    try { iniciarScroll({ F, reduceMotion: querMenosMovimento() }); } catch (erro) { console.warn("scroll sem coreografia", erro); }
+    try { iniciarScroll({ F: { ...F, CAMINHAO_META: metaCaminhao }, reduceMotion: querMenosMovimento() }); } catch (erro) { console.warn("scroll sem coreografia", erro); }
   });
 }
 

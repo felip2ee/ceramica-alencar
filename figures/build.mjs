@@ -51,6 +51,9 @@ function escreverFigures(mapa) {
 
 const CASA = casa();
 const CAMINHAO = caminhao(mapaTO);
+// Retrato para a célula de tela cheia do celular: o chão gira para a rota descer a tela, a câmera sobe para 40°
+// (a 24° a rota em profundidade encurtaria demais) e o enquadramento é pela rota, não pelo estado inteiro.
+const CAMINHAO_RETRATO = caminhao(mapaTO, { largura: 720, altura: 1440, giro: -20, elevacao: 40, escala: 1.2, grupoAltura: 0.86, centroY: 0.5, enquadrar: "rota" });
 
 escreverFigures({
   LOGO_VIEWBOX: viewBox,
@@ -65,4 +68,6 @@ escreverFigures({
   CASA_META: CASA.meta,
   CAMINHAO: CAMINHAO.svg,
   CAMINHAO_META: CAMINHAO.meta,
+  CAMINHAO_RETRATO: CAMINHAO_RETRATO.svg,
+  CAMINHAO_RETRATO_META: CAMINHAO_RETRATO.meta,
 });

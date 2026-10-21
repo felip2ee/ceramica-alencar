@@ -68,7 +68,7 @@ function revelar(gsap, reduceMotion) {
       // clamp(): o que já está na tela (ou no fim da página) revela mesmo sem chegar a 85%.
       scrollTrigger: reduceMotion
         ? { trigger: el, start: "clamp(top 85%)", once: true }
-        : { trigger: el, start: "clamp(top 88%)", end: "bottom 6%", toggleActions: "play reverse play reverse" },
+        : { trigger: el, start: "clamp(top 88%)", end: "bottom 6%", toggleActions: "play reverse play reverse", pinnedContainer: el.closest("#fabrica") || undefined },
     });
   });
 }
@@ -76,7 +76,8 @@ function revelar(gsap, reduceMotion) {
 const ALTURA_CABECALHO = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header")) || 64;
 
 // Caminhão: a plaqueta cai com o mapa a 40% da tela; depois a seção da Fábrica fica presa (pin) por uma tela
-// inteira de rolagem, e é nesse trecho que o caminhão desce a rota até Palmas, no desktop e no celular.
+// inteira de rolagem com só o mapa à vista (a moldura tem a altura da tela), e é nesse trecho que o caminhão desce
+// a rota até Palmas, no desktop e no celular. Título e texto da seção só aparecem depois, com a rolagem normal.
 function dirigir(gsap, svg, veiculo, meta) {
   const secao = document.getElementById("fabrica");
   const rota = svg.querySelector("#rota-principal");
@@ -222,12 +223,10 @@ function titulos(gsap) {
   for (const el of gsap.utils.toArray(".section:not(.hero) h2:not(.so-leitor), .par__texto h3")) {
     const palavras = dividirPalavras(el);
     if (!palavras.length) continue;
-    const naFabrica = el.closest("#fabrica");
     gsap.from(palavras, {
       opacity: 0.08, y: "0.45em", ease: "none", stagger: 0.25,
-      scrollTrigger: naFabrica
-        ? { trigger: "#fabrica", start: () => `top ${ALTURA_CABECALHO()}px`, end: "+=45%", scrub: 0.3 }
-        : { trigger: el, start: "top 92%", end: "top 48%", scrub: 0.3 },
+      // o título da Fábrica fica abaixo da moldura de tela cheia: entra depois do pin, como os outros
+      scrollTrigger: { trigger: el, start: "top 92%", end: "top 48%", scrub: 0.3, pinnedContainer: el.closest("#fabrica") || undefined },
     });
   }
 }

@@ -43,3 +43,11 @@ test("caminhão: figura com mapa, rota e carroceria", () => {
   assert.equal(F.CAMINHAO_META.partida.length, 2);
   assert.ok(F.CAMINHAO_META.carroceria.w > 0);
 });
+test("caminhão em retrato (celular): quadro 720 × 1440 e rota descendo a tela", () => {
+  assert.match(F.CAMINHAO_RETRATO, /viewBox="0 0 720 1440"/); assert.match(F.CAMINHAO_RETRATO, /id="rota-principal"/);
+  assert.match(F.CAMINHAO_RETRATO, /<g id="caminhao-veiculo" class="movel">/);
+  const m = F.CAMINHAO_RETRATO_META;
+  const [dx, dy] = [m.fim[0] - m.partida[0], m.fim[1] - m.partida[1]];
+  assert.ok(dy > Math.abs(dx) && dy > 0.3 * 1440, `a rota desce: dx=${dx} dy=${dy}`);
+  assert.ok(m.partida[1] < 0.5 * 1440 && m.fim[1] > 0.75 * 1440, "parte na metade de cima, chega perto da base");
+});
