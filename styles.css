@@ -206,19 +206,20 @@ main { padding-top: var(--header); }
 /* desenho técnico em três pesos de linha: silhueta 2 px, arestas das peças 1 px, fiadas e juntas 0,5 px */
 #casa .iso-edge { stroke: rgba(90, 52, 35, .75); stroke-width: 1px; }
 #casa :is(.fileira, [data-parte="jardim"]) :is(.iso-edge, .iso-line[data-tone="faint"]) { stroke: rgba(90, 52, 35, .45); stroke-width: .5px; }
-#casa :is(.silhueta, .mat-chao > .iso-edge, [data-parte="cobertura"] > .mat-cobertura > .iso-edge) { stroke: #5A3423; stroke-width: 2px; }
+#casa :is(.silhueta, [data-parte="cobertura"] > .mat-cobertura > .iso-edge) { stroke: #5A3423; stroke-width: 2px; }
 /* hachura de sombra a 45°: chão e vidro a 35 %, face curta de plaqueta a 45 %, testeira a 25 % */
 #casa .hachura { stroke: rgba(90, 52, 35, .35); stroke-width: .5px; }
 #casa .fileira ~ .estrutura .hachura { stroke: rgba(90, 52, 35, .45); }
 #casa .estrutura .hachura.hachura--leve { stroke: rgba(90, 52, 35, .25); }
 #casa .vidro .hachura { stroke: rgba(90, 52, 35, .35); }
-/* reflexo do vidro: um traço claro na diagonal de cada folha */
-#casa .reflexo { stroke: #FBF6EC; stroke-width: 1.5px; }
+/* vidro em dois tons: o alto de cada folha mais claro (céu), sem traço de reflexo */
+#casa .vidro-alto { fill: #FBF6EC; fill-opacity: .45; stroke: none; }
 /* tom de queima por plaqueta (sorteio sem correlação): base, um pouco mais claro, um pouco mais escuro */
 #casa .tom-0 { fill: #B65E3C; } #casa .tom-1 { fill: #BF6A47; } #casa .tom-2 { fill: #A85538; }
-/* sombras projetadas na fachada (beiral, vergas, peitoris): núcleo 14 % e penumbra 7 % de tinta */
+/* sombras projetadas na fachada: caixilhos, vergas e peitoris a 14 %; o beiral desce como véu de 8 % com hachura a 35 % */
 #casa .sombra-face { fill: var(--ink); fill-opacity: .14; stroke: none; }
-#casa .sombra-face--pen { fill-opacity: .07; }
+#casa .sombra-beiral { fill: var(--ink); fill-opacity: .08; stroke: none; }
+#casa .estrutura .hachura.hachura--beiral { stroke: rgba(90, 52, 35, .35); }
 #casa .mat-vidro { --anatomy-top: #F3ECDF; --anatomy-shade-0: #DDD2C0; --anatomy-shade-1: #E4DAC8; --anatomy-shade-2: #EDE4D4; --anatomy-shade-3: #F0E8DA; --anatomy-face: #EDE4D4; opacity: .7; }
 /* até a construção começar, as partes da casa ficam ocultas (o JS revela uma a uma) */
 #casa:not(.is-ready) :is(.fileira, .movel, .estrutura, .vidro, #plaqueta-solta) { opacity: 0; }
