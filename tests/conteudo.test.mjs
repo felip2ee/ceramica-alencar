@@ -104,3 +104,7 @@ test("uma casa por argumento: sem redundância e sem texto que exponha o arquite
   assert.ok((texto.match(/cor que o projeto pedir/g) || []).length <= 2, "cor que o projeto pedir repetido");
   assert.doesNotMatch(texto, /relevo do tijolo|quilômetro(?!s)/);
 });
+test("no toque, a rolagem é normalizada pelo GSAP (sem estalo do pin no celular)", () => {
+  const scroll = readFileSync(new URL("../scroll.mjs", import.meta.url), "utf8");
+  assert.match(scroll, /ScrollTrigger\.isTouch === 1[^\n]*ScrollTrigger\.normalizeScroll\(\{ allowNestedScroll: true \}\)/);
+});

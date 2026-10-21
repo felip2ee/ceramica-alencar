@@ -26,6 +26,10 @@ export function iniciarScroll({ F, reduceMotion }) {
   // No celular a barra de endereço muda a altura da janela a cada rolada; sem isto o ScrollTrigger refaz todas as
   // medidas no meio da rolagem e os pins pulam (espaço em branco, seção aparecendo duas vezes).
   ScrollTrigger.config({ ignoreMobileResize: true });
+  // No toque, o navegador avança dezenas de px entre dois eventos de scroll numa flicada: o pin só prende no evento
+  // seguinte e a seção estala de volta ao topo (e de novo ao soltar, no fim). normalizeScroll leva a rolagem para o
+  // thread do JS, o ScrollTrigger atualiza a cada quadro e o pin prende e solta no px certo. Só no toque; o mouse não precisa.
+  if (ScrollTrigger.isTouch === 1) ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
   // O refresh rola para 0 e mede; com html { scroll-behavior: smooth } essa rolagem vira animação
   // e todo start/end sai deslocado pelo scroll atual. Desliga o smooth só durante o refresh.
   const raiz = document.documentElement;
