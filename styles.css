@@ -511,11 +511,15 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .par__fig { width: 100%; height: auto; margin: var(--s-2) 0; overflow: visible; justify-self: center; }
 /* cotas dos desenhos em 14 px na tela: main.js põe --u = 14 / escala do svg */
 .par__fig .cota__texto { font-size: calc(var(--u, 14) * 1px); }
-.par__peca { fill: var(--surface); stroke: rgba(90, 52, 35, .75); stroke-width: 1; }
+/* três pesos de linha, em px de tela (non-scaling-stroke): contorno 1,5, cotas e chão 0,75, juntas das peças 0,5 */
+.par__fig * { vector-effect: non-scaling-stroke; }
+.par__peca { fill: var(--surface); stroke: rgba(90, 52, 35, .8); stroke-width: .5; }
 .par__peca--topo { fill: #E8DCC6; }
-.par__estrado { fill: #E0D5C1; stroke: rgba(90, 52, 35, .75); stroke-width: 1; }
+.par__contorno { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+.par__estrado { fill: #E0D5C1; stroke: var(--ink); stroke-width: 1.5; }
+.par__estrado--bloco { fill: none; }
 .par__hachura { fill: url(#hachura-cota); stroke: none; }
-.par__linha { fill: none; stroke: rgba(90, 52, 35, .6); stroke-width: .75; }
+.par__cota, .par__linha { fill: none; stroke: rgba(90, 52, 35, .7); stroke-width: .75; }
 .par__seta { fill: var(--ink); }
 .par__texto { --mais: linear-gradient(var(--ink), var(--ink)); }
 /* "+" de 11 px centrado no fio: borda de fora a 16 px da tela (como nas molduras) e cruzamento com o fio do meio */
@@ -531,6 +535,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   .par__celula { display: grid; grid-row: span 2; grid-template-rows: subgrid; }
   .par__celula + .par__celula { border-top: 0; border-left: 1px solid var(--line); }
   .par__celula + .par__celula > .celula { padding-left: var(--s-3); }
+  #arquitetos .par__desenho { padding-right: var(--s-3); } /* mesma largura de desenho nas duas colunas: mesma escala e mesma linha de chão */
   #lojas .par__texto::before { left: auto; right: 11px; }
   #lojas .par__texto::after { display: block; left: -6px; }
 }
