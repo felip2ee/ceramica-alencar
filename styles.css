@@ -200,16 +200,22 @@ main { padding-top: var(--header); }
 }
 #casa svg { width: 100%; height: auto; }
 /* vidro em neutro quente (só a plaqueta tem cor) */
-/* placa de chão na mesma projeção: areia (família --surface), contorno no fio da grade; sombra chapada em tinta a 8 % */
+/* placa de chão na mesma projeção: areia (família --surface), silhueta em tinta; sombra em tinta a 4 % com hachura por cima */
 #casa .mat-chao { --anatomy-top: #F0E8DA; --anatomy-face: #E8DECC; --anatomy-shade-0: #E4DAC8; --anatomy-shade-1: #E8DECC; --anatomy-shade-2: #EBE2D2; --anatomy-shade-3: #EDE4D4; }
-#casa .mat-chao > .iso-edge { stroke: rgba(90, 52, 35, .5); }
 #casa .sombra { fill: var(--ink); fill-opacity: .04; stroke: none; }
-/* desenho técnico: contorno fino em tinta em toda aresta; fiadas e juntas mais leves; hachura de sombra a 35 % */
-#casa .iso-edge { stroke: rgba(90, 52, 35, .7); stroke-width: .7px; }
-#casa .fileira .iso-edge, #casa [data-parte="jardim"] .iso-edge { stroke: rgba(90, 52, 35, .45); stroke-width: .6px; }
-#casa .fileira .iso-line[data-tone="faint"], #casa [data-parte="jardim"] .iso-line[data-tone="faint"] { stroke: rgba(90, 52, 35, .3); stroke-width: .5px; }
+/* desenho técnico em três pesos de linha: silhueta 2 px, arestas das peças 1 px, fiadas e juntas 0,5 px */
+#casa .iso-edge { stroke: rgba(90, 52, 35, .75); stroke-width: 1px; }
+#casa :is(.fileira, [data-parte="jardim"]) :is(.iso-edge, .iso-line[data-tone="faint"]) { stroke: rgba(90, 52, 35, .6); stroke-width: .5px; }
+#casa :is(.silhueta, .mat-chao > .iso-edge, [data-parte="cobertura"] > .mat-cobertura > .iso-edge) { stroke: #5A3423; stroke-width: 2px; }
+/* hachura de sombra a 45°: chão e vidro a 35 %, face curta de plaqueta a 45 %, testeira a 25 % */
 #casa .hachura { stroke: rgba(90, 52, 35, .35); stroke-width: .5px; }
-#casa .fileira ~ .estrutura .hachura { stroke: rgba(90, 52, 35, .45); } /* na face curta, mais escura, a hachura precisa de mais tinta */
+#casa .fileira ~ .estrutura .hachura { stroke: rgba(90, 52, 35, .45); }
+#casa .estrutura .hachura.hachura--leve { stroke: rgba(90, 52, 35, .25); }
+#casa .vidro .hachura { stroke: rgba(90, 52, 35, .35); }
+/* reflexo do vidro: um traço claro na diagonal de cada folha */
+#casa .reflexo { stroke: #FBF6EC; stroke-width: 1.5px; }
+/* tons de queima por peça na face da plaqueta (a cor da face é o tom claro) */
+#casa .tom-1 { fill: #B65E3C; } #casa .tom-2 { fill: #A85D3A; } #casa .tom-3 { fill: #8E4529; }
 #casa .mat-vidro { --anatomy-top: #F3ECDF; --anatomy-shade-0: #DDD2C0; --anatomy-shade-1: #E4DAC8; --anatomy-shade-2: #EDE4D4; --anatomy-shade-3: #F0E8DA; --anatomy-face: #EDE4D4; opacity: .7; }
 /* até a construção começar, as partes da casa ficam ocultas (o JS revela uma a uma) */
 #casa:not(.is-ready) :is(.fileira, .movel, .estrutura, .vidro, #plaqueta-solta) { opacity: 0; }

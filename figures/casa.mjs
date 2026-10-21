@@ -89,6 +89,17 @@ function hachura(poli, passo) {
 console.assert(recorta([-1, 0.5], [2, 0.5], [[0, 0], [1, 0], [1, 1], [0, 1]]).flat().join() === "0,0.5,1,0.5", "recorta");
 console.assert(hachura([[0, 0], [10, 0], [10, 10], [0, 10]], 2).length === 9, "hachura");
 
+// Tom de cada plaqueta (determinístico): 0 claro (cor da face), 1 médio, 2 queimado, 3 escuro — a parede mostra os tons do produto.
+const TOM = (n, i) => {
+  const h = (((Math.sin(n * 12.9898 + i * 78.233) * 43758.5453) % 1) + 1) % 1;
+  return h < 0.4 ? 0 : h < 0.72 ? 1 : h < 0.88 ? 2 : 3;
+};
+// Peças de uma fiada entre x0 e x1, cortadas nas juntas: [[a, b], ...].
+const pecas = (x0, x1, js) => {
+  const cortes = [x0, ...js.filter((x) => x > x0 && x < x1).sort((a, b) => a - b), x1];
+  return cortes.slice(1).map((b, i) => [cortes[i], b]);
+};
+
 // Casco convexo (cadeia monótona) dos pontos de planta: contorno da sombra.
 function casco(pts) {
   const p = [...pts].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
@@ -134,6 +145,15 @@ export function casa() {
   const grupo = (pecas, attrs, centro) => ({ prof: prof(centro), svg: k.groupSvg(ordenar(pecas), attrs) });
 
   const camadas = [];
+  // Desenho num plano de face: f([u, v]) → ponto 3D. Retângulo fechado, hachura recortada e tons de plaqueta.
+  const faceY = (Y) => ([u, v]) => [u, Y, v];
+  const faceX = (X) => ([u, v]) => [X, u, v];
+  const quad = (f, u0, v0, u1, v1) => k.pathOf([[u0, v0], [u1, v0], [u1, v1], [u0, v1]].map((q) => k.iso(f(q), P)), true);
+  const hachuraFace = (f, poli, passo = HACHURA) => hachura(poli, passo).map(([a, b]) => k.segment(f(a), f(b), P)).join("");
+  const tons = (f, n, faixas, v0, v1) => [1, 2, 3].map((t) => {
+    const d = faixas.filter(([, , i]) => TOM(n, i) === t).map(([a, b]) => quad(f, a, v0, b, v1)).join("");
+    return d ? `<path class="tom-${t}" d="${d}"/>` : "";
+  }).join("");
 
   // 0 · placa de chão, sombra projetada, piso e deck (o deck é o degrau da porta). A base da casa assenta na placa.
   const topoCob = COB_Z + COBERTURA;
@@ -204,7 +224,8 @@ export function casa() {
   camadas.push(ordenar([sofa, mesa, luminaria, planta]));
 
   // 4 · cinta recuada (atrás das plaquetas que a encostam).
-  camadas.push(k.groupSvg(caixa({ x: BEIRAL, y: BEIRAL, w: PLANTA.w - 2 * BEIRAL, d: PLANTA.d - 2 * BEIRAL, r: 0 }, PE, CINTA,
+  // Corre a fachada inteira, recuada 15 cm: a fresta de sombra sob a laje não muda de estado no meio do muro.
+  camadas.push(k.groupSvg(caixa({ x: 0, y: 0, w: PLANTA.w - ESP, d: PLANTA.d - ESP, r: 0 }, PE, CINTA,
     { tone: "mid", className: "mat-escuro" }).svg, { class: "estrutura", "data-parte": "cinta" }));
 
   // 5 · fileiras de plaqueta: muro da frente (y = d) + retorno (x = w). Quem é dono da quina pinta por último.
@@ -216,15 +237,16 @@ export function casa() {
     const retorno = { x: PLANTA.w - ESP, y: RETORNO, w: ESP, d: (par ? PLANTA.d - ESP : PLANTA.d) - RETORNO, r: 0 };
     const juntasFrente = (t) => JUNTAS_FRENTE[n % 2].filter((x) => x > t.x && x < t.x + t.w)
       .map((x) => k.segment([x, PLANTA.d, z0], [x, PLANTA.d, z0 + FIADA], P)).join("");
+    const tonsFrente = (t) => tons(faceY(PLANTA.d), n, pecas(t.x, t.x + t.w, JUNTAS_FRENTE[n % 2]).map(([a, b]) => [a, b, Math.round(a)]), z0, z0 + FIADA);
     const juntasRetorno = JUNTAS_RETORNO[n % 2].map((y) => k.segment([PLANTA.w, y, z0], [PLANTA.w, y, z0 + FIADA], P)).join("");
-    const estilo = (linhas) => ({ tone: "lo", inner: k.lineSvg(linhas, { tone: "faint" }) });
+    const estilo = (linhas, cor = "") => ({ tone: "lo", inner: cor + k.lineSvg(linhas, { tone: "faint" }) });
     // A última fileira deixa o vão da plaqueta solta: dois trechos, cada um com as suas juntas.
     const ultima = n === FILEIRAS - 1;
     const trechos = ultima
       ? [{ ...frente, w: SOLTA.x }, { ...frente, x: SOLTA.x + SOLTA.w, w: frente.w - SOLTA.x - SOLTA.w }]
       : [frente];
     // A plaqueta solta pinta entre os dois trechos: atrás do da direita, à frente do da esquerda.
-    const a = trechos.map((t) => k.solidSvg(k.slabOf(t, z0, FIADA, P), estilo(juntasFrente(t))))
+    const a = trechos.map((t) => k.solidSvg(k.slabOf(t, z0, FIADA, P), estilo(juntasFrente(t), tonsFrente(t))))
       .join(ultima ? `<g id="plaqueta-solta" class="mat-plaqueta">${k.solidSvg(k.slabOf(SOLTA, z0, FIADA, P), { tone: "lo" })}</g>` : "");
     const b = k.solidSvg(k.slabOf(retorno, z0, FIADA, P), estilo(juntasRetorno));
     camadas.push(`<g class="fileira mat-plaqueta" data-fileira="${n}">${par ? b + a : a + b}</g>`);
@@ -236,29 +258,56 @@ export function casa() {
     .map(([a, b]) => k.segment([PLANTA.w, a[0], a[1]], [PLANTA.w, b[0], b[1]], P)).join(""), { className: "hachura" }),
   { class: "estrutura", "data-parte": "paredes" }));
 
-  // 5b · vãos da fachada longa, à frente das fiadas: requadro em tinta, vidro neutro e peitoril.
+  // 5b · vãos da fachada longa, à frente das fiadas: caixilho de 4 cm em tinta, verga e peitoril em neutro,
+  // vidro com o requadro interno (segundo retângulo), hachura de sombra no alto e à esquerda e um reflexo diagonal por folha.
   const vaos = [];
-  for (const j of JANELAS) {
-    vaos.push(k.solidSvg(k.slabOf({ x: j.x, y: PLANTA.d, w: j.w, d: 3, r: 0 }, j.z, j.h, P), { tone: "mid", className: "mat-escuro" }));
-    vaos.push(k.solidSvg(k.slabOf({ x: j.x + 6, y: PLANTA.d + 3, w: j.w - 12, d: 1, r: 0 }, j.z + 6, j.h - 12, P), { tone: "mid", className: "mat-vidro" }));
-    vaos.push(k.solidSvg(k.slabOf({ x: j.x - 6, y: PLANTA.d, w: j.w + 12, d: 8, r: 0 }, j.z - 5, 5, P), { tone: "mid", className: "mat-cobertura" }));
-  }
-  const portaY = PLANTA.d + 3;
-  const travessas = [ENTRADA.x + 90].map((x) => k.segment([x, portaY + 1, ENTRADA.z + 6], [x, portaY + 1, ENTRADA.h - 6], P)).join("");
-  vaos.push(k.solidSvg(k.slabOf({ x: ENTRADA.x, y: PLANTA.d, w: ENTRADA.w, d: 3, r: 0 }, ENTRADA.z, ENTRADA.h, P), { tone: "mid", className: "mat-escuro" }));
-  vaos.push(k.solidSvg(k.slabOf({ x: ENTRADA.x + 6, y: portaY, w: ENTRADA.w - 12, d: 1, r: 0 }, ENTRADA.z + 6, ENTRADA.h - 12, P),
-    { tone: "mid", className: "mat-vidro", inner: k.lineSvg(travessas, { tone: "mid" }) }));
+  const CX = 4; // profundidade do caixilho
+  const vidroFace = faceY(PLANTA.d + CX + 1);
+  const folhaVidro = (u0, v0, u1, v1) => {
+    const R = 5; // largura do requadro interno visto no vidro
+    const linhas = [
+      k.lineSvg(quad(vidroFace, u0 + R, v0 + R, u1 - R, v1 - R), { tone: "mid" }),
+      k.lineSvg(hachuraFace(vidroFace, [[u0, v1 - R], [u1, v1 - R], [u1, v1], [u0, v1]], 4)
+        + hachuraFace(vidroFace, [[u0, v0], [u0 + R, v0], [u0 + R, v1 - R], [u0, v1 - R]], 4), { className: "hachura" }),
+      k.lineSvg(k.segment(vidroFace([u0 + R + (u1 - u0) * 0.15, v0 + R + (v1 - v0) * 0.25]), vidroFace([u1 - R - (u1 - u0) * 0.1, v0 + R + (v1 - v0) * 0.62]), P), { className: "reflexo" }),
+    ];
+    return linhas.join("");
+  };
+  const vao = ({ x, w, z, h }, folhas, { peitoril }) => {
+    const pecasVao = [
+      k.solidSvg(k.slabOf({ x, y: PLANTA.d, w, d: CX, r: 0 }, z, h, P), { tone: "mid", className: "mat-escuro" }),
+      k.solidSvg(k.slabOf({ x: x + 6, y: PLANTA.d + CX, w: w - 12, d: 1, r: 0 }, z + 6, h - 12, P), {
+        tone: "mid", className: "mat-vidro",
+        inner: folhas.map(([a, b]) => folhaVidro(a, z + 6, b, z + h - 6)).join("")
+          + k.lineSvg(folhas.slice(1).map(([a]) => k.segment(vidroFace([a, z + 6]), vidroFace([a, z + h - 6]), P)).join(""), { tone: "hi" }),
+      }),
+      k.solidSvg(k.slabOf({ x: x - 6, y: PLANTA.d, w: w + 12, d: CX + 3, r: 0 }, z + h, 6, P), { tone: "mid", className: "mat-cobertura" }), // verga
+    ];
+    if (peitoril) pecasVao.push(k.solidSvg(k.slabOf({ x: x - 6, y: PLANTA.d, w: w + 12, d: CX + 6, r: 0 }, z - 5, 5, P), { tone: "mid", className: "mat-cobertura" }));
+    else pecasVao.push(k.solidSvg(k.slabOf({ x: x - 4, y: PLANTA.d, w: w + 8, d: 14, r: 0 }, PISO_Z, -PISO_Z + 2, P), { tone: "mid", className: "mat-cobertura" })); // soleira
+    return pecasVao.join("");
+  };
+  for (const j of JANELAS) vaos.push(vao(j, [[j.x + 6, j.x + j.w - 6]], { peitoril: true }));
+  const MEIO = ENTRADA.x + ENTRADA.w / 2;
+  vaos.push(vao(ENTRADA, [[ENTRADA.x + 6, MEIO], [MEIO, ENTRADA.x + ENTRADA.w - 6]], { peitoril: false }));
   camadas.push(k.groupSvg(vaos.join(""), { class: "vidro" }));
 
   // 6 · pano de vidro de 2,6 m: montantes de quina e de arranque, verga, peitoril, vidro com montantes e puxador da porta.
   const VIDRO = { x: PLANTA.w - 8, y: ESP, w: 4, d: RETORNO - 8 - ESP, r: 0 };
-  const montantes = [95, 175, 255].map((y) => k.rise([VIDRO.x + VIDRO.w, y], 4, VAO - 4, P)).join("");
   const escuro = { tone: "mid", className: "mat-escuro" };
+  const panos = [ESP, 95, 175, 255, RETORNO - 8];
+  const vidroBay = faceX(VIDRO.x + VIDRO.w);
+  const reflexos = panos.slice(1).map((b, i) => {
+    const a = panos[i];
+    return k.segment(vidroBay([a + (b - a) * 0.2, 4 + (VAO - 8) * 0.3]), vidroBay([b - (b - a) * 0.15, 4 + (VAO - 8) * 0.7]), P);
+  }).join("");
+  const trilhos = [PLANTA.w - 10, PLANTA.w - 5].map((x) => k.lineOnTop([x, ESP], [x, RETORNO - 8], 4, P)).join("");
   camadas.push(k.groupSvg(ordenar([
     caixa({ x: PLANTA.w - ESP, y: 0, w: ESP, d: ESP, r: 0 }, 0, PE, escuro),
-    caixa({ x: PLANTA.w - ESP, y: ESP, w: ESP + 2, d: RETORNO - ESP, r: 0 }, 0, 4, escuro),
+    caixa({ x: PLANTA.w - ESP, y: ESP, w: ESP + 2, d: RETORNO - ESP, r: 0 }, 0, 4, { ...escuro, inner: k.lineSvg(trilhos, { tone: "lo" }) }), // soleira com trilho
     caixa({ x: PLANTA.w - ESP, y: ESP, w: ESP, d: RETORNO - ESP, r: 0 }, VAO, PE - VAO, escuro),
-    { prof: prof([VIDRO.x, 175, VAO / 2]), svg: k.solidSvg(k.slabOf(VIDRO, 4, VAO - 4, P), { tone: "mid", className: "mat-vidro", inner: k.lineSvg(montantes, { tone: "mid" }) }) },
+    { prof: prof([VIDRO.x, 175, VAO / 2]), svg: k.solidSvg(k.slabOf(VIDRO, 4, VAO - 4, P), { tone: "mid", className: "mat-vidro", inner: k.lineSvg(reflexos, { className: "reflexo" }) }) },
+    ...[95, 175, 255].map((y) => caixa({ x: VIDRO.x, y: y - 2, w: VIDRO.w + 4, d: 4, r: 0 }, 4, VAO - 4, escuro)), // montantes com profundidade
     caixa({ x: PLANTA.w - ESP, y: RETORNO - 8, w: ESP, d: 8, r: 0 }, 0, PE, escuro),
     { ...caixa({ x: PLANTA.w - 2, y: 170, w: 2, d: 3, r: 0 }, 95, 30, escuro), prof: Infinity }, // puxador no montante da porta, por fora do vidro
   ]), { class: "vidro" }));
@@ -268,12 +317,23 @@ export function casa() {
   camadas.push(k.groupSvg([
     k.solidSvg(k.slabOf(PLANO_COB, COB_Z, COBERTURA, P), {
       tone: "mid", className: "mat-cobertura",
-      inner: k.lineSvg(k.sideSeam(PLANO_COB, COB_Z + COBERTURA / 2, P, 2), { tone: "hi" })
-        + k.lineSvg(k.planOutline(k.insetPlan(PLANO_COB, 12), topo, P, 2), { tone: "faint" }),
+      // espessura de 20 cm desenhada: costura da testeira, pingadeira junto à aresta de baixo, hachura na testeira lateral
+      // (face de sombra) e juntas da manta a cada metro, de borda a borda do rufo interno.
+      inner: k.lineSvg(hachuraFace(faceX(PLANO_COB.x + PLANO_COB.w), [[PLANO_COB.y, COB_Z], [PLANO_COB.y + PLANO_COB.d, COB_Z], [PLANO_COB.y + PLANO_COB.d, topo], [PLANO_COB.y, topo]]), { className: "hachura hachura--leve" })
+        + k.lineSvg(k.sideSeam(PLANO_COB, COB_Z + 12, P, 2), { tone: "hi" })
+        + k.lineSvg(k.sideSeam(PLANO_COB, COB_Z + 4, P, 2), { tone: "mid" })
+        + k.lineSvg(k.planOutline(k.insetPlan(PLANO_COB, 12), topo, P, 2), { tone: "mid" })
+        + k.lineSvg(Array.from({ length: 10 }, (_, i) => PLANO_COB.x + 100 * (i + 1))
+          .map((x) => k.lineOnTop([x, PLANO_COB.y + 12], [x, PLANO_COB.y + PLANO_COB.d - 12], topo, P)).join(""), { tone: "faint" }),
     }),
     k.solidSvg(k.slabOf(CLARABOIA, topo, 10, P), { tone: "mid" }),
     k.solidSvg(k.slabOf(k.insetPlan(CLARABOIA, 10), topo + 10, 2, P), { tone: "lo", className: "mat-vidro" }),
   ], { class: "estrutura", "data-parte": "cobertura" }));
+
+  // 7b · silhueta da casa a 2 px: as duas arestas verticais extremas das paredes (laje e placa engrossam por CSS).
+  // Antes da mureta, que passa na frente da aresta esquerda.
+  camadas.push(k.groupSvg(k.lineSvg(k.segment([0, PLANTA.d, PISO_Z], [0, PLANTA.d, COB_Z], P)
+    + k.segment([PLANTA.w, 0, 0], [PLANTA.w, 0, COB_Z], P), { className: "silhueta" }), { class: "estrutura", "data-parte": "cobertura" }));
 
   // 8 · mureta de plaqueta (8 fiadas) à frente da fachada, aberta no caminho da entrada.
   const fiadasMureta = (m) => {
@@ -285,7 +345,12 @@ export function casa() {
   };
   camadas.push(k.groupSvg(ordenar(MURETA.map((m) => ({
     prof: prof(meio(m, PISO_Z, MURETA_H)),
-    svg: k.solidSvg(k.slabOf(m, PISO_Z, MURETA_H - PISO_Z, P), { tone: "lo", className: "mat-plaqueta", inner: k.lineSvg(fiadasMureta(m), { tone: "faint" }) }),
+    svg: k.solidSvg(k.slabOf(m, PISO_Z, MURETA_H - PISO_Z, P), {
+      tone: "lo", className: "mat-plaqueta",
+      inner: Array.from({ length: MURETA_H / FIADA }, (_, i) => tons(faceY(m.y + m.d), 100 + i,
+        pecas(m.x, m.x + m.w, juntas(m.x + m.w, m.x, i % 2 ? PECA / 2 : 0)).map(([a, b]) => [a, b, Math.round(a)]), i * FIADA, (i + 1) * FIADA)).join("")
+        + k.lineSvg(fiadasMureta(m), { tone: "faint" }),
+    }),
   }))), { class: "estrutura", "data-parte": "jardim" }));
 
   const cantos = k.boxCorners(SOLTA, PE - FIADA, PE).map((p) => k.iso(p, P));
