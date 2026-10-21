@@ -79,7 +79,14 @@ function injetarFiguras(F) {
     iniciarCasa(casa);
   }
   const caminhao = document.getElementById("caminhao");
-  if (caminhao && F.CAMINHAO) caminhao.innerHTML = F.CAMINHAO;
+  if (caminhao && F.CAMINHAO) {
+    caminhao.innerHTML = F.CAMINHAO;
+    // rótulos do mapa em 14 px na tela: o corpo em unidades do viewBox é 14 / escala do svg
+    const svg = caminhao.querySelector("svg");
+    const corpo = () => { const m = svg?.getScreenCTM(); if (m?.a) caminhao.style.setProperty("--u", (14 / m.a).toFixed(2)); };
+    corpo();
+    new ResizeObserver(corpo).observe(caminhao);
+  }
   depoisDaAbertura(() => {
     try { iniciarScroll({ F, reduceMotion: querMenosMovimento() }); } catch (erro) { console.warn("scroll sem coreografia", erro); }
   });

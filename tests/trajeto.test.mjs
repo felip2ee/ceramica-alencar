@@ -35,6 +35,12 @@ test("poligonosCarga: a plaqueta extra fica dentro da carroceria", () => {
   }
   assert.deepEqual(frente[0], topo[3], "frente nasce da aresta de baixo do topo");
 });
+test("poligonosCarga: com centro e eixos da figura, a plaqueta centra no ponto dado", () => {
+  const { topo } = poligonosCarga({ sx: 0, sy: 0, w: 300, h: 200, centro: [100, 50], eixos: [[20, 10], [-4, 3]] });
+  const media = topo.reduce(([a, b], [x, y]) => [a + x / 4, b + y / 4], [0, 0]);
+  assert.deepEqual(media.map((v) => Math.round(v)), [100, 50]);
+  assert.deepEqual(topo[1], [topo[0][0] + 20, topo[0][1] + 10]);
+});
 test("rota: pontos a partir da partida, relativos a ela", () => {
   assert.deepEqual(rotaDesde("M414.9 107.6L350.6 227.9L342.8 281.8L307.5 387.7", [350.6, 227.9]),
     [{x:0, y:0}, {x:-7.8, y:53.9}, {x:-43.1, y:159.8}]);

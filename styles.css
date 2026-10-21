@@ -268,17 +268,11 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .iso-dots[data-tone="red"] circle { fill: var(--anatomy-red); opacity: 1; }
 #rota-principal { stroke-width: 1.6; }
 .rotulo-mapa { font: 500 15px var(--font-text); fill: var(--anatomy-hi); paint-order: stroke; stroke: var(--anatomy-paper); stroke-linejoin: round; }
-/* o svg (viewBox 793) escala com a largura do #caminhao: --u = 14 × 793 / largura, em degraus, para o rótulo ler 13–15 px */
-#caminhao { container-type: inline-size; }
-.rotulo-mapa { --u: 14; font-size: calc(var(--u) * 1px); stroke-width: calc(var(--u) * .2px); }
-@container (max-width: 740px) { .rotulo-mapa { --u: 16; } }
-@container (max-width: 650px) { .rotulo-mapa { --u: 18; } }
-@container (max-width: 580px) { .rotulo-mapa { --u: 20; } }
-@container (max-width: 520px) { .rotulo-mapa { --u: 22.5; } }
-@container (max-width: 460px) { .rotulo-mapa { --u: 25; } }
-@container (max-width: 415px) { .rotulo-mapa { --u: 28; } }
-@container (max-width: 370px) { .rotulo-mapa { --u: 31; } }
-@container (max-width: 330px) { .rotulo-mapa { --u: 35; } }
+/* corpo dos rótulos do mapa em unidades do viewBox; main.js põe --u = 14 / escala do svg (14 px na tela) */
+#caminhao { --u: 18; }
+.rotulo-mapa { font-size: calc(var(--u) * 1px); stroke-width: calc(var(--u) * .2px); }
+.rotulo-mapa--estado { text-transform: uppercase; letter-spacing: .08em; }
+@media (max-width: 767px) { .rotulo-mapa--estado { display: none; } } /* no celular o mapa é pequeno: o nome do estado encosta em Palmas */
 /* caminhão e mapa: o mesmo acabamento da casa. Silhueta 2 px (laje do mapa; no caminhão, a base em tinta de 4 px
    por baixo das peças deixa 2 px de borda), arestas 1 px, juntas e hachura 0,5 px; sombra projetada pelo mesmo sol */
 #caminhao .iso-edge { stroke: rgba(90, 52, 35, .75); stroke-width: 1px; }
@@ -307,13 +301,14 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 @media (min-width: 768px) { .galeria { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1280px) { .galeria { grid-template-columns: repeat(3, 1fr); } }
 
-/* fábrica: mesma grade do hero (fio de borda a borda, colunas 1fr | 348 | 436 alinhadas com as de cima).
-   Moldura da figura sozinha em cima (tracejada, "+" nos cantos); título | texto | ação; quatro números em células iguais */
+/* fábrica: em ≥ 1024, figura à esquerda (58 %, altura da tela menos cabeçalho e números) e, à direita, células
+   empilhadas: rótulo e título, texto, ganho das lojas com o botão, ganho dos arquitetos. A faixa de números
+   abaixo divide os mesmos 58 % em duas colunas, então o fio entre figura e texto continua até o fim da seção. */
 .fabrica { padding-top: 0; }
 .fabrica__grade { grid-template-columns: minmax(0, 1fr); }
 .fabrica__moldura {
   position: relative; display: flex; align-items: center; justify-content: center;
-  padding: var(--s-8) var(--s-2) var(--s-4); border-bottom: 1px solid var(--line);
+  padding: 56px var(--s-2) var(--s-3);
   --mais: linear-gradient(var(--ink), var(--ink));
   background:
     var(--mais) left 11px top 16px / 11px 1px no-repeat, var(--mais) left 16px top 11px / 1px 11px no-repeat,
@@ -321,56 +316,43 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
     var(--mais) left 11px bottom 16px / 11px 1px no-repeat, var(--mais) left 16px bottom 11px / 1px 11px no-repeat,
     var(--mais) right 11px bottom 16px / 11px 1px no-repeat, var(--mais) right 16px bottom 11px / 1px 11px no-repeat;
 }
-/* moldura tracejada entre as quatro marcas "+" */
-.fabrica__moldura::before { content: ""; position: absolute; inset: 16px; border: 1px dashed var(--line); pointer-events: none; }
-.fabrica__legenda { position: absolute; top: 28px; left: 32px; right: 32px; }
-.fabrica__titulo, .fabrica__texto, .fabrica__acao { border-left: 0; padding-left: var(--gutter); }
-.fabrica__titulo h2 { margin: 0; max-width: 10em; font-size: var(--h2); line-height: 1.04; text-wrap: balance; }
-/* legenda do mapa e norte, nos cantos de baixo da moldura, dentro do tracejado */
-.fabrica__chave, .fabrica__norte { display: none; }
-.traco { display: inline-block; width: 24px; height: 0; margin-right: 12px; vertical-align: middle; border-top: 1.6px solid var(--brand); }
-.traco--vizinha { border-top: 1px dashed var(--ink); }
-.fabrica__texto, .fabrica__acao { display: grid; align-content: start; gap: 12px; border-top: 1px solid var(--line); }
+.fabrica__legenda { position: absolute; top: 24px; left: 32px; right: 32px; }
+.fabrica__grade > .celula:not(.fabrica__moldura) { display: grid; align-content: start; gap: 12px; border-left: 0; border-top: 1px solid var(--line); padding: var(--s-3) var(--gutter); }
+.fabrica__titulo h2 { margin: 4px 0 0; max-width: 10em; font-size: var(--h2); line-height: 1.04; text-wrap: balance; }
 .fabrica__copy { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }
-.fabrica__acao .btn { justify-self: start; margin-top: 4px; }
+.fabrica__ganho .btn { justify-self: start; margin-top: 4px; }
+#caminhao { width: 100%; }
+#caminhao svg { width: 100%; height: auto; }
 .fabrica__numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .fabrica__numeros > .celula { display: grid; align-content: start; gap: 8px; padding-block: var(--s-2) 20px; }
 .fabrica__numeros > .celula:nth-child(odd) { border-left: 0; padding-left: var(--gutter); }
 .fabrica__numeros > .celula:nth-child(n+3) { border-top: 1px solid var(--line); }
-.fabrica__numeros strong { font: 400 var(--h2)/1 var(--font-display); letter-spacing: -.025em; color: var(--brand); white-space: nowrap; }
+/* números em tinta: o vermelho fica para o título; o acento, para o botão */
+.fabrica__numeros strong { font: 400 var(--h2)/1 var(--font-display); letter-spacing: -.025em; color: var(--ink); white-space: nowrap; }
 .fabrica__numeros span { font-size: 16px; line-height: 1.4; }
 .fabrica__numeros .rotulo span { font-size: 14px; }
-#caminhao { width: 100%; }
-#caminhao svg { width: 100%; height: auto; }
-@media (min-width: 768px) {
-  .fabrica__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .fabrica__moldura, .fabrica__titulo { grid-column: 1 / -1; }
-  .fabrica__acao { border-left: 1px solid var(--line); padding-left: var(--s-3); }
-  #caminhao { width: min(100%, 560px); }
-}
-@media (min-width: 960px) {
-  .fabrica__numeros { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (min-width: 1024px) {
+  :root { --fig: 58%; --numeros-fab: 168px; }
+  .fabrica__grade {
+    grid-template-columns: var(--fig) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    height: calc(100svh - var(--header) - var(--numeros-fab) - 2px); min-height: 600px;
+  }
+  .fabrica__moldura { grid-row: 1 / -1; padding: 56px 24px 24px; }
+  .fabrica__grade > .celula:not(.fabrica__moldura) { border-left: 1px solid var(--line); padding: var(--s-2) var(--gutter) var(--s-2) var(--s-3); }
+  .fabrica__titulo, .fabrica__texto { grid-column: 2 / -1; }
+  .fabrica__titulo { border-top: 0 !important; }
+  /* os dois ganhos lado a lado: o fio entre eles cai sobre o fio da faixa de números (79 %) */
+  .fabrica__ganho { padding-right: var(--s-3) !important; }
+  .fabrica__ganho:last-child { padding-right: var(--gutter) !important; }
+  .fabrica__titulo h2 { max-width: none; font-size: 56px; }
+  /* a figura enche a moldura; o svg centra o desenho mantendo a proporção */
+  #caminhao, #caminhao svg { width: 100%; height: 100%; }
+  .fabrica__numeros { grid-template-columns: calc(var(--fig) / 2) calc(var(--fig) / 2) minmax(0, 1fr) minmax(0, 1fr); }
+  .fabrica__numeros > .celula { min-height: var(--numeros-fab); }
   .fabrica__numeros > .celula:nth-child(odd) { border-left: 1px solid var(--line); padding-left: var(--s-3); }
   .fabrica__numeros > .celula:first-child { border-left: 0; padding-left: var(--gutter); }
   .fabrica__numeros > .celula:nth-child(n+3) { border-top: 0; }
-}
-@media (min-width: 1200px) {
-  :root { --banda-fab: 176px; --numeros-fab: 148px; }
-  /* a tela inteira em 1440 × 900: cabeçalho 64 + moldura ≥ 495 (55 %) + banda 176 + números 150 */
-  .fabrica__grade {
-    grid-template-columns: minmax(0, 1fr) 348px var(--col-acao);
-    grid-template-rows: max(495px, calc(100svh - var(--header) - var(--banda-fab) - var(--numeros-fab) - 4px)) var(--banda-fab);
-  }
-  .fabrica__moldura { grid-column: 1 / -1; padding-block: 48px 24px; }
-  .fabrica__chave { display: grid; gap: 4px; position: absolute; left: 32px; bottom: 28px; }
-  .fabrica__norte { display: grid; justify-items: center; gap: 4px; position: absolute; right: 32px; bottom: 28px; }
-  .fabrica__norte svg { display: block; }
-  .fabrica__titulo { grid-column: auto; padding-block: var(--s-3); padding-right: var(--s-2); }
-  .fabrica__titulo h2 { max-width: none; font-size: 56px; }
-  .fabrica__texto, .fabrica__acao { border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--s-3); }
-  /* a figura enche a altura da moldura (desenho ≈ 1,11 : 1) */
-  #caminhao { width: auto; height: 100%; aspect-ratio: 793 / 713; }
-  .fabrica__numeros > .celula { min-height: var(--numeros-fab); }
   .fabrica__numeros strong { font-size: 56px; }
 }
 
