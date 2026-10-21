@@ -9,41 +9,43 @@ function variar(hex, fator) {
   return "#" + [0, 1, 2].map((i) => canal(i).toString(16).padStart(2, "0")).join("").toUpperCase();
 }
 
-// direção (x1 y1 x2 y2, em fração da peça) e força do degradê de luz: cerca de ±6 % de brilho dentro de cada peça
-const GRADES = [[0, 0, 1, 1, 0.08, 0.07], [0.2, 0, 0.8, 1, 0.06, 0.05], [0, 0.2, 1, 0.8, 0.07, 0.06], [0, 0, 1, 0.6, 0.05, 0.08]];
-
-const r = (n) => Math.round(n * 100) / 100;
-const ret = (x, y, w, h) => `M${r(x)} ${r(y)}h${r(w)}v${r(h)}h${r(-w)}z`;
+const r = (n) => Math.round(n * 10) / 10;
 
 // Parede em aparelho corrido que sangra além do viewBox (cols 14 / rows 19 cobrem 480x300 nas duas paridades de fileira; peça na proporção 19 : 7,5).
-// Luz única do alto à esquerda (a mesma da casa e do caminhão): a argamassa fica recuada e em sombra; cada peça projeta
-// uma faixa escura na junta, embaixo e à direita; a aresta de cima e da esquerda pega luz, a de baixo e da direita escurece;
-// dentro da peça, um degradê sorteado entre quatro muda o brilho em cerca de ±6 %.
+// Barro, não botão: sem sombra projetada e sem degradê. Luz do alto à esquerda: a junta é recuada e a peça lança sombra só
+// dentro dela, numa faixa fina junto às arestas de cima e da esquerda. Cada peça tem borda irregular (cantos e meio das
+// arestas longas deslocados até ±0,3 un.) e grão de extrusão: dois a três riscos horizontais translúcidos (≤ 6 % de brilho).
+// A argamassa é um neutro quente da rampa das ilustrações com pontilhado leve.
 export function amostraSvg(tomBase, rotulo, seed = 20261021) {
   const alt = 13.4;
   const sorteio = mulberry32(seed);
+  const j = () => (sorteio() - 0.5) * 0.6; // deslocamento de um ponto da borda, ±0,3 un. (≈ 0,5 px na tela em 1440)
   const pecas = gradePlaquetas({ cols: 14, rows: 19, larg: 34, alt, gap: 3, x0: -23.5, y0: 300 - alt });
-  const sombra = [], luz = [], escuro = [];
-  const id = "luz-" + tomBase.slice(1).toLowerCase(); // ids únicos por parede: as três ficam no mesmo documento
-  const defs = GRADES.map(([x1, y1, x2, y2, clareia, escurece], i) =>
-    `<linearGradient id="${id}-${i}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">` +
-    `<stop offset="0" stop-color="#FFF" stop-opacity="${clareia}"/><stop offset=".55" stop-color="#FFF" stop-opacity="0"/>` +
-    `<stop offset="1" stop-color="#000" stop-opacity="${escurece}"/></linearGradient>`).join("");
+  const id = "argamassa-" + tomBase.slice(1).toLowerCase(); // id único por parede: as três ficam no mesmo documento
+  const sombra = [], claros = [], escuros = [];
   const corpo = pecas.map((p) => {
     const fill = variar(tomBase, FATOR_TOM[sorteiaTom(sorteio())]);
-    sombra.push(ret(p.x + 1.3, p.y + 1.3, p.w, p.h));
-    luz.push(`M${r(p.x + 0.3)} ${r(p.y + p.h - 0.6)}V${r(p.y + 0.3)}H${r(p.x + p.w - 0.6)}`);
-    escuro.push(`M${r(p.x + 0.6)} ${r(p.y + p.h - 0.3)}H${r(p.x + p.w - 0.3)}V${r(p.y + 0.6)}`);
-    // luz dentro da peça: um degradê do alto à esquerda (mais claro) para baixo à direita (mais escuro), sorteado entre 4 variações
-    return `<rect x="${r(p.x)}" y="${r(p.y)}" width="${p.w}" height="${p.h}" fill="${fill}"/>` +
-      `<rect x="${r(p.x)}" y="${r(p.y)}" width="${p.w}" height="${p.h}" fill="url(#${id}-${Math.floor(sorteio() * GRADES.length)})"/>`;
+    const { x, y, w, h } = p;
+    sombra.push(`M${r(x - 0.9)} ${r(y - 0.9)}h${r(w + 0.9)}v.9h${r(-w)}v${r(h)}h-.9z`);
+    const pts = [[x + j(), y + j()], [x + w / 2, y + j()], [x + w + j(), y + j()],
+      [x + w + j(), y + h + j()], [x + w / 2, y + h + j()], [x + j(), y + h + j()]];
+    const n = 2 + Math.floor(sorteio() * 2);
+    for (let k = 0; k < n; k++) {
+      const lw = 4 + sorteio() * 12, lh = 0.4 + sorteio() * 1.1;
+      const risco = `<rect x="${r(x + 1 + sorteio() * (w - lw - 2))}" y="${r(y + 1 + sorteio() * (h - lh - 2))}" width="${r(lw)}" height="${r(lh)}"/>`;
+      (sorteio() < 0.5 ? claros : escuros).push(risco);
+    }
+    return `<polygon points="${pts.map(([a, b]) => `${r(a)},${r(b)}`).join(" ")}" fill="${fill}"/>`;
   }).join("");
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" role="img" aria-label="Parede de plaqueta, tom ${rotulo}">` +
-    `<defs>${defs}</defs>` +
-    `<rect x="-10" y="-10" width="500" height="320" fill="#C9BBA6"/>` + // argamassa
-    `<path d="${sombra.join("")}" fill="#65392A" fill-opacity=".55"/>` +
+    `<defs><pattern id="${id}" width="4.3" height="3.7" patternUnits="userSpaceOnUse">` +
+    `<circle cx=".7" cy=".8" r=".32" fill="#B9AA92" fill-opacity=".4"/><circle cx="3.1" cy="2.2" r=".26" fill="#B9AA92" fill-opacity=".3"/>` +
+    `<circle cx="2" cy="3.1" r=".3" fill="#FBF6EC" fill-opacity=".35"/></pattern></defs>` +
+    `<rect x="-10" y="-10" width="500" height="320" fill="#D8CCB8"/>` +
+    `<rect x="-10" y="-10" width="500" height="320" fill="url(#${id})"/>` +
+    `<path d="${sombra.join("")}" fill="#65392A" fill-opacity=".5"/>` +
     corpo +
-    `<path d="${luz.join("")}" fill="none" stroke="#FBF6EC" stroke-opacity=".28" stroke-width=".6"/>` +
-    `<path d="${escuro.join("")}" fill="none" stroke="#3F241A" stroke-opacity=".3" stroke-width=".6"/>` +
+    `<g fill="#FBF6EC" fill-opacity=".07">${claros.join("")}</g>` +
+    `<g fill="#3F241A" fill-opacity=".06">${escuros.join("")}</g>` +
     `</svg>`;
 }

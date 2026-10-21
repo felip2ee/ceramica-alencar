@@ -339,9 +339,9 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .fabrica__texto, .fabrica__acao { display: grid; align-content: start; gap: 12px; border-top: 1px solid var(--line); }
 .fabrica__copy { margin: 0; max-width: 300px; text-wrap: pretty; }
 .fabrica__acao .btn { justify-self: start; }
-.fabrica__ganho { display: grid; gap: 4px; margin: 4px 0 0; }
-.fabrica__ganho :is(dt, dd) { display: inline; margin: 0; }
-.fabrica__ganho dt { margin-right: 8px; }
+.fabrica__ganho, .rev__ganho { display: grid; gap: 4px; margin: 4px 0 0; }
+.fabrica__ganho :is(dt, dd), .rev__ganho :is(dt, dd) { display: inline; margin: 0; }
+.fabrica__ganho dt, .rev__ganho dt { margin-right: 8px; }
 /* abaixo de 1200 a faixa é 2 × 2: o número fica em cima e o texto ganha a largura da célula */
 .fabrica__faixa > .celula { flex-direction: column; gap: 4px; }
 @media (min-width: 768px) {
@@ -415,7 +415,8 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .rev__ficha { margin: 0; padding: 12px var(--gutter); border-top: 1px solid var(--line); }
 .amostra { width: 100%; height: 100%; min-height: 200px; aspect-ratio: 16 / 9; overflow: hidden; background: var(--background); }
 .amostra svg { display: block; width: 100%; height: 100%; }
-.rev__medida { grid-template-rows: auto auto auto 1fr; align-content: start; }
+.rev__medida { grid-template-rows: none; align-content: start; }
+.rev__ganho { margin: 0; max-width: 340px; }
 .rev__medida .btn { justify-self: start; align-self: end; }
 .rev__cota { width: 100%; max-width: 340px; height: auto; margin: var(--s-3) 0 var(--s-2); overflow: visible; }
 .cota__peca { fill: var(--surface); stroke: var(--ink); stroke-width: 1.5; }
@@ -442,7 +443,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   .rev__texto + .rev__tom { border-left: 0; }
   .rev__tom > :is(.rotulo, .rev__ficha) { padding-inline: var(--s-3); }
   .rev__texto + .rev__tom > :is(.rotulo, .rev__ficha) { padding-left: var(--gutter); }
-  .rev__medida { grid-template-rows: auto minmax(0, 1fr) auto auto; gap: var(--s-2); }
+  .rev__medida { grid-template-rows: auto minmax(0, 1fr) auto auto auto; gap: 12px; }
   .rev__cota { align-self: center; margin: 0; }
   .rev__medida { grid-column: 4; grid-row: 1 / 3; border-left: 1px solid var(--line); border-bottom: 0; padding: var(--s-2) var(--gutter) var(--s-4) var(--s-3); }
   .rev__titulo { grid-column: 1 / 3; grid-row: 2; padding-block: var(--s-2) var(--s-3); }
