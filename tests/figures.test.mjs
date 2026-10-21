@@ -1,13 +1,8 @@
 import { test } from "node:test"; import assert from "node:assert/strict";
 import * as F from "../figures/out/figures.js";
 import mapa from "../figures/mapa-to.json" with { type: "json" };
-test("amostras: três svgs válidos, cada um com dezenas de peças", () => {
-  for (const tom of ["lisa","queimada","rustica"]) {
-    const svg = F.AMOSTRAS[tom];
-    assert.match(svg, /^<svg [^>]*viewBox="0 0 480 300"/);
-    assert.ok((svg.match(/<polygon/g)||[]).length >= 60, tom); // uma peça por polígono
-  }
-  assert.ok(F.AMOSTRAS.rustica.includes("#C9896A") && F.AMOSTRAS.queimada.includes("#8E4529") && F.AMOSTRAS.rustica.includes("<circle"));
+test("amostras SVG saíram do build: as células de Revestimentos são foto", () => {
+  assert.equal(F.AMOSTRAS, undefined);
 });
 test("ISO_CSS_MARCA recolorido e sem card", () => {
   assert.match(F.ISO_CSS_MARCA, /--anatomy-paper:#FAF8F1/);

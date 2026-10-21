@@ -34,7 +34,7 @@ test("fontes: só Bodoni Moda e DM Sans", () => {
 test("ids e ganchos de interface das tasks seguintes", () => {
   for (const id of ["abertura","casa","plaqueta-narradora","caminhao","galeria","whatsapp-flutuante"]) assert.ok(html.includes(`id="${id}"`), id);
   assert.equal((html.match(/<figure[^>]*data-ambiente="[^"]+"[^>]*data-tom="(lisa|queimada|rustica)"/g) || []).length, 6);
-  // lisa e queimada já são foto da peça (assets/kit); a rústica segue vetorial até a foto chegar
+  // as três células de Revestimentos são foto da peça sobre areia (assets/kit)
   assert.equal((html.match(/<div class="amostra amostra--foto"><img src="assets\/kit\/kit-areia-(lisa|queimada|rustica)\.jpg"/g) || []).length, 3);
   assert.doesNotMatch(html, /class="amostra" data-tom=/);
   assert.ok(/<script type="module" src="main\.js">/.test(html));
@@ -59,12 +59,13 @@ test("ajustes da Task 8: og:image absoluto, anti-flash, flutuante e áreas de to
   assert.match(css, /#whatsapp-flutuante\.is-oculto/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
   assert.match(css, /\.link\s*\{[^}]*min-height:\s*44px/);
-  assert.equal((html.match(/<img [^>]*assets\/(flow|kit)\/[^>]*srcset=/g) || []).length, 10); // 6 da galeria + 4 interlúdios
+  assert.equal((html.match(/<img [^>]*assets\/(flow|kit)\/[^>]*srcset=/g) || []).length, 13); // 6 da galeria + 4 interlúdios + 3 peças
+  assert.equal((html.match(/kit-areia-(lisa|queimada|rustica)-800\.jpg 800w/g) || []).length, 3);
   assert.equal((html.match(/class="interludio__frase"/g) || []).length, 8); // duas frases por interlúdio
 });
 test("toda imagem gerada (assets/flow/, assets/kit/) de ambiente vem com a legenda \"imagem conceitual\"", () => {
   const figuras = [...html.matchAll(/<figure[\s\S]*?<\/figure>/g)].map((m) => m[0]);
-  const flow = [...html.matchAll(/<img [^>]*src="assets\/(flow|kit)\/[^>]*srcset=[^>]*>/g)]; // fotos de peça (sem srcset) ficam de fora
+  const flow = [...html.matchAll(/<img [^>]*src="assets\/(flow|kit)\/[^>]*srcset=[^>]*>/g)].filter(([img]) => !/kit-areia-(lisa|queimada|rustica)/.test(img)); // fotos de peça (células 04.x, sem legenda) ficam de fora
   const interludios = [...html.matchAll(/<section class="interludio"[\s\S]*?<\/section>/g)].map((m) => m[0]);
   assert.equal(flow.length, 10); // 6 da galeria + 4 interlúdios
   for (const [img] of flow) {
@@ -98,4 +99,8 @@ test("uma casa por argumento: sem redundância e sem texto que exponha o arquite
   const foraDeParceiros = html.slice(0, html.indexOf('id="parceiros"')) + html.slice(html.indexOf('id="contato"'));
   assert.doesNotMatch(foraDeParceiros, /<dl\b/);
   assert.match(texto, /aceita pintura/);
+  // revisão final: bordões não se repetem entre hero, interlúdio e materialidade
+  assert.ok((texto.match(/nosso forno/g) || []).length <= 1, "nosso forno repetido");
+  assert.ok((texto.match(/cor que o projeto pedir/g) || []).length <= 2, "cor que o projeto pedir repetido");
+  assert.doesNotMatch(texto, /relevo do tijolo|quilômetro(?!s)/);
 });

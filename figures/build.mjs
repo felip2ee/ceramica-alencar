@@ -4,7 +4,6 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ISO_CSS } from "./kit/iso-kit.mjs";
-import { amostraSvg } from "./amostras.mjs";
 import { casa } from "./casa.mjs";
 import { caminhao } from "./caminhao.mjs";
 import mapaTO from "./mapa-to.json" with { type: "json" };
@@ -59,11 +58,6 @@ escreverFigures({
   LOGO_VIEWBOX: viewBox,
   LOGO_PATHS,
   ISO_CSS_MARCA: isoCssMarca(ISO_CSS),
-  AMOSTRAS: {
-    lisa: amostraSvg("#B65E3C", "lisa", { estilo: "lisa" }),
-    queimada: amostraSvg("#8E4529", "queimada", { estilo: "queimada" }),
-    rustica: amostraSvg("#C9896A", "rústica", { estilo: "rustica" }),
-  },
   CASA: CASA.svg,
   CASA_META: CASA.meta,
   CAMINHAO: CAMINHAO.svg,
