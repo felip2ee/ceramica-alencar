@@ -34,7 +34,9 @@ test("fontes: só Bodoni Moda e DM Sans", () => {
 test("ids e ganchos de interface das tasks seguintes", () => {
   for (const id of ["abertura","casa","plaqueta-narradora","caminhao","galeria","whatsapp-flutuante"]) assert.ok(html.includes(`id="${id}"`), id);
   assert.equal((html.match(/<figure[^>]*data-ambiente="[^"]+"[^>]*data-tom="(lisa|queimada|rustica)"/g) || []).length, 6);
-  assert.equal((html.match(/<div class="amostra" data-tom="(lisa|queimada|rustica)"/g) || []).length, 3);
+  // lisa e queimada já são foto da peça (assets/kit); a rústica segue vetorial até a foto chegar
+  assert.equal((html.match(/<div class="amostra amostra--foto"><img src="assets\/kit\/kit-plaqueta-(lisa|queimada)\.jpg"/g) || []).length, 2);
+  assert.equal((html.match(/<div class="amostra" data-tom="rustica"/g) || []).length, 1);
   assert.ok(/<script type="module" src="main\.js">/.test(html));
   assert.equal((html.match(/<script defer src="https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/gsap\/3\.12\.5\//g) || []).length, 3);
 });
@@ -51,17 +53,18 @@ test("acessibilidade estática", () => {
   assert.match(html, /#plaqueta-narradora[^>]*aria-hidden="true"|id="plaqueta-narradora"[^>]*aria-hidden="true"/);
 });
 test("ajustes da Task 8: og:image absoluto, anti-flash, flutuante e áreas de toque", () => {
-  assert.match(html, /property="og:image" content="https:\/\/SITE_DOMINIO\/assets\/logo\/favicon-512\.png"/);
+  assert.match(html, /property="og:image" content="https:\/\/SITE_DOMINIO\/assets\/kit\/kit-acabamentos\.jpg"/);
   assert.ok(html.indexOf('dataset.abertura = "skip"') > 0 && html.indexOf('dataset.abertura = "skip"') < html.indexOf('href="styles.css"'));
   assert.match(css, /html\[data-abertura="skip"\] #abertura\s*\{\s*display:\s*none/);
   assert.match(css, /#whatsapp-flutuante\.is-oculto/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
   assert.match(css, /\.link\s*\{[^}]*min-height:\s*44px/);
-  assert.equal((html.match(/<img [^>]*assets\/flow\/[^>]*srcset=/g) || []).length, 10); // 6 da galeria + 4 interlúdios
+  assert.equal((html.match(/<img [^>]*assets\/(flow|kit)\/[^>]*srcset=/g) || []).length, 10); // 6 da galeria + 4 interlúdios
+  assert.equal((html.match(/class="interludio__frase"/g) || []).length, 8); // duas frases por interlúdio
 });
-test("toda imagem gerada (assets/flow/) vem com a legenda \"imagem conceitual\"", () => {
+test("toda imagem gerada (assets/flow/, assets/kit/) de ambiente vem com a legenda \"imagem conceitual\"", () => {
   const figuras = [...html.matchAll(/<figure[\s\S]*?<\/figure>/g)].map((m) => m[0]);
-  const flow = [...html.matchAll(/<img [^>]*src="assets\/flow\/[^>]*>/g)];
+  const flow = [...html.matchAll(/<img [^>]*src="assets\/(flow|kit)\/[^>]*srcset=[^>]*>/g)]; // fotos de peça (sem srcset) ficam de fora
   const interludios = [...html.matchAll(/<section class="interludio"[\s\S]*?<\/section>/g)].map((m) => m[0]);
   assert.equal(flow.length, 10); // 6 da galeria + 4 interlúdios
   for (const [img] of flow) {

@@ -411,6 +411,9 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .rev__ficha { margin: 0; padding: 12px var(--gutter); border-top: 1px solid var(--line); }
 .amostra { width: 100%; height: 100%; min-height: 200px; aspect-ratio: 16 / 9; overflow: hidden; background: var(--background); }
 .amostra svg { display: block; width: 100%; height: 100%; }
+/* foto da peça sobre o papel: o fundo branco da foto some em multiply, como a logo da agência no rodapé */
+.amostra--foto { display: grid; place-items: center; padding: var(--s-3); }
+.amostra--foto img { display: block; width: 100%; max-width: 440px; height: auto; mix-blend-mode: multiply; }
 .rev__medida { grid-template-rows: none; align-content: start; }
 .rev__ganho { margin: 0; max-width: 340px; }
 .rev__medida .btn { justify-self: start; align-self: end; }
@@ -646,7 +649,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   position: fixed; z-index: 60;
   right: max(var(--s-3), env(safe-area-inset-right)); bottom: max(var(--s-3), calc(env(safe-area-inset-bottom) + var(--s-2)));
   /* menor e translúcido (pedido do dono em 2026-10-21): papel a 70 % com desfoque, contorno em tinta a meia força */
-  min-height: 40px; padding: 10px 16px; font-size: 14px;
+  min-height: 34px; padding: 7px 12px; font-size: 13px;
   background: color-mix(in srgb, var(--background) 70%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 60%, transparent);
   transition: opacity var(--t), background-color var(--t);
@@ -719,17 +722,19 @@ html[data-abertura="skip"] #abertura { display: none; }
 
 /* Interlúdios: foto de fundo em tela cheia entre seções, frase em Bodoni marfim que entra e sai com a rolagem (scroll.mjs).
    A foto anda em paralaxe (yPercent ±7), por isso é 16 % mais alta que a seção. Fotografia fica fora da conta de cor. */
-.interludio { position: relative; height: 100svh; min-height: 520px; max-height: 1100px; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--ink); }
+/* o interlúdio é uma tela cheia presa na rolagem (scroll.mjs): a primeira frase fica, troca pela segunda, e só então a
+   página segue (pedido do dono em 2026-10-21, como as frases em tela cheia da referência) */
+.interludio { position: relative; height: calc(100svh - var(--header)); min-height: 480px; max-height: 1100px; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--ink); }
 .interludio__foto { position: absolute; inset: -8% 0; width: 100%; height: 116%; object-fit: cover; }
 .interludio::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(42, 24, 16, .18), rgba(42, 24, 16, .46)); pointer-events: none; }
-.interludio__texto {
-  position: absolute; z-index: 1; left: var(--gutter); right: var(--gutter); top: 50%; transform: translateY(-50%);
-  margin: 0; max-width: none; text-align: center; text-wrap: balance;
+.interludio__texto { position: absolute; z-index: 1; left: var(--gutter); right: var(--gutter); top: 50%; transform: translateY(-50%); display: grid; }
+.interludio__frase {
+  grid-area: 1 / 1; margin: 0; max-width: none; text-align: center; text-wrap: balance;
   font: 400 clamp(40px, 6.6vw, 96px)/1.04 var(--font-display); letter-spacing: -.025em; color: var(--background);
 }
-.interludio__texto em { font-style: italic; }
+.interludio__frase + .interludio__frase { opacity: 0; } /* a segunda frase só entra pela rolagem (scroll.mjs) */
+.interludio__frase em { font-style: italic; }
 .interludio__legenda { position: absolute; z-index: 1; left: var(--gutter); bottom: 20px; color: var(--background); opacity: .85; }
-@media (max-width: 767px) { .interludio { height: 72svh; min-height: 420px; } }
 
 /* títulos palavra a palavra (scroll.mjs divide os nós de texto em spans) */
 .palavra { display: inline-block; }

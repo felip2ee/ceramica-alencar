@@ -53,6 +53,9 @@ export function iniciarScroll({ F, reduceMotion }) {
   }
   titulos(gsap);
   interludios(gsap);
+  // Vários pins (interlúdios e Fábrica): o refresh mede na ordem da página, para cada gatilho ver os espaçadores
+  // dos pins que vêm antes dele.
+  ScrollTrigger.sort();
   ScrollTrigger.refresh();
 }
 
@@ -231,22 +234,23 @@ function titulos(gsap) {
   }
 }
 
-// Interlúdios: uma foto de fundo que anda devagar (paralaxe) e uma frase que entra, fica e sai conforme a rolagem.
+// Interlúdios: a seção fica presa por uma tela e meia de rolagem com a foto andando devagar (paralaxe); a primeira
+// frase fica, sobe e some, a segunda sobe no lugar e fica até a página seguir.
 function interludios(gsap) {
   for (const sec of gsap.utils.toArray(".interludio")) {
     const foto = sec.querySelector(".interludio__foto");
-    const texto = sec.querySelector(".interludio__texto");
-    if (foto) {
-      gsap.fromTo(foto, { yPercent: -7 }, {
-        yPercent: 7, ease: "none",
-        scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: true },
-      });
-    }
-    if (texto) {
-      gsap.timeline({ defaults: { ease: "none" }, scrollTrigger: { trigger: sec, start: "top 65%", end: "bottom 35%", scrub: 0.3 } })
-        .fromTo(texto, { opacity: 0, y: 48 }, { opacity: 1, y: 0, duration: 1 })
-        .to(texto, { opacity: 1, duration: 0.8 })
-        .to(texto, { opacity: 0, y: -48, duration: 1 });
+    const [primeira, segunda] = sec.querySelectorAll(".interludio__frase");
+    const tl = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        trigger: sec, start: () => `top ${ALTURA_CABECALHO()}px`, end: "+=150%", scrub: 0.3,
+        pin: true, pinSpacing: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1,
+      },
+    });
+    if (foto) tl.fromTo(foto, { yPercent: -6 }, { yPercent: 6, duration: 10 }, 0);
+    if (primeira && segunda) {
+      tl.to(primeira, { opacity: 0, y: -40, duration: 1.5 }, 4)
+        .fromTo(segunda, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.5 }, 4.8);
     }
   }
 }

@@ -53,7 +53,7 @@ const CASA = casa();
 const CAMINHAO = caminhao(mapaTO);
 // Retrato para a célula de tela cheia do celular: o chão gira para a rota descer a tela, a câmera sobe para 40°
 // (a 24° a rota em profundidade encurtaria demais) e o enquadramento é pela rota, não pelo estado inteiro.
-const CAMINHAO_RETRATO = caminhao(mapaTO, { largura: 720, altura: 1440, giro: -20, elevacao: 40, escala: 1.2, grupoAltura: 0.86, centroY: 0.5, enquadrar: "rota" });
+const CAMINHAO_RETRATO = caminhao(mapaTO, { largura: 720, altura: 1440, giro: -20, elevacao: 40, escala: 1.6, grupoAltura: 0.84, centroY: 0.54, enquadrar: "rota" });
 
 escreverFigures({
   LOGO_VIEWBOX: viewBox,
