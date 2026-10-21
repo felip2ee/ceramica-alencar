@@ -484,33 +484,50 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   .apl__texto { grid-column: 3; grid-row: 2; border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--gutter) var(--s-2) var(--s-3); }
 }
 
-/* para quem vende: duas células grandes lado a lado; rótulo, desenho técnico em tinta, título (classe do título, 56),
-   três ganhos (rótulo + frase, como no hero) e o botão: os dois botões são as duas ocorrências do acento */
+/* para quem vende: duas colunas (arquitetos | lojas), cada uma em duas células: desenho técnico em cima, texto embaixo.
+   O fio entre desenho e texto atravessa a tela, com "+" nas duas bordas e no cruzamento com o fio vertical do meio.
+   Título na classe do título (56), três ganhos (rótulo + frase, como no hero) e o botão: os dois botões são as duas ocorrências do acento */
 .par__grade { grid-template-columns: minmax(0, 1fr); }
-.par__celula { display: grid; align-content: start; gap: var(--s-2); border-left: 0; padding: var(--s-3) var(--gutter) var(--s-4); }
 .par__celula + .par__celula { border-top: 1px solid var(--line); }
-.par__celula h3 { margin: var(--s-1) 0 0; font-size: var(--h2); line-height: 1.04; }
+.par__desenho, .par__texto { display: grid; align-content: start; gap: var(--s-2); border-left: 0; padding: var(--s-3) var(--gutter); }
+.par__texto { position: relative; border-top: 1px solid var(--line); padding-bottom: var(--s-4); }
+.par__texto h3 { margin: 0; font-size: var(--h2); line-height: 1.04; }
 .par__ganho { display: grid; gap: 4px; margin: 0; max-width: 520px; }
 .par__ganho :is(dt, dd) { display: inline; margin: 0; }
 .par__ganho dt { margin-right: 8px; }
-.par__celula .btn { justify-self: start; margin-top: var(--s-1); }
-.par__fig { width: 100%; max-width: 520px; height: auto; margin: var(--s-2) 0; overflow: visible; }
+.par__texto .btn { justify-self: start; margin-top: var(--s-1); }
+.par__fig { width: 100%; max-width: 520px; height: auto; margin: var(--s-2) 0; overflow: visible; justify-self: center; }
 .par__peca { fill: var(--surface); stroke: rgba(90, 52, 35, .75); stroke-width: 1; }
 .par__peca--topo { fill: #E8DCC6; }
 .par__estrado { fill: #E0D5C1; stroke: rgba(90, 52, 35, .75); stroke-width: 1; }
 .par__hachura { fill: url(#hachura-cota); stroke: none; }
 .par__linha { fill: none; stroke: rgba(90, 52, 35, .6); stroke-width: .75; }
 .par__seta { fill: var(--ink); }
-.par__texto { font: 500 14px var(--font-text); letter-spacing: .08em; text-transform: uppercase; fill: var(--ink); }
+.par__texto { --mais: linear-gradient(var(--ink), var(--ink)); }
+/* "+" de 11 px centrado no fio: borda de fora a 16 px da tela (como nas molduras) e cruzamento com o fio do meio */
+.par__texto::before, .par__texto::after {
+  content: ""; position: absolute; top: -6px; width: 11px; height: 11px; pointer-events: none;
+  background: var(--mais) 0 5px / 11px 1px no-repeat, var(--mais) 5px 0 / 1px 11px no-repeat;
+}
+.par__texto::before { left: 11px; }
+.par__texto::after { display: none; }
 @media (min-width: 768px) {
-  .par__grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .par__celula + .par__celula { border-top: 0; border-left: 1px solid var(--line); padding-left: var(--s-3); }
+  /* subgrid: o fio de cima do texto fica na mesma altura nas duas colunas */
+  .par__grade { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr) auto; }
+  .par__celula { display: grid; grid-row: span 2; grid-template-rows: subgrid; }
+  .par__celula + .par__celula { border-top: 0; border-left: 1px solid var(--line); }
+  .par__celula + .par__celula > .celula { padding-left: var(--s-3); }
+  #lojas .par__texto::before { left: auto; right: 11px; }
+  #lojas .par__texto::after { display: block; left: -6px; }
 }
 @media (min-width: 1200px) {
-  /* 900 em 1440: as duas células enchem a dobra; o desenho fica no meio, o texto embaixo */
-  .par__celula { grid-template-rows: auto minmax(0, 1fr) auto auto auto; height: max(720px, calc(100svh - var(--header) - 1px)); padding-block: var(--s-2) var(--s-6); }
-  .par__celula h3 { font-size: 56px; }
-  .par__fig { align-self: center; justify-self: center; margin: 0; }
+  /* 900 em 1440: as duas colunas enchem a dobra; o fio entre desenho e texto cai em ≈ 450 */
+  .par__grade { height: max(720px, calc(100svh - var(--header) - 1px)); }
+  .par__desenho { grid-template-rows: auto minmax(0, 1fr); padding-top: var(--s-2); }
+  .par__texto { padding: var(--s-3) var(--s-3) var(--s-6) var(--gutter); }
+  #lojas .par__texto { padding-left: var(--s-3); padding-right: var(--gutter); }
+  .par__texto h3 { font-size: 56px; }
+  .par__fig { align-self: center; margin: 0; }
 }
 
 /* fechamento: uma frase só, centrada numa célula alta com as marcas "+" nos cantos; o botão é o único acento da tela */
@@ -535,7 +552,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 }
 
 /* rodapé: grade de quatro colunas com rótulos; embaixo, o nome em Bodoni na largura da tela, em tom claro; linha legal */
-.rodape { font-size: 16px; line-height: 1.6; }
+.rodape { line-height: 1.6; } /* corpo da página: 16 px no celular, 18 px a partir de 1024 */
 .rodape__grade { grid-template-columns: minmax(0, 1fr); }
 .rodape__grade > .celula { display: grid; align-content: start; gap: 12px; border-left: 0; padding: var(--s-3) var(--gutter) var(--s-4); }
 .rodape__grade > .celula + .celula { border-top: 1px solid var(--line); }
