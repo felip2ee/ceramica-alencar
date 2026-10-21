@@ -275,7 +275,8 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .rotulo-mapa { font-size: calc(var(--u) * 1px); stroke-width: calc(var(--u) * .3px); }
 /* no celular o mapa tem ~360 px e os rótulos de 14 px não cabem todos: saem o nome do estado (encosta em Palmas) e
    Tocantinópolis (à esquerda sai da tela, à direita fica sob o caminhão); a legenda da figura nomeia a cidade */
-@media (max-width: 767px) { .rotulo-mapa--largo, .fabrica__norte { display: none; } }
+/* .fabrica .fabrica__norte: vence o display: flex da regra da célula, declarada mais abaixo */
+@media (max-width: 767px) { .rotulo-mapa--largo, .fabrica .fabrica__norte { display: none; } }
 @media (min-width: 768px) { .rotulo-mapa--estreito { display: none; } }
 /* caminhão e mapa: o mesmo acabamento da casa. Silhueta 2 px (laje do mapa; no caminhão, a base em tinta de 4 px
    por baixo das peças deixa 2 px de borda), arestas 1 px, juntas e hachura 0,5 px; sombra projetada pelo mesmo sol */

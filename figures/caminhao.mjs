@@ -205,10 +205,10 @@ export function caminhao(mapa) {
     ...[-31, 30].flatMap((u) => [-11, 11].flatMap((v) => [emPalmas(u, v, LAJE), emPalmas(u, v, alt(26))])),
   ].map((q) => k.iso(q, unidade3));
   const [gx, gy] = [grupo.map(([x]) => x), grupo.map(([, y]) => y)];
-  // pela largura, sem passar de 90 % da altura
-  const escalaTela = Math.min((GRUPO_LARGURA * LARGURA) / (Math.max(...gx) - Math.min(...gx)), (0.9 * ALTURA) / (Math.max(...gy) - Math.min(...gy)));
+  // pela largura, sem passar de 82 % da altura; centro a 57 % da altura: o caminhão parado em Palmas cabe inteiro
+  const escalaTela = Math.min((GRUPO_LARGURA * LARGURA) / (Math.max(...gx) - Math.min(...gx)), (0.82 * ALTURA) / (Math.max(...gy) - Math.min(...gy)));
   const meio = [((Math.max(...gx) + Math.min(...gx)) / 2) * escalaTela, ((Math.max(...gy) + Math.min(...gy)) / 2) * escalaTela];
-  const P = { origin: [LARGURA / 2 - meio[0], ALTURA * 0.6 - meio[1]], scale: escalaTela, azimuth: AZIMUTE, elevation: ELEVACAO };
+  const P = { origin: [LARGURA / 2 - meio[0], ALTURA * 0.57 - meio[1]], scale: escalaTela, azimuth: AZIMUTE, elevation: ELEVACAO };
 
   // Rótulos de pé, na tela, ancorados no ponto e afastados em em (dx, dy): o corpo muda com a largura
   // (main.js mantém 14 px na tela), então o afastamento acompanha o corpo e não a escala do mapa.
@@ -225,7 +225,7 @@ export function caminhao(mapa) {
       { texto: "Palmas", x: tf[0], y: tf[1], dx: -5, dy: 2.4, ancora: "end", classe: "rotulo-mapa--largo" },
       // no celular o rótulo é grande perto do desenho: nomes curtos e afastamentos menores, para caberem no quadro
       { texto: "Fábrica", x: fx, y: Math.min(...topoFab.map(([, y]) => y)), dx: 0, dy: -0.8, ancora: "middle", classe: "rotulo-mapa--estreito" },
-      { texto: "Palmas", x: tf[0], y: tf[1], dx: -2, dy: 0.9, ancora: "end", classe: "rotulo-mapa--estreito" },
+      { texto: "Palmas", x: tf[0], y: tf[1], dx: -4, dy: -0.1, ancora: "end", classe: "rotulo-mapa--estreito" }, // ≥ 8 px do fio de baixo em 390
       { texto: "Tocantins", x: ce[0], y: ce[1], dx: 0, dy: 0, ancora: "middle", classe: "rotulo-mapa--largo" },
     ];
     // Área útil do quadro (o svg corta ~10 unidades em cima e embaixo; a legenda ocupa o alto à esquerda).
@@ -312,7 +312,8 @@ export function caminhao(mapa) {
     + k.lineSvg(k.pathOf(linha.map((p) => k.iso(p, P))), { tone: "faint", dashed: true })
     + k.dotsSvg([k.iso([...fim, 0], P)], { size: 3.5, tone: "hi" }) + "</g>").join("");
   const principal = `<path id="rota-principal" class="iso-line" data-tone="red" d="${k.onTop(rota, ROTA_Z, P)}"/>`;
-  const cidades = k.dotsSvg([k.iso([...palmas, ROTA_Z], P)], { size: 4, tone: "red" });
+  // ponto de Palmas em tinta: o vermelho fica só na linha da rota e no botão
+  const cidades = k.dotsSvg([k.iso([...palmas, ROTA_Z], P)], { size: 4, tone: "hi" });
 
   // ── fábrica: galpão de plaqueta com shed de três dentes (vidro virado para o caminhão), anexo e chaminé.
   const fabContorno = [];
