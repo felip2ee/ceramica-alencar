@@ -92,7 +92,7 @@ console.assert(hachura([[0, 0], [10, 0], [10, 10], [0, 10]], 2).length === 9, "h
 // Tom de cada plaqueta (determinístico): 0 claro (cor da face), 1 médio, 2 queimado, 3 escuro — a parede mostra os tons do produto.
 const TOM = (n, i) => {
   const h = (((Math.sin(n * 12.9898 + i * 78.233) * 43758.5453) % 1) + 1) % 1;
-  return h < 0.4 ? 0 : h < 0.72 ? 1 : h < 0.88 ? 2 : 3;
+  return h < 0.5 ? 0 : h < 0.82 ? 1 : h < 0.94 ? 2 : 3;
 };
 // Peças de uma fiada entre x0 e x1, cortadas nas juntas: [[a, b], ...].
 const pecas = (x0, x1, js) => {
@@ -332,8 +332,8 @@ export function casa() {
 
   // 7b · silhueta da casa a 2 px: as duas arestas verticais extremas das paredes (laje e placa engrossam por CSS).
   // Antes da mureta, que passa na frente da aresta esquerda.
-  camadas.push(k.groupSvg(k.lineSvg(k.segment([0, PLANTA.d, PISO_Z], [0, PLANTA.d, COB_Z], P)
-    + k.segment([PLANTA.w, 0, 0], [PLANTA.w, 0, COB_Z], P), { className: "silhueta" }), { class: "estrutura", "data-parte": "cobertura" }));
+  camadas.push(k.groupSvg(k.lineSvg(k.segment([0, PLANTA.d, PISO_Z], [0, PLANTA.d, PE], P)
+    + k.segment([PLANTA.w, 0, 0], [PLANTA.w, 0, PE], P), { className: "silhueta" }), { class: "estrutura", "data-parte": "cobertura" }));
 
   // 8 · mureta de plaqueta (8 fiadas) à frente da fachada, aberta no caminho da entrada.
   const fiadasMureta = (m) => {
