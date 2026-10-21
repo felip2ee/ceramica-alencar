@@ -10,11 +10,11 @@ function variar(hex, fator) {
 
 const r = (n) => Math.round(n * 100) / 100;
 
-// Parede em aparelho corrido que sangra além do viewBox (cols 11 / rows 20 cobrem 480x300 nas duas paridades de fileira).
+// Parede em aparelho corrido que sangra além do viewBox (cols 14 / rows 19 cobrem 480x300 nas duas paridades de fileira; peça na proporção 19 : 7,5).
 // Argamassa = fundo da página aparecendo pelas juntas.
 export function amostraSvg(tomBase, rotulo) {
-  const alt = 12.8;
-  const pecas = gradePlaquetas({ cols: 11, rows: 20, larg: 44, alt, gap: 3, x0: -23.5, y0: 300 - alt });
+  const alt = 13.4;
+  const pecas = gradePlaquetas({ cols: 14, rows: 19, larg: 34, alt, gap: 3, x0: -23.5, y0: 300 - alt });
   const rects = pecas.map((p) =>
     `<rect x="${r(p.x)}" y="${r(p.y)}" width="${p.w}" height="${p.h}" fill="${variar(tomBase, FATOR[p.tom])}"/>`).join("");
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" role="img" aria-label="Parede de plaqueta, tom ${rotulo}">${rects}</svg>`;

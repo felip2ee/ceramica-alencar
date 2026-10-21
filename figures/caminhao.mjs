@@ -568,9 +568,9 @@ export function caminhao(mapa) {
       norte: (() => { const [nx, ny] = menos(k.iso([...gira([0, -1]), 0], P), k.iso([0, 0, 0], P)); return Math.round((Math.atan2(nx, -ny) * 180) / Math.PI); })(),
       carroceria: {
         sx: r1(Math.min(...xs)), sy: r1(Math.min(...ys)), w: r1(Math.max(...xs) - Math.min(...xs)), h: r1(Math.max(...ys) - Math.min(...ys)),
-        // onde a plaqueta extra deita: no fardo do meio junto à cabine, eixos 24 : 7 ao longo do caminhão (ampliada para ler)
+        // onde a plaqueta extra deita: no fardo do meio junto à cabine, eixos 19 : 7,5 ao longo do caminhão (ampliada para ler)
         centro: tela(mundo(-5.7, 0, alt(17.6))),
-        eixos: [[8.2, 0], [0, 2.4]].map(([du, dv]) => menos(k.iso(mundo(du, dv, 0), P), k.iso(mundo(0, 0, 0), P)).map(r1)),
+        eixos: [[7.6, 0], [0, 3]].map(([du, dv]) => menos(k.iso(mundo(du, dv, 0), P), k.iso(mundo(0, 0, 0), P)).map(r1)),
       },
     },
   };

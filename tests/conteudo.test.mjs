@@ -16,7 +16,7 @@ test("palavras vetadas ausentes", () => {
   for (const w of [/premium/i, /exclusiv/i, /luxuos/i, /o melhor/i, /R\$/]) assert.doesNotMatch(html, w);
 });
 test("nome e fatos obrigatórios presentes", () => {
-  for (const s of ["Cerâmicas Alencar", "Tocantinópolis", "7 × 24", "3 a 7 dias", "frete próprio", "Conversar sobre meu projeto"]) assert.ok(html.includes(s), s);
+  for (const s of ["Cerâmicas Alencar", "Tocantinópolis", "7,5 × 19", "3 a 7 dias", "frete próprio", "Conversar sobre meu projeto"]) assert.ok(html.includes(s), s);
 });
 test("seções na ordem do spec", () => {
   const ids = ["hero","fabrica","materialidade","revestimentos","aplicacoes","parceiros","contato"];
@@ -25,7 +25,7 @@ test("seções na ordem do spec", () => {
   assert.deepEqual(pos, [...pos].sort((a,b)=>a-b));
 });
 test("placeholders da empresa presentes e tokens exatos", () => {
-  for (const p of ["WHATSAPP_NUMERO","TOM_CLARO_NOME","TOM_MEDIO_NOME","TOM_ESCURO_NOME","INSTAGRAM_HANDLE","RAZAO_SOCIAL","CNPJ"]) assert.ok(html.includes(p), p);
+  for (const p of ["WHATSAPP_NUMERO","TOM_CLARO_NOME","TOM_MEDIO_NOME","TOM_ESCURO_NOME","INSTAGRAM_HANDLE"]) assert.ok(html.includes(p), p);
   for (const t of ["--background:#FAF8F1","--surface:#F0E8DA","--brand:#D93612","--action:#B82E12","--ink:#5A3423","--clay:#B65E3C","--sun:#E7B43D"]) assert.ok(css.replace(/\s/g,"").includes(t), t);
 });
 test("fontes: só Bodoni Moda e DM Sans", () => {

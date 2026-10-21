@@ -18,7 +18,7 @@ A abertura (plaquetas assentando na forma da logo) roda uma vez por navegador e 
 ## Placeholders a trocar
 
 ```bash
-grep -rn "WHATSAPP_NUMERO\|TOM_.*_NOME\|INSTAGRAM_HANDLE\|RAZAO_SOCIAL\|CNPJ\|SITE_DOMINIO" site/index.html site/main.js
+grep -rn "WHATSAPP_NUMERO\|TOM_.*_NOME\|INSTAGRAM_HANDLE\|SITE_DOMINIO" site/index.html site/main.js
 ```
 
 | Placeholder | Onde | O que colocar |
@@ -26,7 +26,6 @@ grep -rn "WHATSAPP_NUMERO\|TOM_.*_NOME\|INSTAGRAM_HANDLE\|RAZAO_SOCIAL\|CNPJ\|SI
 | `WHATSAPP_NUMERO` | `data-whatsapp` no `<body>` e texto do rodapé | `+55 63 9xxxx-xxxx`. Número que já começa com 55 é tratado como se trouxesse o DDI; sem 55, o código acrescenta. Enquanto for o placeholder, todos os CTAs apontam para `#contato`. |
 | `TOM_CLARO_NOME`, `TOM_MEDIO_NOME`, `TOM_ESCURO_NOME` | Revestimentos | nome comercial de cada tom |
 | `INSTAGRAM_HANDLE` | rodapé | `@perfil` |
-| `RAZAO_SOCIAL`, `CNPJ` | rodapé | dados da empresa |
 | `SITE_DOMINIO` | `og:image` no `<head>` | domínio final, sem protocolo (`https://SITE_DOMINIO/assets/logo/favicon-512.png`) |
 
 Palavra "amostra" no texto visível só entra depois de confirmada com a Cerâmicas Alencar. A classe `.amostra` dos cartões de tom é nome interno e não aparece para o visitante.

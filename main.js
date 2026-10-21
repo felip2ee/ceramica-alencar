@@ -176,7 +176,7 @@ function iniciarAbertura() {
   figuras.then(({ LOGO_PATHS }) => {
     if (encerrada) return;
     montada = true;
-    const pecas = gradePlaquetas({ cols: 11, rows: 25, larg: 48, alt: 14, gap: 3, x0: 280, y0: 440 });
+    const pecas = gradePlaquetas({ cols: 14, rows: 25, larg: 38, alt: 15, gap: 3, x0: 280, y0: 440 });
     const tempos = cronograma(pecas, { porFileiraMs: 70, jitterMs: 120, seed: 7 });
     const visivel = pecas.map((p) =>
       p.x < CAIXA.x1 && p.x + p.w > CAIXA.x0 && p.y < CAIXA.y1 && p.y + p.h > CAIXA.y0);

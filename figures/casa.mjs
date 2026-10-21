@@ -1,6 +1,6 @@
 // Geometria da casa isométrica do hero (Node, sem DOM). Uso: casa() → { svg, meta }.
 // Mundo em centímetros: x e y no chão, z para cima. Casa térrea de 10 × 5 m com pé-direito de 3 m,
-// para a plaqueta (24 × 7 cm) ler pequena contra a porta e os móveis. A face y = PLANTA.d é o muro
+// para a plaqueta (19 × 7,5 cm) ler pequena contra a porta e os móveis. A face y = PLANTA.d é o muro
 // comprido (frente-esquerda); a face x = PLANTA.w tem o pano de vidro e um retorno de plaqueta junto à quina.
 import * as k from "./kit/iso-kit.mjs";
 
@@ -9,10 +9,10 @@ const ROTULO = "Casa moderna de um pavimento revestida em plaqueta de barro, com
 
 const PLANTA = { x: 0, y: 0, w: 1000, d: 500, r: 0 };
 const PISO_Z = -15;
-const FIADA = 8; // plaqueta de 7 cm + junta de 1 cm
-const FILEIRAS = 37; // 37 × 8 = 296 cm de pé-direito
+const FIADA = 8.5; // plaqueta de 7,5 cm + junta de 1 cm
+const FILEIRAS = 35; // 35 × 8,5 = 297,5 cm de pé-direito
 const PE = FIADA * FILEIRAS;
-const PECA = 25; // plaqueta de 24 cm + junta de 1 cm
+const PECA = 20; // plaqueta de 19 cm + junta de 1 cm
 const ESP = 15; // espessura dos muros
 const RETORNO = 340; // na face x = PLANTA.w, o vidro vai até y = 340 e daí até a quina é plaqueta
 const VAO = 260; // altura do pano de vidro e da porta
@@ -25,7 +25,7 @@ const CLARABOIA = { x: X0 - 320, y: 160, w: 120, d: 80, r: 0 };
 const PLANO_COB = { x: -BEIRAL, y: -BEIRAL, w: PLANTA.w + 2 * BEIRAL, d: PLANTA.d + 2 * BEIRAL, r: 0 };
 const DECK = { x: PLANTA.w, y: 20, w: 120, d: RETORNO - 20, r: 0 };
 
-// Juntas verticais a cada 25 cm; fileiras ímpares deslocadas meia peça (amarração corrida).
+// Juntas verticais a cada 20 cm; fileiras ímpares deslocadas meia peça (amarração corrida).
 const juntas = (fim, inicio, desloc) => {
   const xs = [];
   for (let v = fim - PECA - desloc; v > inicio; v -= PECA) xs.push(v);
@@ -33,18 +33,18 @@ const juntas = (fim, inicio, desloc) => {
 };
 const JUNTAS_FRENTE = [juntas(PLANTA.w, 0, 0), juntas(PLANTA.w, 0, PECA / 2)];
 const JUNTAS_RETORNO = [juntas(PLANTA.d, RETORNO, 0), juntas(PLANTA.d, RETORNO, PECA / 2)];
-// Vão da plaqueta solta na última fileira (par): entre duas juntas, 24 cm de peça.
-const SOLTA_X = JUNTAS_FRENTE[(FILEIRAS - 1) % 2][23];
+// Vão da plaqueta solta na última fileira (par): entre duas juntas, 19 cm de peça.
+const SOLTA_X = JUNTAS_FRENTE[(FILEIRAS - 1) % 2][29];
 const SOLTA = { x: SOLTA_X, y: PLANTA.d - ESP, w: PECA, d: ESP, r: 0 };
 
 // Fachada longa (y = PLANTA.d): duas janelas altas e um vão de entrada envidraçado perto da ponta x = 0.
 const JANELAS = [420, 640].map((x) => ({ x, w: 60, z: 40, h: 220 }));
-const ENTRADA = { x: 70, w: 170, z: 0, h: 240 }; // 240 cm = 30 fiadas de 8 cm
+const ENTRADA = { x: 70, w: 170, z: 0, h: 238 }; // 238 cm = 28 fiadas de 8,5 cm
 // Mureta de plaqueta de 64 cm à frente da fachada, aberta no caminho da entrada. Na câmera rasa a mureta
 // (130 cm à frente) aparece ~84 cm à esquerda do que tapa: a abertura vai de 130 a 330 para cair diante do vão.
 const MURETA_Y = PLANTA.d + 130;
 const MURETA = [{ x: -60, w: 190 }, { x: 330, w: 540 }].map(({ x, w }) => ({ x, y: MURETA_Y, w, d: 15, r: 0 }));
-const MURETA_H = 64; // 8 fiadas
+const MURETA_H = 68; // 8 fiadas
 // Placa de chão na mesma projeção: 80 cm além da casa, do deck e da mureta (margem curta: a casa enche a célula).
 const MARGEM = 80;
 const PLACA = { x: -60 - MARGEM, y: -MARGEM, w: PLANTA.w + DECK.w + 60 + 2 * MARGEM, d: MURETA_Y + 15 + 2 * MARGEM, r: 0 };
