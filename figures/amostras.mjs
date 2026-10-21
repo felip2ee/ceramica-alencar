@@ -14,7 +14,7 @@ const r = (n) => Math.round(n * 10) / 10;
 // Parede em aparelho corrido que sangra além do viewBox (cols 14 / rows 19 cobrem 480x300 nas duas paridades de fileira; peça na proporção 19 : 7,5).
 // Barro, não botão: sem sombra projetada e sem degradê. Luz do alto à esquerda: a junta é recuada e a peça lança sombra só
 // dentro dela, numa faixa fina junto às arestas de cima e da esquerda. Cada peça tem borda irregular (cantos e meio das
-// arestas longas deslocados até ±0,3 un.) e grão de extrusão: dois a três riscos horizontais translúcidos (≤ 6 % de brilho).
+// arestas longas deslocados até ±0,3 un.) e grão de extrusão: dois a três riscos escuros translúcidos em posição sorteada (≤ 3 % de brilho, sem riscos claros: liam como decalque).
 // A argamassa é um neutro quente da rampa das ilustrações com pontilhado leve.
 export function amostraSvg(tomBase, rotulo, seed = 20261021) {
   const alt = 13.4;
@@ -22,7 +22,7 @@ export function amostraSvg(tomBase, rotulo, seed = 20261021) {
   const j = () => (sorteio() - 0.5) * 0.6; // deslocamento de um ponto da borda, ±0,3 un. (≈ 0,5 px na tela em 1440)
   const pecas = gradePlaquetas({ cols: 14, rows: 19, larg: 34, alt, gap: 3, x0: -23.5, y0: 300 - alt });
   const id = "argamassa-" + tomBase.slice(1).toLowerCase(); // id único por parede: as três ficam no mesmo documento
-  const sombra = [], claros = [], escuros = [];
+  const sombra = [], riscos = [];
   const corpo = pecas.map((p) => {
     const fill = variar(tomBase, FATOR_TOM[sorteiaTom(sorteio())]);
     const { x, y, w, h } = p;
@@ -33,7 +33,7 @@ export function amostraSvg(tomBase, rotulo, seed = 20261021) {
     for (let k = 0; k < n; k++) {
       const lw = 4 + sorteio() * 12, lh = 0.4 + sorteio() * 1.1;
       const risco = `<rect x="${r(x + 1 + sorteio() * (w - lw - 2))}" y="${r(y + 1 + sorteio() * (h - lh - 2))}" width="${r(lw)}" height="${r(lh)}"/>`;
-      (sorteio() < 0.5 ? claros : escuros).push(risco);
+      riscos.push(risco);
     }
     return `<polygon points="${pts.map(([a, b]) => `${r(a)},${r(b)}`).join(" ")}" fill="${fill}"/>`;
   }).join("");
@@ -45,7 +45,6 @@ export function amostraSvg(tomBase, rotulo, seed = 20261021) {
     `<rect x="-10" y="-10" width="500" height="320" fill="url(#${id})"/>` +
     `<path d="${sombra.join("")}" fill="#65392A" fill-opacity=".5"/>` +
     corpo +
-    `<g fill="#FBF6EC" fill-opacity=".07">${claros.join("")}</g>` +
-    `<g fill="#3F241A" fill-opacity=".06">${escuros.join("")}</g>` +
+    `<g fill="#3F241A" fill-opacity=".03">${riscos.join("")}</g>` +
     `</svg>`;
 }
