@@ -14,7 +14,7 @@ const ROTA_Z = LAJE + 0.2;
 const ESCALA = 1.65; // o caminhão é desenhado em 60 × 22 × 26 e ampliado (licença cartográfica): ~120 px de altura em 1440
 // viewBox fixo na proporção da célula da figura (largura total, ~60 % da tela); o svg usa slice e corta o excesso
 const LARGURA = 1440;
-const ALTURA = 600;
+const ALTURA = 540; // a célula da figura em 1440 × 900 tem ~1440 × 534 (a faixa de rótulos fecha a dobra)
 const GRUPO_LARGURA = 0.66; // do fundo da fábrica à frente do caminhão parado em Palmas, em fração da largura
 const ANGULO_MAX = 15;
 // Giro do chão (graus) depois de pôr o norte para cima: a rota Tocantinópolis → Palmas desce na diagonal,
@@ -205,8 +205,8 @@ export function caminhao(mapa) {
     ...[-31, 30].flatMap((u) => [-11, 11].flatMap((v) => [emPalmas(u, v, LAJE), emPalmas(u, v, alt(26))])),
   ].map((q) => k.iso(q, unidade3));
   const [gx, gy] = [grupo.map(([x]) => x), grupo.map(([, y]) => y)];
-  // pela largura, sem passar de 82 % da altura
-  const escalaTela = Math.min((GRUPO_LARGURA * LARGURA) / (Math.max(...gx) - Math.min(...gx)), (0.8 * ALTURA) / (Math.max(...gy) - Math.min(...gy)));
+  // pela largura, sem passar de 90 % da altura
+  const escalaTela = Math.min((GRUPO_LARGURA * LARGURA) / (Math.max(...gx) - Math.min(...gx)), (0.9 * ALTURA) / (Math.max(...gy) - Math.min(...gy)));
   const meio = [((Math.max(...gx) + Math.min(...gx)) / 2) * escalaTela, ((Math.max(...gy) + Math.min(...gy)) / 2) * escalaTela];
   const P = { origin: [LARGURA / 2 - meio[0], ALTURA * 0.6 - meio[1]], scale: escalaTela, azimuth: AZIMUTE, elevation: ELEVACAO };
 
@@ -340,7 +340,7 @@ export function caminhao(mapa) {
     ...dentes,
     fabCaixa(FL / 2 - 14, FW / 2, 14, 8, LAJE, 6, { tone: "hi", className: "mat-cobertura" }), // escritório
     (() => { const c = k.cylinder(chamine[0], chamine[1], FAB.r, LAJE, FAB.c, P, 16); fabContorno.push(c.fill); return k.solidSvg(c, { tone: "hi", className: "mat-plaqueta" }); })(),
-    (() => { const c = k.cylinder(chamine[0], chamine[1], FAB.r + 0.8, LAJE + FAB.c, 2, P, 16); fabContorno.push(c.fill); return k.solidSvg(c, { tone: "hi", className: "mat-escuro" }); })(),
+    (() => { const c = k.cylinder(chamine[0], chamine[1], FAB.r + 0.8, LAJE + FAB.c, 2, P, 16); fabContorno.push(c.fill); return k.solidSvg(c, { tone: "hi", className: "mat-cobertura" }); })(),
   ];
   // sombra da fábrica na placa, mesmo sol: galpão até o shed e chaminé
   const projetaFab = (a, b, h) => { const [x, y] = fabMundo(a, b, 0); return [x + SOL[0] * h, y + SOL[1] * h]; };
@@ -414,31 +414,36 @@ export function caminhao(mapa) {
     const t = (i / 24) * Math.PI * 2;
     return k.iso(mundo(u + raio * Math.cos(t), v, alt(zc + raio * Math.sin(t))), P);
   });
+  // borracha em papel + tinta: hachura densa (≈ 2,5 px) na banda, na tela, e na face, no plano da roda; o aro fica em papel
+  const PASSO_PNEU = 0.5;
   const roda = (u, vDentro, vFora) => {
-    const banda = k.pathOf(casco([...disco(u, vDentro, R), ...disco(u, vFora, R)]), true);
+    const casca = casco([...disco(u, vDentro, R), ...disco(u, vFora, R)]);
+    const banda = k.pathOf(casca, true);
     contorno.push(banda);
     const face = vista(vFora > 0 ? "+v" : "-v");
+    const circulo = Array.from({ length: 24 }, (_, i) => { const t = (i / 24) * Math.PI * 2; return [u + R * Math.cos(t), R + R * Math.sin(t)]; });
+    const hachuraBanda = hachura(casca, 2.5).map(([a, b]) => `M${r1(a[0])} ${r1(a[1])}L${r1(b[0])} ${r1(b[1])}`).join("");
     const detalhe = face
       ? `<path class="roda-face" d="${k.pathOf(disco(u, vFora, R), true)}"/>`
+        + k.lineSvg(hachuraFace(faceV(vFora), circulo, PASSO_PNEU), { className: "hachura hachura--pneu" })
         + `<path class="roda-aro" d="${k.pathOf(disco(u, vFora, R * 0.58), true)}"/>`
         + k.lineSvg(k.pathOf(disco(u, vFora, R * 0.22), true), { tone: "hi" })
         + k.lineSvg(k.pathOf(disco(u, vFora, R * 0.82), true), { tone: "faint", className: "junta" })
       : "";
     return {
       prof: prof(mundo(u, (vDentro + vFora) / 2, alt(R))),
-      svg: `<g class="roda"><path class="roda-banda" d="${banda}"/>${detalhe}${k.lineSvg(banda, { tone: "hi", className: "aresta" })}</g>`,
+      svg: `<g class="roda"><path class="roda-banda" d="${banda}"/>${k.lineSvg(hachuraBanda, { className: "hachura hachura--pneu" })}${detalhe}${k.lineSvg(banda, { tone: "hi", className: "aresta" })}</g>`,
     };
   };
-  const escuro = { tone: "hi", className: "mat-pneu" };
   const cabine = { tone: "hi", className: "mat-cabine" };
   const neutro = { tone: "mid" };
   const claro = { tone: "mid", className: "mat-cobertura" };
   const rodagem = [
     ...RODAS.flatMap((u) => [roda(u, -9, -11), roda(u, 9, 11)]),
     caixa(-30, -8, 58, 16, 3, 4, neutro), // chassi
-    caixa(-31, -10, 1, 20, 3, 3, escuro), // para-choque traseiro
-    caixa(28, -11, 1.5, 22, 3, 4, { ...escuro, inner: k.lineSvg(k.segment(...[-10, 10].map((v) => mundo(29.5, v, alt(5))), P), { tone: "mid" }) }), // para-choque com friso
-    caixa(-5, 7, 11, 3.5, 2.5, 4, escuro, 1.5), // tanque
+    caixa(-31, -10, 1, 20, 3, 3, cabine), // para-choque traseiro
+    caixa(28, -11, 1.5, 22, 3, 4, { ...cabine, inner: k.lineSvg(k.segment(...[-10, 10].map((v) => mundo(29.5, v, alt(5))), P), { tone: "mid" }) }), // para-choque com friso
+    caixa(-5, 7, 11, 3.5, 2.5, 4, cabine, 1.5), // tanque
     caixa(13, 10, 5, 2, 4.5, 1, claro), // estribo da porta
   ];
 
@@ -523,9 +528,9 @@ export function caminhao(mapa) {
     // porta: costura em U e maçaneta
     k.lineSvg(k.pathOf([[18.5, 7.5], [18.5, 22.5], [27.5, 22.5], [27.5, 7.5]].map((q) => k.iso(faceV(CAB.v1)(q), P))), { tone: "mid", className: "junta" }),
     k.lineSvg(k.segment(faceV(CAB.v1)([19.5, 13.8]), faceV(CAB.v1)([21.5, 13.8]), P), { tone: "lo" }),
-    // grade: cinco frisos entre os faróis
-    k.lineSvg([8, 9, 10, 11, 12].map((z) => k.segment(faceU(CAB.u1)([-6, z]), faceU(CAB.u1)([6, z]), P)).join(""), { tone: "mid" }),
-    k.lineSvg(sombraCab, { className: "hachura hachura--clara" }),
+    // grade: um quadro entre os faróis (frisos cruzariam a hachura da face de sombra e virariam xadrez)
+    k.lineSvg(quad(faceU(CAB.u1), -6, 8, 6, 12), { tone: "mid" }),
+    k.lineSvg(sombraCab, { className: "hachura" }),
   ].join("");
   const frente = [
     ...carga,
@@ -537,8 +542,8 @@ export function caminhao(mapa) {
     caixa(19, 11, 8, 0.4, 15, 6.5, { tone: "mid", className: "mat-vidro", inner: vidro(faceV(11.4), 19, 15, 27, 21.5, caidaLado) }), // vidro da porta
     caixa(28.5, -9, 0.4, 18, 14, 8, { tone: "mid", className: "mat-vidro", inner: vidro(faceU(28.9), -9, 14, 9, 22, caidaFrente) }), // para-brisa
     ...[-9.5, 6.5].map((v) => caixa(28.5, v, 0.6, 3, 9.5, 2, { tone: "lo", className: "mat-farol" })), // faróis
-    caixa(28, 11, 0.6, 2.2, 15, 5, escuro), // retrovisores na quina da frente, fora do vidro da porta
-    caixa(28, -13.2, 0.6, 2.2, 15, 5, escuro),
+    caixa(28, 11, 0.6, 2.2, 15, 5, cabine), // retrovisores na quina da frente, fora do vidro da porta
+    caixa(28, -13.2, 0.6, 2.2, 15, 5, cabine),
   ];
   // Lanterna na lateral da carroceria, junto à traseira (a face de trás não encara a câmera).
   const lanternas = k.dotsSvg([k.iso(mundo(-29, 11, alt(8)), P)], { size: 1.2, tone: "hi" });

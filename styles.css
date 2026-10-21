@@ -263,11 +263,11 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .mat-madeira { --anatomy-top: #C08A5B; --anatomy-shade-0: #7E5232; --anatomy-shade-1: #8E5E3A; --anatomy-shade-2: #A06C45; --anatomy-shade-3: #B27B50; --anatomy-face: #A06C45; }
 .mat-tecido { --anatomy-top: #D9CDB8; --anatomy-shade-0: #B9AA92; --anatomy-shade-1: #BFB097; --anatomy-shade-2: #C4B59C; --anatomy-shade-3: #CEC1AA; --anatomy-face: #C4B59C; }
 .mat-tapete { --anatomy-top: #EFE6D6; --anatomy-shade-0: #CFC2AC; --anatomy-shade-1: #D9CDB8; --anatomy-shade-2: #E3D8C5; --anatomy-shade-3: #EADFCD; --anatomy-face: #E3D8C5; }
-.mat-cabine { --anatomy-top: #6B4030; --anatomy-shade-0: #3F241A; --anatomy-shade-1: #4A2B1F; --anatomy-shade-2: #5A3423; --anatomy-shade-3: #65392A; --anatomy-face: #5A3423; }
-.mat-pneu { --anatomy-top: #3A2D26; --anatomy-shade-0: #1F1814; --anatomy-shade-1: #241C17; --anatomy-shade-2: #2B211C; --anatomy-shade-3: #332721; --anatomy-face: #2B211C; }
+/* cabine, chassi, defletor, tanque e para-choques: o neutro da laje e do deck da casa; a sombra é hachura, não preenchimento escuro */
+.mat-cabine { --anatomy-top: #F0E8DA; --anatomy-shade-0: #C9BBA6; --anatomy-shade-1: #D8CCB8; --anatomy-shade-2: #E0D5C1; --anatomy-shade-3: #E8DCC6; --anatomy-face: #E8DCC6; }
 .mat-mapa { --anatomy-top: #F0E8DA; --anatomy-shade-0: #D8CCB8; --anatomy-shade-1: #E0D5C1; --anatomy-shade-2: #E8DCC6; --anatomy-shade-3: #EDE4D4; --anatomy-face: #F0E8DA; }
 .iso-dots[data-tone="red"] circle { fill: var(--anatomy-red); opacity: 1; }
-#rota-principal { stroke-width: 1.6; }
+#rota-principal { stroke-width: 2.4; }
 /* rótulos do mapa: o mesmo rótulo da página (DM Sans 500, caixa alta, 0.08em), sem placa: só um halo cor de papel de ~4 px */
 .rotulo-mapa { font: 500 15px var(--font-text); fill: var(--anatomy-hi); text-transform: uppercase; letter-spacing: .08em; paint-order: stroke; stroke: var(--background); stroke-linejoin: round; }
 /* corpo dos rótulos do mapa em unidades do viewBox; main.js põe --u = 14 / escala do svg (14 px na tela) */
@@ -287,14 +287,16 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 #caminhao .sombra { fill: var(--ink); fill-opacity: .06; stroke: none; }
 #caminhao .hachura { stroke: rgba(90, 52, 35, .35); stroke-width: .5px; }
 #caminhao .mat-plaqueta .hachura { stroke: rgba(90, 52, 35, .45); }
-#caminhao .hachura--clara { stroke: rgba(251, 246, 236, .3); }
+/* terracota só no tijolo (carga, paredes da fábrica e chaminé), sem o tom mais escuro: a face de sombra fica no #A85D3A da casa */
+#caminhao .mat-plaqueta { --anatomy-shade-0: #A85D3A; --anatomy-shade-1: #A85D3A; }
 #caminhao .tom-claro { fill: #FBF6EC; fill-opacity: .14; }
 #caminhao .tom-escuro { fill: #5A3423; fill-opacity: .16; }
 #caminhao .vidro-alto { fill: #FBF6EC; fill-opacity: .45; stroke: none; }
 #caminhao .mat-vidro { --anatomy-top: #F3ECDF; --anatomy-shade-0: #DDD2C0; --anatomy-shade-1: #E4DAC8; --anatomy-shade-2: #EDE4D4; --anatomy-shade-3: #F0E8DA; --anatomy-face: #EDE4D4; opacity: .85; }
 #caminhao .mat-palete { --anatomy-top: #D8CCB8; --anatomy-shade-0: #B9AA92; --anatomy-shade-1: #BFB097; --anatomy-shade-2: #C4B59C; --anatomy-shade-3: #C9BBA6; --anatomy-face: #C4B59C; }
 #caminhao .mat-farol { --anatomy-top: #FBF6EC; --anatomy-shade-0: #E8DCC6; --anatomy-shade-1: #EDE4D4; --anatomy-shade-2: #F0E8DA; --anatomy-shade-3: #F6F0E4; --anatomy-face: #F0E8DA; }
-#caminhao .roda-banda { fill: #241C17; }
+#caminhao .roda-banda { fill: #DDD2C0; }
+#caminhao .hachura--pneu { stroke: rgba(90, 52, 35, .6); }
 #caminhao .hachura--leve { stroke: rgba(90, 52, 35, .18); }
 #caminhao .vizinho { fill: #F0E8DA; fill-opacity: .55; stroke: none; } /* chão dos estados vizinhos */
 #caminhao .estrada { fill: #FBF6EC; stroke: none; }
@@ -303,10 +305,10 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 #caminhao .estrada-vizinha .estrada-borda { stroke: rgba(90, 52, 35, .3); stroke-width: .5px; }
 #caminhao .fab-telhado { fill: #E8DCC6; stroke: rgba(90, 52, 35, .75); stroke-width: 1px; stroke-linejoin: round; }
 #caminhao .fab-empena { fill: #A85D3A; stroke: rgba(90, 52, 35, .75); stroke-width: 1px; stroke-linejoin: round; }
-#caminhao .fab-vidro { fill: #65392A; stroke: rgba(90, 52, 35, .75); stroke-width: 1px; stroke-linejoin: round; }
-#caminhao .fab-vidro + .junta { stroke: rgba(251, 246, 236, .4); }
-#caminhao .roda-face { fill: #332721; }
-#caminhao .roda-aro { fill: #8E6B52; }
+#caminhao .fab-vidro { fill: #D8CCB8; stroke: rgba(90, 52, 35, .75); stroke-width: 1px; stroke-linejoin: round; }
+#caminhao .fab-vidro + .junta { stroke: rgba(90, 52, 35, .55); }
+#caminhao .roda-face { fill: #E4DAC8; }
+#caminhao .roda-aro { fill: #F6F0E4; }
 .mat-folha { --anatomy-top: #6E9A63; --anatomy-shade-0: #3E6139; --anatomy-shade-1: #466C40; --anatomy-shade-2: #4F7A4A; --anatomy-shade-3: #5E8A57; --anatomy-face: #4F7A4A; }
 .tom h3 { margin: var(--s-2) 0 0; }
 .tom--medida .ph { border-top: 1px solid var(--clay); }
@@ -317,7 +319,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 @media (min-width: 1280px) { .galeria { grid-template-columns: repeat(3, 1fr); } }
 
 /* fábrica: a mesma família do hero. Moldura da figura em largura total em cima (o mapa é o chão e passa da moldura,
-   o svg corta com slice); banda título | texto | ação nas colunas do hero (1fr | 348 | 436); quatro números iguais embaixo */
+   o svg corta com slice); banda título | texto | ação nas colunas do hero (1fr | 348 | 436); faixa de rótulos numerados embaixo, como a do hero */
 .fabrica { padding-top: 0; }
 .fabrica__grade { grid-template-columns: minmax(0, 1fr); }
 .fabrica__moldura {
@@ -351,13 +353,8 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .fabrica__ganho { display: grid; gap: 4px; margin: 4px 0 0; }
 .fabrica__ganho :is(dt, dd) { display: inline; margin: 0; }
 .fabrica__ganho dt { margin-right: 8px; }
-.fabrica__numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.fabrica__numeros > .celula { display: grid; align-content: start; gap: 8px; padding-block: var(--s-2) 20px; }
-.fabrica__numeros > .celula:nth-child(odd) { border-left: 0; padding-left: var(--gutter); }
-.fabrica__numeros > .celula:nth-child(n+3) { border-top: 1px solid var(--line); }
-/* números em tinta: o vermelho fica para o título; o acento, para o botão */
-.fabrica__numeros strong { font: 400 var(--h2)/1 var(--font-display); letter-spacing: -.025em; color: var(--ink); white-space: nowrap; }
-.fabrica__numeros > .celula > span { line-height: 1.4; }
+/* abaixo de 1200 a faixa é 2 × 2: o número fica em cima e o texto ganha a largura da célula */
+.fabrica__faixa > .celula { flex-direction: column; gap: 4px; }
 @media (min-width: 768px) {
   .fabrica__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .fabrica__moldura, .fabrica__titulo { grid-column: 1 / -1; }
@@ -365,20 +362,17 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 }
 @media (min-width: 1200px) {
   :root { --banda-fab: 254px; }
-  /* 900 em 1440: cabeçalho 64 + moldura ≥ 540 (60 %) + banda; a faixa de números fica logo abaixo da dobra */
+  /* 900 em 1440: cabeçalho 64 + moldura (≥ 55 %) + banda + faixa de rótulos 47: a faixa fecha a dobra */
   .fabrica__grade { grid-template-columns: minmax(0, 1fr) 348px var(--col-acao); grid-template-rows: auto var(--banda-fab); }
-  .fabrica__moldura { grid-column: 1 / -1; height: max(540px, calc(100svh - var(--header) - var(--banda-fab) - 1px)); }
+  .fabrica__moldura { grid-column: 1 / -1; height: max(500px, calc(100svh - var(--header) - var(--banda-fab) - var(--faixa) - 1px)); }
   .fabrica__grade > .fabrica__moldura.celula { padding: 0; } /* em 1440 a legenda fica sobre o papel do desenho */
   #caminhao { height: 100%; aspect-ratio: auto; }
   .fabrica__titulo { grid-column: auto; padding-block: var(--s-3); padding-right: var(--s-2); }
   .fabrica__titulo h2 { max-width: none; font-size: 56px; }
   .fabrica__texto, .fabrica__acao { border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--s-3); }
   .fabrica__acao { padding: 12px var(--gutter) 12px var(--s-3); }
-  .fabrica__numeros { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .fabrica__numeros > .celula:nth-child(odd) { border-left: 1px solid var(--line); padding-left: var(--s-3); }
-  .fabrica__numeros > .celula:first-child { border-left: 0; padding-left: var(--gutter); }
-  .fabrica__numeros > .celula:nth-child(n+3) { border-top: 0; }
-  .fabrica__numeros strong { font-size: 56px; }
+  .fabrica__faixa { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .fabrica__faixa > .celula { flex-direction: row; gap: 12px; }
 }
 
 /* parceiros e fechamento */
