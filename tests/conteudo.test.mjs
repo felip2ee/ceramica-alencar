@@ -89,3 +89,13 @@ test("pré-carga e botão Pular estático", () => {
   }
   assert.match(html, /<div id="abertura"[^>]*><button class="abertura__pular" type="button">Pular<\/button><\/div>/);
 });
+test("uma casa por argumento: sem redundância e sem texto que exponha o arquiteto", () => {
+  const texto = html.replace(/<[^>]*>/g, " ");
+  assert.ok((texto.match(/3 a 7 dias/g) || []).length <= 4, "3 a 7 dias repetido");
+  assert.doesNotMatch(texto, /comiss|reserva técnica|percentual|margem/i);
+  assert.equal((texto.match(/o preço mais competitivo/gi) || []).length, 1);
+  assert.ok(html.search(/o preço mais competitivo/i) > html.indexOf('id="lojas"'));
+  const foraDeParceiros = html.slice(0, html.indexOf('id="parceiros"')) + html.slice(html.indexOf('id="contato"'));
+  assert.doesNotMatch(foraDeParceiros, /<dl\b/);
+  assert.match(texto, /aceita pintura/);
+});
