@@ -25,7 +25,7 @@ test("seções na ordem do spec", () => {
   assert.deepEqual(pos, [...pos].sort((a,b)=>a-b));
 });
 test("placeholders da empresa presentes e tokens exatos", () => {
-  for (const p of ["TOM_CLARO_NOME","TOM_MEDIO_NOME","TOM_ESCURO_NOME"]) assert.ok(html.includes(p), p);
+  for (const p of ["Lisa","Queimada","Rústica"]) assert.ok(html.includes(`<span>${p}</span>`), p);
   for (const t of ["--background:#FAF8F1","--surface:#F0E8DA","--brand:#D93612","--action:#B82E12","--ink:#5A3423","--clay:#B65E3C","--sun:#E7B43D"]) assert.ok(css.replace(/\s/g,"").includes(t), t);
 });
 test("fontes: só Bodoni Moda e DM Sans", () => {
@@ -33,8 +33,8 @@ test("fontes: só Bodoni Moda e DM Sans", () => {
 });
 test("ids e ganchos de interface das tasks seguintes", () => {
   for (const id of ["abertura","casa","plaqueta-narradora","caminhao","galeria","whatsapp-flutuante"]) assert.ok(html.includes(`id="${id}"`), id);
-  assert.equal((html.match(/<figure[^>]*data-ambiente="[^"]+"[^>]*data-tom="(claro|medio|escuro)"/g) || []).length, 6);
-  assert.equal((html.match(/<div class="amostra" data-tom="(claro|medio|escuro)"/g) || []).length, 3);
+  assert.equal((html.match(/<figure[^>]*data-ambiente="[^"]+"[^>]*data-tom="(lisa|queimada|rustica)"/g) || []).length, 6);
+  assert.equal((html.match(/<div class="amostra" data-tom="(lisa|queimada|rustica)"/g) || []).length, 3);
   assert.ok(/<script type="module" src="main\.js">/.test(html));
   assert.equal((html.match(/<script defer src="https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/gsap\/3\.12\.5\//g) || []).length, 3);
 });
@@ -57,13 +57,13 @@ test("ajustes da Task 8: og:image absoluto, anti-flash, flutuante e áreas de to
   assert.match(css, /#whatsapp-flutuante\.is-oculto/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
   assert.match(css, /\.link\s*\{[^}]*min-height:\s*44px/);
-  assert.equal((html.match(/<img [^>]*assets\/flow\/[^>]*srcset=/g) || []).length, 9); // 6 da galeria + 3 interlúdios
+  assert.equal((html.match(/<img [^>]*assets\/flow\/[^>]*srcset=/g) || []).length, 10); // 6 da galeria + 4 interlúdios
 });
 test("toda imagem gerada (assets/flow/) vem com a legenda \"imagem conceitual\"", () => {
   const figuras = [...html.matchAll(/<figure[\s\S]*?<\/figure>/g)].map((m) => m[0]);
   const flow = [...html.matchAll(/<img [^>]*src="assets\/flow\/[^>]*>/g)];
   const interludios = [...html.matchAll(/<section class="interludio"[\s\S]*?<\/section>/g)].map((m) => m[0]);
-  assert.equal(flow.length, 9); // 6 da galeria + 3 interlúdios
+  assert.equal(flow.length, 10); // 6 da galeria + 4 interlúdios
   for (const [img] of flow) {
     const fig = figuras.find((f) => f.includes(img));
     if (fig) { assert.match(fig.match(/<figcaption>([\s\S]*?)<\/figcaption>/)?.[1] ?? "", /imagem conceitual/, img); continue; }

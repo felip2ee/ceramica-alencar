@@ -57,9 +57,9 @@ escreverFigures({
   LOGO_PATHS,
   ISO_CSS_MARCA: isoCssMarca(ISO_CSS),
   AMOSTRAS: {
-    claro: amostraSvg("#C9896A", "claro"),
-    medio: amostraSvg("#B65E3C", "médio"),
-    escuro: amostraSvg("#8E4529", "escuro"),
+    lisa: amostraSvg("#B65E3C", "lisa", { estilo: "lisa" }),
+    queimada: amostraSvg("#8E4529", "queimada", { estilo: "queimada" }),
+    rustica: amostraSvg("#C9896A", "rústica", { estilo: "rustica" }),
   },
   CASA: CASA.svg,
   CASA_META: CASA.meta,

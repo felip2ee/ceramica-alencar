@@ -18,12 +18,11 @@ A abertura (plaquetas assentando na forma da logo) roda uma vez por navegador e 
 ## Placeholders a trocar
 
 ```bash
-grep -rn "TOM_.*_NOME\|SITE_DOMINIO" site/index.html site/main.js
+grep -rn "SITE_DOMINIO" site/index.html site/main.js
 ```
 
 | Placeholder | Onde | O que colocar |
 | --- | --- | --- |
-| `TOM_CLARO_NOME`, `TOM_MEDIO_NOME`, `TOM_ESCURO_NOME` | Revestimentos | nome comercial de cada tom |
 | `SITE_DOMINIO` | `og:image` no `<head>` | domínio final, sem protocolo (`https://SITE_DOMINIO/assets/logo/favicon-512.png`) |
 
 Palavra "amostra" no texto visível só entra depois de confirmada com a Cerâmicas Alencar. A classe `.amostra` dos cartões de tom é nome interno e não aparece para o visitante.

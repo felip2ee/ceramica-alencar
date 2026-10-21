@@ -174,9 +174,9 @@ main { padding-top: var(--header); }
   background-size: 100% 1px, 1px 50%, 1px 50%, 1px 50%;
   background-position: 0 50%, 50% 0, 25% 100%, 75% 100%;
 }
-.tom-mini--claro { --tom: #C9896A; }
-.tom-mini--medio { --tom: var(--clay); }
-.tom-mini--escuro { --tom: #8E4529; }
+.tom-mini--lisa { --tom: var(--clay); }
+.tom-mini--queimada { --tom: #8E4529; }
+.tom-mini--rustica { --tom: #C9896A; }
 .hero__acao { padding-bottom: var(--s-4); }
 @media (min-width: 768px) {
   .hero__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
