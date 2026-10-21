@@ -17,7 +17,7 @@ A abertura (plaquetas assentando na forma da logo) roda uma vez por navegador e 
 
 ## Publicar (Portainer Swarm + Traefik)
 
-Só a pasta `site/` vai para o repositório público (github.com/felip2ee/ceramica-alencar) e para a imagem; o repositório local completo (pesquisa, docs, mídia) fica privado. `deploy/publicar.sh` faz as duas coisas: constrói a imagem `linux/amd64` com `Dockerfile` + `deploy/nginx.conf` (gzip, cache longo para imagens, revalidação para HTML e código), envia para `ghcr.io/felip2ee/ceramica-alencar:latest` e força o `git subtree split` de `site/` em `origin/main`. Uma vez só: `gh auth refresh -h github.com -s write:packages,read:packages`.
+Só a pasta `site/` vai para o repositório público (github.com/felip2ee/ceramica-alencar); o repositório local completo (pesquisa, docs, mídia) fica privado. `deploy/publicar.sh` força o `git subtree split` de `site/` em `origin/main`; lá, `.github/workflows/docker.yml` constrói a imagem (`Dockerfile` + `deploy/nginx.conf`: gzip, `.mjs` como JavaScript, cache longo para imagens) e publica `ghcr.io/felip2ee/ceramica-alencar:latest`.
 
 ```bash
 site/deploy/publicar.sh
