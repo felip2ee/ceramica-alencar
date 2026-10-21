@@ -8,5 +8,5 @@ gh auth token | docker login ghcr.io -u "$(gh api user --jq .login)" --password-
 docker buildx build --platform linux/amd64 -t "$IMAGEM:latest" -t "$IMAGEM:$(git rev-parse --short HEAD)" --push .
 cd ..                                          # raiz do repositório local (completo, privado)
 SPLIT=$(git subtree split --prefix=site HEAD 2>/dev/null | grep -oE "[0-9a-f]{40}" | tail -n1)
-git push --force origin "$SPLIT:refs/heads/main"
+git push --force origin "${SPLIT}:refs/heads/main"
 echo "publicado: $IMAGEM:latest e github.com/felip2ee/ceramica-alencar (só site/)"
