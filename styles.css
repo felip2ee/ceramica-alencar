@@ -22,7 +22,7 @@
 
   --gutter: 24px;
   --section: 64px;
-  --header: 80px;
+  --header: 64px;
   --t: 200ms;
 
   --h1: clamp(42px, 11vw, 48px);
@@ -122,24 +122,36 @@ h1 em, h2 em, h3 em { font-style: italic; }
 .topo__nav { display: none; }
 .topo__nav a { display: flex; align-items: flex-start; padding: var(--s-2) var(--s-3) 0 var(--s-2); }
 .topo__nav a:hover, .topo__nav a:focus-visible { background: var(--surface); }
-/* o CTA do topo é o 1º dos dois usos do acento na dobra (texto + seta) */
-.topo__cta { display: block; min-height: 44px; padding: var(--s-2) var(--s-3); color: var(--action); }
-.topo__cta .seta { letter-spacing: 0; white-space: pre; }
+/* o CTA do topo é o 1º dos dois usos do acento na dobra; texto exato, em caixa de frase.
+   Some abaixo de 768 px: o botão do hero vem logo abaixo e o WhatsApp flutuante cobre o resto. */
+.topo__cta { display: none; padding: var(--s-2) var(--s-3); font: 500 16px/1.2 var(--font-text); color: var(--action); text-decoration: none; }
+.topo__cta .seta { white-space: pre; }
 .topo__cta:hover { background: var(--surface); }
-.so-desktop { display: none; }
+@media (min-width: 768px) {
+  .topo__linha { grid-template-columns: minmax(0, 1fr) auto; }
+  .topo__cta { display: flex; align-items: flex-start; }
+}
 @media (min-width: 1200px) {
-  .topo__linha { grid-template-columns: minmax(0, 1fr) auto 360px; }
+  .topo__linha { grid-template-columns: minmax(0, 1fr) auto var(--col-acao); }
   .topo__nav { display: grid; grid-auto-flow: column; }
-  .so-desktop { display: inline; white-space: pre; }
 }
 main { padding-top: var(--header); }
 
 /* hero: moldura da casa sozinha em cima; título | texto | CTA embaixo; faixa de rótulos numerados */
 .hero { padding-top: 0; }
 .hero__grade { grid-template-columns: minmax(0, 1fr); }
-.hero__moldura { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--s-6) var(--s-3) var(--s-3); border-bottom: 1px solid var(--line); }
-.hero__legenda { position: absolute; top: var(--s-2); left: var(--gutter); right: var(--gutter); }
-.hero__casa { aspect-ratio: 900 / 449; width: 100%; }
+.hero__moldura { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--s-8) var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); }
+.hero__legenda { position: absolute; top: var(--s-4); left: var(--gutter); right: var(--gutter); } /* abaixo das marcas "+" */
+.hero__casa { aspect-ratio: 900 / 306; width: 100%; }
+/* marcas "+" nos quatro cantos da moldura da figura, em tinta, 16 px para dentro */
+.hero__moldura {
+  --mais: linear-gradient(var(--ink), var(--ink));
+  background:
+    var(--mais) left 11px top 16px / 11px 1px no-repeat, var(--mais) left 16px top 11px / 1px 11px no-repeat,
+    var(--mais) right 11px top 16px / 11px 1px no-repeat, var(--mais) right 16px top 11px / 1px 11px no-repeat,
+    var(--mais) left 11px bottom 16px / 11px 1px no-repeat, var(--mais) left 16px bottom 11px / 1px 11px no-repeat,
+    var(--mais) right 11px bottom 16px / 11px 1px no-repeat, var(--mais) right 16px bottom 11px / 1px 11px no-repeat;
+}
 .hero__titulo, .hero__produto, .hero__acao { border-left: 0; padding-left: var(--gutter); }
 .hero__titulo h1 { margin: 0; max-width: 9.5em; font-size: var(--h1); line-height: 1.04; }
 .hero__copy { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }
@@ -167,16 +179,21 @@ main { padding-top: var(--header); }
   .hero__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .hero__moldura, .hero__titulo { grid-column: 1 / -1; }
   .hero__acao { border-left: 1px solid var(--line); padding-left: var(--s-3); }
-  .hero__casa { width: min(100%, calc((100svh - var(--header) - 320px) * 900 / 449)); }
+  .hero__casa { width: min(100%, calc((100svh - var(--header) - 320px) * 900 / 306)); }
 }
 @media (min-width: 1200px) {
-  /* a dobra inteira: a moldura fica com o que sobra da tela (≥ 55 % da altura) */
-  .hero__grade { grid-template-columns: minmax(0, 1fr) 400px 360px; grid-template-rows: minmax(55svh, 1fr) auto; min-height: calc(100svh - var(--header) - 51px); } /* 1 px: sentinela do cabeçalho compacto no topo do main */
+  :root { --col-acao: 424px; --banda: 205px; --faixa: 46px; }
+  /* a dobra inteira (900 px em 1440): cabeçalho 64 + moldura ≥ 585 (65 %) + banda do título 205 + faixa 46 */
+  .hero__grade { grid-template-columns: minmax(0, 1fr) 360px var(--col-acao); grid-template-rows: minmax(0, 1fr) var(--banda); height: calc(100svh - var(--header) - var(--faixa)); min-height: 640px; }
   .hero__moldura { padding-block: var(--s-2); }
-  .hero__titulo { grid-column: auto; padding-block: var(--s-3) var(--s-4); }
-  .hero__produto, .hero__acao { border-top: 0; border-left: 1px solid var(--line); padding-left: var(--s-3); }
-  /* a casa usa a altura que sobra da dobra: cabeçalho, faixa de produto (≈ 260 px), régua de rótulos e a folga da moldura */
-  .hero__casa { width: min(100%, calc((100svh - var(--header) - 52px - 260px - 2 * var(--s-2)) * 900 / 449)); }
+  .hero__legenda { top: var(--s-2); }
+  .hero__titulo { grid-column: auto; padding-block: var(--s-3); padding-right: var(--s-2); }
+  .tons-mini { margin-top: var(--s-1); }
+  .hero__titulo h1 { max-width: none; }
+  .hero__ganho { white-space: nowrap; }
+  .hero__produto, .hero__acao { border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--s-3); }
+  /* a casa centra na moldura com folga igual em cima e embaixo; a largura manda (desenho ≈ 2,9 : 1) */
+  .hero__casa { width: min(82%, calc((100svh - var(--header) - var(--faixa) - var(--banda) - 2 * var(--s-12)) * 900 / 306)); }
 }
 #casa svg { width: 100%; height: auto; }
 /* vidro em neutro quente (só a plaqueta tem cor) */
@@ -188,7 +205,7 @@ main { padding-top: var(--header); }
 /* até a construção começar, as partes da casa ficam ocultas (o JS revela uma a uma) */
 #casa:not(.is-ready) :is(.fileira, .movel, .estrutura, .vidro, #plaqueta-solta) { opacity: 0; }
 .faixa { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.faixa > .celula { display: flex; gap: 12px; padding-block: var(--s-2); }
+.faixa > .celula { display: flex; gap: 12px; padding-block: 14px; }
 .faixa > .celula:nth-child(odd) { border-left: 0; padding-left: var(--gutter); }
 .faixa > .celula:nth-child(n+3) { border-top: 1px solid var(--line); }
 @media (min-width: 1200px) {

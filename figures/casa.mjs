@@ -40,16 +40,17 @@ const SOLTA = { x: SOLTA_X, y: PLANTA.d - ESP, w: PECA, d: ESP, r: 0 };
 // Fachada longa (y = PLANTA.d): duas janelas altas e um vão de entrada envidraçado perto da ponta x = 0.
 const JANELAS = [420, 640].map((x) => ({ x, w: 60, z: 40, h: 220 }));
 const ENTRADA = { x: 70, w: 170, z: 0, h: 260 };
-// Mureta de plaqueta de 60 cm à frente da fachada, aberta no caminho da entrada.
+// Mureta de plaqueta de 64 cm à frente da fachada, aberta no caminho da entrada. Na câmera rasa a mureta
+// (130 cm à frente) aparece ~84 cm à esquerda do que tapa: a abertura vai de 130 a 330 para cair diante do vão.
 const MURETA_Y = PLANTA.d + 130;
-const MURETA = [{ x: -60, w: 150 }, { x: 230, w: 640 }].map(({ x, w }) => ({ x, y: MURETA_Y, w, d: 15, r: 0 }));
+const MURETA = [{ x: -60, w: 190 }, { x: 330, w: 540 }].map(({ x, w }) => ({ x, y: MURETA_Y, w, d: 15, r: 0 }));
 const MURETA_H = 64; // 8 fiadas
 // Placa de chão na mesma projeção: 150 cm além da casa, do deck e da mureta, em todos os lados.
 const PLACA = { x: -150, y: -150, w: PLANTA.w + DECK.w + 300, d: MURETA_Y + 15 + 150 + 150, r: 0 };
 const PLACA_Z = PISO_Z - 2;
 // Sombra projetada no plano da placa: luz vinda da direita e de trás, sombra para a esquerda e para a frente.
-// Comprimento escolhido para a sombra do beiral (351 cm acima da placa) ficar dentro da placa.
-const SOMBRA = [-0.28, 0.32]; // deslocamento em planta por cm de altura
+// Sol alto: sombra curta e chata, rente à base, dentro da placa.
+const SOMBRA = [-0.16, 0.18]; // deslocamento em planta por cm de altura
 
 const r1 = (n) => Math.round(n * 10) / 10;
 const PEGADA = k.boxCorners(PLACA, PLACA_Z, PISO_Z);
@@ -64,8 +65,9 @@ function casco(pts) {
   return [...baixo.slice(0, -1), ...cima.slice(0, -1)];
 }
 
-// Câmera girada para o muro comprido e baixa o bastante para a casa com a placa de chão caber larga (≥ 65 % da célula) na dobra.
-const CAMERA = { azimuth: 50, elevation: 20 };
+// Dimétrica rasa: elevação de 9° deixa a cobertura num friso fino e a fachada de plaqueta dominante;
+// azimute 57° (33° fora da normal do muro comprido, convenção do kit: 90° = muro comprido de frente).
+const CAMERA = { azimuth: 57, elevation: 9 };
 const PAD = 4;
 const ENQUADRA = [...k.boxCorners(PLANTA, PISO_Z, PE), ...k.boxCorners(PLANO_COB, COB_Z, COB_Z + COBERTURA), ...PEGADA];
 // Altura do viewBox justa ao desenho: o svg não carrega folga própria, quem centra é a célula.
