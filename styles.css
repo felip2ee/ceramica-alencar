@@ -504,7 +504,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .par__desenho, .par__texto { display: grid; align-content: start; gap: var(--s-2); border-left: 0; padding: var(--s-3) var(--gutter); }
 .par__texto { position: relative; border-top: 1px solid var(--line); padding-bottom: var(--s-4); }
 .par__texto h3 { margin: 0; font-size: var(--h2); line-height: 1.04; }
-.par__ganho { display: grid; gap: 4px; margin: 0; max-width: 520px; }
+.par__ganho { display: grid; gap: 4px; margin: 0; max-width: 60ch; } /* parágrafo ≤ 60ch */
 .par__ganho :is(dt, dd) { display: inline; margin: 0; }
 .par__ganho dt { margin-right: 8px; }
 .par__texto .btn { justify-self: start; }
@@ -540,32 +540,34 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   .par__desenho { grid-template-rows: auto minmax(0, 1fr); padding-top: var(--s-2); }
   /* faixa do desenho ≥ 55 % da dobra: o texto aperta o respiro vertical, não o corpo */
   .par__texto { gap: 12px; padding: var(--s-2) var(--s-3) var(--s-3) var(--gutter); }
-  .par__ganho { max-width: none; }
+  .par__ganho { max-width: 60ch; }
   #lojas .par__texto { padding-left: var(--s-3); padding-right: var(--gutter); }
   .par__texto h3 { font-size: 56px; }
   .par__fig { align-self: center; margin: 0; }
 }
 
-/* fechamento: uma frase só, centrada numa célula alta com as marcas "+" nos cantos; o botão é o único acento da tela */
+/* "+" de 11 px centrados nos fios: uma faixa de 11 px de altura com o centro no fio (top/bottom: -6px a partir da borda
+   da célula); --cruz-borda põe uma cruz a 16 px de cada borda da tela, --cruz-meio uma cruz sobre o fio vertical da esquerda */
+:root {
+  --mais: linear-gradient(var(--ink), var(--ink));
+  --cruz-borda: var(--mais) left 11px top 5px / 11px 1px no-repeat, var(--mais) left 16px top 0 / 1px 11px no-repeat,
+    var(--mais) right 11px top 5px / 11px 1px no-repeat, var(--mais) right 16px top 0 / 1px 11px no-repeat;
+}
+.cruzes::after { content: ""; position: absolute; z-index: 1; left: 0; right: 0; bottom: -6px; height: 11px; pointer-events: none; background: var(--cruz-borda); }
+
+/* fechamento: uma frase só em tela cheia (mecanismo 6), centrada numa célula da altura da dobra menos o cabeçalho
+   (menos 16 px, para o fio de baixo e as cruzes caberem inteiros na dobra); o fio de baixo é o fio de cima da grade
+   do rodapé, cujo texto começa na rolagem seguinte; o botão é o único acento da tela */
 .fim__grade { grid-template-columns: minmax(0, 1fr); }
 .fim__celula {
   position: relative; display: grid; justify-items: center; align-content: center; gap: var(--s-3);
-  min-height: 560px; padding: var(--s-12) var(--gutter); text-align: center;
-  --mais: linear-gradient(var(--ink), var(--ink));
-  background:
-    var(--mais) left 11px top 16px / 11px 1px no-repeat, var(--mais) left 16px top 11px / 1px 11px no-repeat,
-    var(--mais) right 11px top 16px / 11px 1px no-repeat, var(--mais) right 16px top 11px / 1px 11px no-repeat,
-    var(--mais) left 11px bottom 16px / 11px 1px no-repeat, var(--mais) left 16px bottom 11px / 1px 11px no-repeat,
-    var(--mais) right 11px bottom 16px / 11px 1px no-repeat, var(--mais) right 16px bottom 11px / 1px 11px no-repeat;
+  min-height: max(480px, calc(100svh - var(--header) - 16px)); padding: var(--s-12) var(--gutter); text-align: center;
 }
 .fim__rotulo { position: absolute; top: var(--s-4); left: var(--gutter); right: var(--gutter); }
 .fim__celula h2 { margin: 0; font-size: clamp(40px, 6.7vw, 96px); line-height: 1.02; }
 .fim__copy { margin: 0 auto var(--s-2); max-width: 34ch; text-wrap: balance; }
 @media (min-width: 1200px) {
-  /* frase única que, com a grade do rodapé, enche a dobra (mecanismo 6): a célula termina no fio de cima do rodapé,
-     sem papel sobrando; --rodape-grade é a altura da grade de 4 colunas com corpo de 18 px */
-  :root { --rodape-grade: 241px; }
-  .fim__celula { min-height: max(520px, calc(100svh - var(--header) - var(--rodape-grade) - 1px)); padding-block: var(--s-8); }
+  .fim__celula { min-height: max(600px, calc(100svh - var(--header) - 16px)); padding-block: var(--s-8); }
   .fim__rotulo { top: var(--s-2); }
 }
 
@@ -584,6 +586,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .rodape__legal { border-top: 1px solid var(--line); border-bottom: 0; }
 .legal { display: flex; align-items: center; gap: 12px; margin: 0; padding-block: 28px; /* 80 px: o botão flutuante (24 + 48) fica dentro da faixa legal, sem cruzar o fio */ font-size: 14px; color: var(--ink); }
 .legal img { height: 24px; width: auto; }
+.legal > span > span { white-space: nowrap; } /* no celular quebra entre a razão social e o CNPJ, nunca no meio */
 @media (max-width: 767px) { .legal { flex-direction: column; align-items: flex-start; } } /* símbolo numa linha, razão social e CNPJ na outra */
 @media (min-width: 768px) {
   .rodape__grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -595,6 +598,16 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   .rodape__grade { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .rodape__grade > .celula:nth-child(n) { border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--s-3) var(--s-6); }
   .rodape__grade > .celula:first-child { border-left: 0; padding-left: var(--gutter); }
+  /* "+" nos cruzamentos internos: fio de cima e fio de baixo da grade com cada um dos três fios verticais */
+  .rodape__grade { position: relative; }
+  .rodape__grade::after { content: ""; position: absolute; z-index: 1; left: 0; right: 0; bottom: -6px; height: 11px; pointer-events: none; background: var(--cruz-borda); }
+  .rodape__grade > .celula { position: relative; }
+  .rodape__grade > .celula + .celula::before, .rodape__grade > .celula + .celula::after {
+    content: ""; position: absolute; z-index: 1; left: -6px; width: 11px; height: 11px; pointer-events: none;
+    background: var(--mais) 0 5px / 11px 1px no-repeat, var(--mais) 5px 0 / 1px 11px no-repeat;
+  }
+  .rodape__grade > .celula + .celula::before { top: -6px; }
+  .rodape__grade > .celula + .celula::after { bottom: -6px; }
 }
 
 /* plaqueta narradora: fixa e dirigida pelo scroll (scroll.mjs), escondida até sair da casa */
