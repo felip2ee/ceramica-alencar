@@ -53,3 +53,8 @@ test("robots.txt, sitemap.xml e llms.txt", () => {
   for (const s of ["Tocantinópolis", "7,5 × 19 × 2 cm", "lisa", "queimada", "rústica", "WhatsApp", "revestimentos rústicos", "apartamento"]) assert.ok(llms.includes(s), s);
   assert.doesNotMatch(llms, /R\$|comiss|reserva técnica/);
 });
+
+test("nginx entrega .mjs como JavaScript (senão nenhum módulo roda em produção)", () => {
+  const conf = readFileSync(new URL("deploy/nginx.conf", raiz), "utf8");
+  assert.match(conf, /\\\.mjs[^\n]*\n[^}]*default_type application\/javascript/);
+});
