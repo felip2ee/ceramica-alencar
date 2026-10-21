@@ -1,8 +1,8 @@
 // Animação da casa do hero (browser). Constrói fileira a fileira, mobília, e depois respira com o ponteiro.
 // Fases: "construindo" (timers) → "pronta" (loop único: paralaxe com follow + tour ocioso, pausa fora da tela).
 
-const FILEIRA_MS = 40; // 37 fiadas: a última assenta antes das paredes (2 s) e a casa fecha em ≈ 4,3 s
-const MOVEL_MS = 90;
+const FILEIRA_MS = 28; // 35 fiadas: a última assenta antes das paredes (1,4 s) e a casa fecha em ≈ 3 s
+const MOVEL_MS = 65;
 const OVERSHOOT = "cubic-bezier(.2,.9,.2,1.2)";
 const ASSENTA = "cubic-bezier(.2,.8,.2,1)";
 // px do viewBox no extremo do ponteiro: casca inteira junta (piso, paredes, vidro, cobertura), móveis à parte.
@@ -36,12 +36,12 @@ export function animarCasa(svgRoot, { reduceMotion }) {
     [parte("piso"), 0, 0, "opacity 500ms ease"],
     ...fileiras.map((el, n) => [[el], 300 + n * FILEIRA_MS, -8, `opacity 350ms ease, transform 450ms ${ASSENTA}`]),
     [[solta], 300 + fileiras.length * FILEIRA_MS + 100, -24, `opacity 200ms ease, transform 600ms ${OVERSHOOT}`],
-    [[...parte("paredes"), ...parte("cinta"), ...parte("cobertura")], 2000, -14, `opacity 500ms ease, transform 700ms ${ASSENTA}`],
-    [todos(".vidro"), 2500, 0, "opacity 600ms ease"],
-    ...moveis.map((el, i) => [[el], 3100 + i * MOVEL_MS, -18, `opacity 250ms ease, transform 650ms ${OVERSHOOT}`]),
-    [parte("jardim"), 3400, 6, `opacity 500ms ease, transform 600ms ${ASSENTA}`],
+    [[...parte("paredes"), ...parte("cinta"), ...parte("cobertura")], 1400, -14, `opacity 500ms ease, transform 700ms ${ASSENTA}`],
+    [todos(".vidro"), 1750, 0, "opacity 600ms ease"],
+    ...moveis.map((el, i) => [[el], 2150 + i * MOVEL_MS, -18, `opacity 250ms ease, transform 650ms ${OVERSHOOT}`]),
+    [parte("jardim"), 2400, 6, `opacity 500ms ease, transform 600ms ${ASSENTA}`],
   ];
-  const FIM_MS = 3100 + (moveis.length - 1) * MOVEL_MS + 650 + 200; // ≈ 4,3 s
+  const FIM_MS = 2150 + (moveis.length - 1) * MOVEL_MS + 650 + 200; // ≈ 3 s
 
   for (const [els, , dy] of passos) for (const el of els) if (el) el.style.transform = `translate(0px, ${dy}px)`;
   svgRoot.getBoundingClientRect(); // fixa o estado inicial antes das transições

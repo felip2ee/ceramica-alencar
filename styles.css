@@ -588,11 +588,18 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   margin: 0; max-width: none; padding: var(--s-4) 0 0; overflow: hidden;
   font: 400 11.8vw/1.12 var(--font-display); letter-spacing: -.035em; white-space: nowrap; text-align: center; color: #DDD2C0;
 }
-.rodape__legal { border-top: 1px solid var(--line); border-bottom: 0; }
-.legal { display: flex; align-items: center; gap: 12px; margin: 0; padding-block: 28px; /* 80 px: o botão flutuante (24 + 48) fica dentro da faixa legal, sem cruzar o fio */ font-size: 14px; color: var(--ink); }
-.legal img { height: 24px; width: auto; }
-.legal > span > span { white-space: nowrap; } /* no celular quebra entre a razão social e o CNPJ, nunca no meio */
-@media (max-width: 767px) { .legal { flex-direction: column; align-items: flex-start; } } /* símbolo numa linha, razão social e CNPJ na outra */
+.rodape__legal { border-top: 1px solid var(--line); border-bottom: 0; grid-template-columns: 1fr auto; }
+.legal { display: flex; align-items: center; gap: 16px; padding-block: 28px; }
+.legal img { height: 32px; width: auto; flex: none; }
+.legal .rotulo { line-height: 1.6; }
+.legal .rotulo a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.credito { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin: 0; }
+.credito img { height: 30px; width: auto; mix-blend-mode: multiply; } /* fundo branco do PNG some sobre o marfim */
+@media (max-width: 767px) {
+  .rodape__legal { grid-template-columns: 1fr; }
+  .rodape__legal > .celula { border-left: 0; padding-left: var(--gutter); }
+  .credito { justify-content: flex-start; }
+}
 @media (min-width: 768px) {
   .rodape__grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .rodape__grade > .celula + .celula { border-top: 0; }

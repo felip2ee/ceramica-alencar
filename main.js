@@ -33,7 +33,7 @@ function ligarCabecalhoCompacto() {
 // nunca duplica um CTA visível nem cobre o texto do hero.
 function ligarWhatsappFlutuante() {
   const flutuante = document.getElementById("whatsapp-flutuante");
-  const alvos = document.querySelectorAll("#hero, main a[data-cta]");
+  const alvos = document.querySelectorAll("#hero, main a[data-cta], footer");
   if (!flutuante || !alvos.length || !("IntersectionObserver" in window)) return;
   const visiveis = new Set();
   const observador = new IntersectionObserver((entradas) => {

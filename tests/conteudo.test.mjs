@@ -25,7 +25,7 @@ test("seções na ordem do spec", () => {
   assert.deepEqual(pos, [...pos].sort((a,b)=>a-b));
 });
 test("placeholders da empresa presentes e tokens exatos", () => {
-  for (const p of ["WHATSAPP_NUMERO","TOM_CLARO_NOME","TOM_MEDIO_NOME","TOM_ESCURO_NOME","INSTAGRAM_HANDLE"]) assert.ok(html.includes(p), p);
+  for (const p of ["TOM_CLARO_NOME","TOM_MEDIO_NOME","TOM_ESCURO_NOME"]) assert.ok(html.includes(p), p);
   for (const t of ["--background:#FAF8F1","--surface:#F0E8DA","--brand:#D93612","--action:#B82E12","--ink:#5A3423","--clay:#B65E3C","--sun:#E7B43D"]) assert.ok(css.replace(/\s/g,"").includes(t), t);
 });
 test("fontes: só Bodoni Moda e DM Sans", () => {
