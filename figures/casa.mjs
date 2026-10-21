@@ -50,9 +50,9 @@ const MARGEM = 80;
 const PLACA = { x: -60 - MARGEM, y: -MARGEM, w: PLANTA.w + DECK.w + 60 + 2 * MARGEM, d: MURETA_Y + 15 + 2 * MARGEM, r: 0 };
 const HACHURA = 6; // cm entre linhas de hachura, medidos no plano da superfície
 const PLACA_Z = PISO_Z - 2;
-// Sombra projetada no plano da placa: luz vinda da direita e de trás, sombra para a esquerda e para a frente.
-// Sol alto: sombra curta e chata, rente à base, dentro da placa.
-const SOMBRA = [-0.16, 0.18]; // deslocamento em planta por cm de altura
+// Sol à frente e à esquerda, alto (a mesma luz do kit, que escurece a face x = PLANTA.w): cada cm de altura
+// projeta 0,25 cm para +x e 0,5 cm para trás (−y). A laje sombreia o alto da fachada; a sombra da casa cai atrás, à direita.
+const SOMBRA = [0.25, -0.5]; // deslocamento em planta por cm de altura
 
 const r1 = (n) => Math.round(n * 10) / 10;
 const PEGADA = k.boxCorners(PLACA, PLACA_Z, PISO_Z);
@@ -89,11 +89,30 @@ function hachura(poli, passo) {
 console.assert(recorta([-1, 0.5], [2, 0.5], [[0, 0], [1, 0], [1, 1], [0, 1]]).flat().join() === "0,0.5,1,0.5", "recorta");
 console.assert(hachura([[0, 0], [10, 0], [10, 10], [0, 10]], 2).length === 9, "hachura");
 
-// Tom de cada plaqueta (determinístico): 0 claro (cor da face), 1 médio, 2 queimado, 3 escuro — a parede mostra os tons do produto.
-const TOM = (n, i) => {
-  const h = (((Math.sin(n * 12.9898 + i * 78.233) * 43758.5453) % 1) + 1) % 1;
-  return h < 0.5 ? 0 : h < 0.82 ? 1 : h < 0.94 ? 2 : 3;
-};
+// Tom de queima sorteado por plaqueta com PRNG semeado (mulberry32), sem correlação espacial:
+// 65 % tom base, 25 % um pouco mais claro, 10 % um pouco mais escuro.
+function mulberry32(a) {
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const sorteiaTom = (r) => (r < 0.65 ? 0 : r < 0.9 ? 1 : 2);
+// Recorta um polígono 2D ao retângulo [u0, u1] × [v0, v1] (Sutherland–Hodgman).
+function recortaRet(poli, u0, v0, u1, v1) {
+  const lados = [[(p) => p[0] >= u0, (a, b) => [u0, a[1] + (b[1] - a[1]) * (u0 - a[0]) / (b[0] - a[0])]],
+    [(p) => p[0] <= u1, (a, b) => [u1, a[1] + (b[1] - a[1]) * (u1 - a[0]) / (b[0] - a[0])]],
+    [(p) => p[1] >= v0, (a, b) => [a[0] + (b[0] - a[0]) * (v0 - a[1]) / (b[1] - a[1]), v0]],
+    [(p) => p[1] <= v1, (a, b) => [a[0] + (b[0] - a[0]) * (v1 - a[1]) / (b[1] - a[1]), v1]]];
+  return lados.reduce((pts, [dentro, corta]) => pts.flatMap((b, i) => {
+    const a = pts[(i + pts.length - 1) % pts.length];
+    if (dentro(b)) return dentro(a) ? [b] : [corta(a, b), b];
+    return dentro(a) ? [corta(a, b)] : [];
+  }), poli);
+}
+console.assert(recortaRet([[-1, -1], [2, -1], [2, 2], [-1, 2]], 0, 0, 1, 1).length === 4, "recortaRet");
 // Peças de uma fiada entre x0 e x1, cortadas nas juntas: [[a, b], ...].
 const pecas = (x0, x1, js) => {
   const cortes = [x0, ...js.filter((x) => x > x0 && x < x1).sort((a, b) => a - b), x1];
@@ -150,19 +169,30 @@ export function casa() {
   const faceX = (X) => ([u, v]) => [X, u, v];
   const quad = (f, u0, v0, u1, v1) => k.pathOf([[u0, v0], [u1, v0], [u1, v1], [u0, v1]].map((q) => k.iso(f(q), P)), true);
   const hachuraFace = (f, poli, passo = HACHURA) => hachura(poli, passo).map(([a, b]) => k.segment(f(a), f(b), P)).join("");
-  const tons = (f, n, faixas, v0, v1) => [1, 2, 3].map((t) => {
-    const d = faixas.filter(([, , i]) => TOM(n, i) === t).map(([a, b]) => quad(f, a, v0, b, v1)).join("");
-    return d ? `<path class="tom-${t}" d="${d}"/>` : "";
-  }).join("");
+  const sorteio = mulberry32(20261021);
+  const tons = (f, faixas, v0, v1) => {
+    const porTom = [[], [], []];
+    for (const [a, b] of faixas) porTom[sorteiaTom(sorteio())].push(quad(f, a, v0, b, v1));
+    return porTom.map((ds, t) => (ds.length ? `<path class="tom-${t}" d="${ds.join("")}"/>` : "")).join("");
+  };
+  // Sombra num plano vertical y = Y de um contorno horizontal em planta à altura Z: cada canto à frente do plano
+  // desce na direção da luz até cruzá-lo; os cantos sobre o plano ficam em Z. Polígono em (x, z), recortado à face.
+  const sombraNaFace = (Y, cantos, Z, [u0, v0, u1, v1]) => recortaRet(casco(cantos.flatMap(([x, y]) => {
+    if (y < Y - 1e-6) return [];
+    const t = (y - Y) / -SOMBRA[1];
+    return [[x + SOMBRA[0] * t, Z - t], [x, Z]];
+  })), u0, v0, u1, v1);
+  const poligonoFace = (f, poli) => (poli.length > 2 ? k.pathOf(poli.map((q) => k.iso(f(q), P)), true) : "");
 
   // 0 · placa de chão, sombra projetada, piso e deck (o deck é o degrau da porta). A base da casa assenta na placa.
   const topoCob = COB_Z + COBERTURA;
   const projeta = ([x, y], h) => [x + SOMBRA[0] * h, y + SOMBRA[1] * h];
   const cantosPlanta = (pl) => [[pl.x, pl.y], [pl.x + pl.w, pl.y], [pl.x + pl.w, pl.y + pl.d], [pl.x, pl.y + pl.d]];
-  const sombra = casco([
+  const naPlaca = (pl) => recortaRet(pl, PLACA.x, PLACA.y, PLACA.x + PLACA.w, PLACA.y + PLACA.d);
+  const sombra = naPlaca(casco([
     ...cantosPlanta(PLANTA), ...cantosPlanta(PLANO_COB).map((q) => projeta(q, topoCob - PISO_Z)),
-  ]);
-  const sombraMureta = MURETA.map((m) => casco([...cantosPlanta(m), ...cantosPlanta(m).map((q) => projeta(q, MURETA_H))]));
+  ]));
+  const sombraMureta = MURETA.map((m) => naPlaca(casco([...cantosPlanta(m), ...cantosPlanta(m).map((q) => projeta(q, MURETA_H - PISO_Z))])));
   const caminho = (pts) => k.pathOf(pts.map(([x, y]) => k.iso([x, y, PISO_Z], P)), true);
   const tabuas = Array.from({ length: Math.floor(DECK.d / 15) - 1 }, (_, i) =>
     k.lineOnTop([DECK.x, DECK.y + 15 * (i + 1)], [DECK.x + DECK.w, DECK.y + 15 * (i + 1)], 0, P)).join("");
@@ -237,7 +267,7 @@ export function casa() {
     const retorno = { x: PLANTA.w - ESP, y: RETORNO, w: ESP, d: (par ? PLANTA.d - ESP : PLANTA.d) - RETORNO, r: 0 };
     const juntasFrente = (t) => JUNTAS_FRENTE[n % 2].filter((x) => x > t.x && x < t.x + t.w)
       .map((x) => k.segment([x, PLANTA.d, z0], [x, PLANTA.d, z0 + FIADA], P)).join("");
-    const tonsFrente = (t) => tons(faceY(PLANTA.d), n, pecas(t.x, t.x + t.w, JUNTAS_FRENTE[n % 2]).map(([a, b]) => [a, b, Math.round(a)]), z0, z0 + FIADA);
+    const tonsFrente = (t) => tons(faceY(PLANTA.d), pecas(t.x, t.x + t.w, JUNTAS_FRENTE[n % 2]), z0, z0 + FIADA);
     const juntasRetorno = JUNTAS_RETORNO[n % 2].map((y) => k.segment([PLANTA.w, y, z0], [PLANTA.w, y, z0 + FIADA], P)).join("");
     const estilo = (linhas, cor = "") => ({ tone: "lo", inner: cor + k.lineSvg(linhas, { tone: "faint" }) });
     // A última fileira deixa o vão da plaqueta solta: dois trechos, cada um com as suas juntas.
@@ -287,10 +317,31 @@ export function casa() {
     else pecasVao.push(k.solidSvg(k.slabOf({ x: x - 4, y: PLANTA.d, w: w + 8, d: 14, r: 0 }, PISO_Z, -PISO_Z + 2, P), { tone: "mid", className: "mat-cobertura" })); // soleira
     return pecasVao.join("");
   };
+  // Sombras na fachada (plano y = PLANTA.d): verga e peitoril sobre a plaqueta, antes dos vãos; núcleo a 14 % e
+  // penumbra (5 cm a mais) a 7 %, para a borda não ser seca.
+  const parede = [0, 0, PLANTA.w, PE];
+  const sombraFace = (f, poli, pen) => `<path class="sombra-face${pen ? " sombra-face--pen" : ""}" d="${poligonoFace(f, poli)}"/>`;
+  const projetaBorda = (Y, x0, x1, yFrente, Z, extra = 0) => sombraNaFace(Y, [[x0, Y], [x1, Y], [x1, yFrente + extra * -SOMBRA[1]], [x0, yFrente + extra * -SOMBRA[1]]], Z, parede);
+  const sombrasParede = [];
+  for (const j of [...JANELAS, ENTRADA]) {
+    const verga = (extra) => projetaBorda(PLANTA.d, j.x - 6, j.x + j.w + 6, PLANTA.d + CX + 3, j.z + j.h, extra);
+    sombrasParede.push(sombraFace(faceY(PLANTA.d), verga(5), true), sombraFace(faceY(PLANTA.d), verga(0)));
+    if (j !== ENTRADA) {
+      const peit = (extra) => projetaBorda(PLANTA.d, j.x - 6, j.x + j.w + 6, PLANTA.d + CX + 6, j.z - 5, extra);
+      sombrasParede.push(sombraFace(faceY(PLANTA.d), peit(5), true), sombraFace(faceY(PLANTA.d), peit(0)));
+    }
+  }
+  camadas.push(k.groupSvg(sombrasParede.join(""), { class: "estrutura", "data-parte": "paredes" }));
+
   for (const j of JANELAS) vaos.push(vao(j, [[j.x + 6, j.x + j.w - 6]], { peitoril: true }));
   const MEIO = ENTRADA.x + ENTRADA.w / 2;
   vaos.push(vao(ENTRADA, [[ENTRADA.x + 6, MEIO], [MEIO, ENTRADA.x + ENTRADA.w - 6]], { peitoril: false }));
   camadas.push(k.groupSvg(vaos.join(""), { class: "vidro" }));
+
+  // Sombra do beiral da laje sobre o alto da fachada (e por cima dos caixilhos que ela alcança).
+  const beiral = (extra) => projetaBorda(PLANTA.d, PLANO_COB.x, PLANO_COB.x + PLANO_COB.w, PLANO_COB.y + PLANO_COB.d, COB_Z, extra);
+  camadas.push(k.groupSvg(sombraFace(faceY(PLANTA.d), beiral(8), true) + sombraFace(faceY(PLANTA.d), beiral(0)),
+    { class: "estrutura", "data-parte": "cobertura" }));
 
   // 6 · pano de vidro de 2,6 m: montantes de quina e de arranque, verga, peitoril, vidro com montantes e puxador da porta.
   const VIDRO = { x: PLANTA.w - 8, y: ESP, w: 4, d: RETORNO - 8 - ESP, r: 0 };
@@ -347,8 +398,8 @@ export function casa() {
     prof: prof(meio(m, PISO_Z, MURETA_H)),
     svg: k.solidSvg(k.slabOf(m, PISO_Z, MURETA_H - PISO_Z, P), {
       tone: "lo", className: "mat-plaqueta",
-      inner: Array.from({ length: MURETA_H / FIADA }, (_, i) => tons(faceY(m.y + m.d), 100 + i,
-        pecas(m.x, m.x + m.w, juntas(m.x + m.w, m.x, i % 2 ? PECA / 2 : 0)).map(([a, b]) => [a, b, Math.round(a)]), i * FIADA, (i + 1) * FIADA)).join("")
+      inner: Array.from({ length: MURETA_H / FIADA }, (_, i) => tons(faceY(m.y + m.d),
+        pecas(m.x, m.x + m.w, juntas(m.x + m.w, m.x, i % 2 ? PECA / 2 : 0)), i * FIADA, (i + 1) * FIADA)).join("")
         + k.lineSvg(fiadasMureta(m), { tone: "faint" }),
     }),
   }))), { class: "estrutura", "data-parte": "jardim" }));
