@@ -70,10 +70,6 @@ function injetarFiguras(F) {
   estilo.id = "iso-css";
   estilo.textContent = F.ISO_CSS_MARCA;
   document.head.append(estilo);
-  for (const no of document.querySelectorAll(".amostra[data-tom]")) {
-    no.innerHTML = F.AMOSTRAS[no.dataset.tom] ?? "";
-    no.firstElementChild?.setAttribute("preserveAspectRatio", "xMidYMid slice"); // a parede enche a célula, de fio a fio
-  }
   const casa = document.getElementById("casa");
   if (casa && F.CASA) {
     casa.innerHTML = F.CASA;

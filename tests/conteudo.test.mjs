@@ -35,8 +35,8 @@ test("ids e ganchos de interface das tasks seguintes", () => {
   for (const id of ["abertura","casa","plaqueta-narradora","caminhao","galeria","whatsapp-flutuante"]) assert.ok(html.includes(`id="${id}"`), id);
   assert.equal((html.match(/<figure[^>]*data-ambiente="[^"]+"[^>]*data-tom="(lisa|queimada|rustica)"/g) || []).length, 6);
   // lisa e queimada já são foto da peça (assets/kit); a rústica segue vetorial até a foto chegar
-  assert.equal((html.match(/<div class="amostra amostra--foto"><img src="assets\/kit\/kit-plaqueta-(lisa|queimada)\.jpg"/g) || []).length, 2);
-  assert.equal((html.match(/<div class="amostra" data-tom="rustica"/g) || []).length, 1);
+  assert.equal((html.match(/<div class="amostra amostra--foto"><img src="assets\/kit\/kit-areia-(lisa|queimada|rustica)\.jpg"/g) || []).length, 3);
+  assert.doesNotMatch(html, /class="amostra" data-tom=/);
   assert.ok(/<script type="module" src="main\.js">/.test(html));
   assert.equal((html.match(/<script defer src="https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/gsap\/3\.12\.5\//g) || []).length, 3);
 });
@@ -53,7 +53,7 @@ test("acessibilidade estática", () => {
   assert.match(html, /#plaqueta-narradora[^>]*aria-hidden="true"|id="plaqueta-narradora"[^>]*aria-hidden="true"/);
 });
 test("ajustes da Task 8: og:image absoluto, anti-flash, flutuante e áreas de toque", () => {
-  assert.match(html, /property="og:image" content="https:\/\/SITE_DOMINIO\/assets\/kit\/kit-acabamentos\.jpg"/);
+  assert.match(html, /property="og:image" content="https:\/\/SITE_DOMINIO\/assets\/kit\/kit-areia-trio\.jpg"/);
   assert.ok(html.indexOf('dataset.abertura = "skip"') > 0 && html.indexOf('dataset.abertura = "skip"') < html.indexOf('href="styles.css"'));
   assert.match(css, /html\[data-abertura="skip"\] #abertura\s*\{\s*display:\s*none/);
   assert.match(css, /#whatsapp-flutuante\.is-oculto/);

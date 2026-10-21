@@ -412,8 +412,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .amostra { width: 100%; height: 100%; min-height: 200px; aspect-ratio: 16 / 9; overflow: hidden; background: var(--background); }
 .amostra svg { display: block; width: 100%; height: 100%; }
 /* foto da peça sobre o papel: o fundo branco da foto some em multiply, como a logo da agência no rodapé */
-.amostra--foto { display: grid; place-items: center; padding: var(--s-3); }
-.amostra--foto img { display: block; width: 100%; max-width: 440px; height: auto; mix-blend-mode: multiply; }
+.amostra--foto img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .rev__medida { grid-template-rows: none; align-content: start; }
 .rev__ganho { margin: 0; max-width: 340px; }
 .rev__medida .btn { justify-self: start; align-self: end; }
