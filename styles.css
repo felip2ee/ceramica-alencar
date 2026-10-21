@@ -729,3 +729,21 @@ html[data-abertura="skip"] #abertura { display: none; }
 
 /* títulos palavra a palavra (scroll.mjs divide os nós de texto em spans) */
 .palavra { display: inline-block; }
+
+/* perguntas: título à esquerda, lista de <details> à direita; cada pergunta é uma linha com fio e um "+" que vira "–" aberta */
+.faq__grade { grid-template-columns: minmax(0, 1fr); }
+.faq__titulo h2 { margin: 0; max-width: 10em; font-size: var(--h2); line-height: 1.04; text-wrap: balance; }
+.faq__lista { padding: 0; }
+.faq__lista details + details { border-top: 1px solid var(--line); }
+.faq__lista summary { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-2); padding: var(--s-2) var(--gutter); cursor: pointer; list-style: none; font-family: var(--font-display); font-size: clamp(22px, 2.4vw, 28px); line-height: 1.15; }
+.faq__lista summary::-webkit-details-marker { display: none; }
+.faq__lista summary::after { content: "+"; flex: none; color: var(--brand); font-family: var(--font-text); font-size: 20px; }
+.faq__lista details[open] summary::after { content: "–"; }
+.faq__lista p { margin: 0; padding: 0 var(--gutter) var(--s-3); max-width: 60ch; text-wrap: pretty; }
+@media (min-width: 768px) {
+  .faq__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  .faq__titulo { border-left: 0; padding-left: var(--gutter); }
+  .faq__lista summary, .faq__lista p { padding-left: var(--s-3); }
+  .faq__lista p { padding-right: var(--s-3); }
+}
+@media (min-width: 1200px) { .faq__titulo h2 { font-size: 56px; max-width: none; } }

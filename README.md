@@ -25,7 +25,7 @@ site/deploy/publicar.sh
 
 `docker-stack.yml` sobe o serviço no Portainer com os rótulos do Traefik para `ceramicaalencar.dgtnova.com`; a rede externa precisa ser a mesma do Traefik (`docker network ls --filter driver=overlay` no manager). Teste local: `docker build -t ceramica-alencar site && docker run --rm -p 8080:80 ceramica-alencar`.
 
-Domínio final já está no `og:image` (`https://ceramicaalencar.dgtnova.com/...`). Palavra "amostra" no texto visível só entra depois de confirmada com a Cerâmicas Alencar. A classe `.amostra` dos cartões de tom é nome interno e não aparece para o visitante.
+Busca e LLMs: `robots.txt` (libera GPTBot, ClaudeBot, PerplexityBot, Google-Extended), `sitemap.xml`, `llms.txt` e um JSON-LD no `<head>` (LocalBusiness, Product, WebSite, FAQPage) descrevem a empresa e a plaqueta; as perguntas do JSON-LD são as mesmas da seção Perguntas, e `tests/seo.test.mjs` confere tudo. Palavras de busca do dono (2026-10-21): revestimentos rústicos, plaquetas de barro, plaquetas revestimentos, revestimentos modernos, material de construção, Cerâmica Alencar, "ideias de revestimento para meu apartamento". Domínio final já está no `og:image` (`https://ceramicaalencar.dgtnova.com/...`). Palavra "amostra" no texto visível só entra depois de confirmada com a Cerâmicas Alencar. A classe `.amostra` dos cartões de tom é nome interno e não aparece para o visitante.
 
 ## Imagens
 

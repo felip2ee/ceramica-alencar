@@ -19,7 +19,7 @@ test("nome e fatos obrigatórios presentes", () => {
   for (const s of ["Cerâmicas Alencar", "Tocantinópolis", "7,5 × 19", "3 a 7 dias", "frete próprio", "Conversar sobre meu projeto"]) assert.ok(html.includes(s), s);
 });
 test("seções na ordem do spec", () => {
-  const ids = ["hero","fabrica","materialidade","revestimentos","aplicacoes","parceiros","contato"];
+  const ids = ["hero","fabrica","materialidade","revestimentos","aplicacoes","parceiros","perguntas","contato"];
   const pos = ids.map(id => html.indexOf(`id="${id}"`));
   assert.ok(pos.every(p => p > 0));
   assert.deepEqual(pos, [...pos].sort((a,b)=>a-b));
@@ -91,7 +91,7 @@ test("pré-carga e botão Pular estático", () => {
   assert.match(html, /<div id="abertura"[^>]*><button class="abertura__pular" type="button">Pular<\/button><\/div>/);
 });
 test("uma casa por argumento: sem redundância e sem texto que exponha o arquiteto", () => {
-  const texto = html.replace(/<[^>]*>/g, " ");
+  const texto = html.replace(/<script[\s\S]*?<\/script>/g, " ").replace(/<[^>]*>/g, " "); // só o visível: o JSON-LD repete as respostas da FAQ
   assert.ok((texto.match(/3 a 7 dias/g) || []).length <= 4, "3 a 7 dias repetido");
   assert.doesNotMatch(texto, /comiss|reserva técnica|percentual|margem/i);
   assert.equal((texto.match(/o preço mais competitivo/gi) || []).length, 1);
