@@ -56,5 +56,5 @@ test("robots.txt, sitemap.xml e llms.txt", () => {
 
 test("nginx entrega .mjs como JavaScript (senão nenhum módulo roda em produção)", () => {
   const conf = readFileSync(new URL("deploy/nginx.conf", raiz), "utf8");
-  assert.match(conf, /\\\.mjs[^\n]*\n[^}]*default_type application\/javascript/);
+  assert.match(conf, /\\\.mjs\$ \{[\s\S]*?default_type application\/javascript/);
 });
