@@ -155,10 +155,6 @@ main { padding-top: var(--header); }
 .hero__titulo, .hero__produto, .hero__acao { border-left: 0; padding-left: var(--gutter); }
 .hero__titulo h1 { margin: 0; max-width: 9.5em; font-size: var(--h1); line-height: 1.04; }
 .hero__copy { margin: 0; max-width: 300px; text-wrap: pretty; }
-/* ganhos por público: rótulo curto em caixa alta (14) seguido da frase (16), em linha, como parágrafo com entrada */
-.hero__ganho { display: grid; gap: 4px; margin: 12px 0 0; line-height: 1.35; color: var(--ink); }
-.hero__ganho :is(dt, dd) { display: inline; margin: 0; }
-.hero__ganho dt { margin-right: 8px; }
 .hero__produto, .hero__acao { border-top: 1px solid var(--line); }
 /* três tons lado a lado: retângulos na proporção 7:24 da plaqueta, cores das plaquetas da casa */
 .tons-mini { display: grid; grid-template-columns: repeat(3, minmax(0, 112px)); gap: var(--s-1); margin: 12px 0 var(--s-2); }
@@ -194,7 +190,7 @@ main { padding-top: var(--header); }
   .tons-mini { margin-top: var(--s-1); }
   .hero__titulo h1 { max-width: none; }
   .hero__produto, .hero__acao { border-top: 0; border-left: 1px solid var(--line); padding: var(--s-2) var(--s-3); }
-  .hero__acao { padding-block: 12px; } /* botão + três ganhos cabem na banda de 205 px */
+  .hero__acao { padding-block: 12px; } /* só o botão na banda de 205 px */
   /* a casa centra na moldura com folga igual em cima e embaixo; a largura manda (desenho ≈ 2,9 : 1) */
   .hero__casa { width: min(90%, calc((100svh - var(--header) - var(--faixa) - var(--banda) - 2 * var(--s-8)) * 900 / 325)); }
 }
@@ -337,9 +333,6 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .fabrica__texto, .fabrica__acao { display: grid; align-content: start; gap: 12px; border-top: 1px solid var(--line); }
 .fabrica__copy { margin: 0; max-width: 300px; text-wrap: pretty; }
 .fabrica__acao .btn { justify-self: start; }
-.fabrica__ganho, .rev__ganho { display: grid; gap: 4px; margin: 4px 0 0; }
-.fabrica__ganho :is(dt, dd), .rev__ganho :is(dt, dd) { display: inline; margin: 0; }
-.fabrica__ganho dt, .rev__ganho dt { margin-right: 8px; }
 /* abaixo de 1200 a faixa é 2 × 2: o número fica em cima e o texto ganha a largura da célula */
 .fabrica__faixa > .celula { flex-direction: column; gap: 4px; }
 @media (min-width: 768px) {
@@ -414,7 +407,6 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 /* foto da peça sobre o papel: o fundo branco da foto some em multiply, como a logo da agência no rodapé */
 .amostra--foto img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .rev__medida { grid-template-rows: none; align-content: start; }
-.rev__ganho { margin: 0; max-width: 340px; }
 .rev__medida .btn { justify-self: start; align-self: end; }
 .rev__cota { width: 100%; max-width: 340px; height: auto; margin: var(--s-3) 0 var(--s-2); overflow: visible; }
 .cota__peca { fill: var(--surface); stroke: var(--ink); stroke-width: 1.5; }
@@ -502,7 +494,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 
 /* para quem vende: duas colunas (arquitetos | lojas), cada uma em duas células: desenho técnico em cima, texto embaixo.
    O fio entre desenho e texto atravessa a tela, com "+" nas duas bordas e no cruzamento com o fio vertical do meio.
-   Título na classe do título (56), três ganhos (rótulo + frase, como no hero) e o botão: os dois botões são as duas ocorrências do acento */
+   Título na classe do título (56), três ganhos (rótulo + frase) e o botão: os dois botões são as duas ocorrências do acento */
 .par__grade { grid-template-columns: minmax(0, 1fr); }
 .par__celula + .par__celula { border-top: 1px solid var(--line); }
 .par__desenho, .par__texto { display: grid; align-content: start; gap: var(--s-2); border-left: 0; padding: var(--s-3) var(--gutter); }
