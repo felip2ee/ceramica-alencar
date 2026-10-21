@@ -277,7 +277,7 @@ export function casa() {
       : [frente];
     // A plaqueta solta pinta entre os dois trechos: atrás do da direita, à frente do da esquerda.
     const a = trechos.map((t) => k.solidSvg(k.slabOf(t, z0, FIADA, P), estilo(juntasFrente(t), tonsFrente(t))))
-      .join(ultima ? `<g id="plaqueta-solta" class="mat-plaqueta">${k.solidSvg(k.slabOf(SOLTA, z0, FIADA, P), { tone: "lo" })}</g>` : "");
+      .join(ultima ? `<g id="plaqueta-solta" class="mat-plaqueta">${k.solidSvg(k.slabOf(SOLTA, z0, FIADA, P), { tone: "lo", inner: `<path class="tom-0" d="${quad(faceY(PLANTA.d), SOLTA.x, z0, SOLTA.x + SOLTA.w, z0 + FIADA)}"/>` })}</g>` : "");
     const b = k.solidSvg(k.slabOf(retorno, z0, FIADA, P), estilo(juntasRetorno));
     camadas.push(`<g class="fileira mat-plaqueta" data-fileira="${n}">${par ? b + a : a + b}</g>`);
   }
@@ -398,8 +398,9 @@ export function casa() {
     prof: prof(meio(m, PISO_Z, MURETA_H)),
     svg: k.solidSvg(k.slabOf(m, PISO_Z, MURETA_H - PISO_Z, P), {
       tone: "lo", className: "mat-plaqueta",
-      inner: Array.from({ length: MURETA_H / FIADA }, (_, i) => tons(faceY(m.y + m.d),
-        pecas(m.x, m.x + m.w, juntas(m.x + m.w, m.x, i % 2 ? PECA / 2 : 0)), i * FIADA, (i + 1) * FIADA)).join("")
+      // duas fiadas abaixo do piso (a mureta nasce na placa, em PISO_Z)
+      inner: Array.from({ length: MURETA_H / FIADA + 2 }, (_, j) => j - 2).map((i) => tons(faceY(m.y + m.d),
+        pecas(m.x, m.x + m.w, juntas(m.x + m.w, m.x, (i + 2) % 2 ? PECA / 2 : 0)), Math.max(PISO_Z, i * FIADA), (i + 1) * FIADA)).join("")
         + k.lineSvg(fiadasMureta(m), { tone: "faint" }),
     }),
   }))), { class: "estrutura", "data-parte": "jardim" }));
