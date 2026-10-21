@@ -709,3 +709,20 @@ html[data-abertura="skip"] #abertura { display: none; }
 .abertura__pular:hover { text-decoration: underline; }
 @media (max-width: 599px) { .abertura__rotulos { display: none; } } /* no celular os rótulos encostam no símbolo */
 @media (prefers-reduced-motion: reduce) { #abertura { display: none; } html.abrindo { overflow: auto; } }
+
+/* Interlúdios: foto de fundo em tela cheia entre seções, frase em Bodoni marfim que entra e sai com a rolagem (scroll.mjs).
+   A foto anda em paralaxe (yPercent ±7), por isso é 16 % mais alta que a seção. Fotografia fica fora da conta de cor. */
+.interludio { position: relative; height: 100svh; min-height: 520px; max-height: 1100px; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--ink); }
+.interludio__foto { position: absolute; inset: -8% 0; width: 100%; height: 116%; object-fit: cover; }
+.interludio::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(42, 24, 16, .18), rgba(42, 24, 16, .46)); pointer-events: none; }
+.interludio__texto {
+  position: absolute; z-index: 1; left: var(--gutter); right: var(--gutter); top: 50%; transform: translateY(-50%);
+  margin: 0; max-width: none; text-align: center; text-wrap: balance;
+  font: 400 clamp(40px, 6.6vw, 96px)/1.04 var(--font-display); letter-spacing: -.025em; color: var(--background);
+}
+.interludio__texto em { font-style: italic; }
+.interludio__legenda { position: absolute; z-index: 1; left: var(--gutter); bottom: 20px; color: var(--background); opacity: .85; }
+@media (max-width: 767px) { .interludio { height: 72svh; min-height: 420px; } }
+
+/* títulos palavra a palavra (scroll.mjs divide os nós de texto em spans) */
+.palavra { display: inline-block; }

@@ -44,9 +44,16 @@ export function iniciarScroll({ F, reduceMotion }) {
   });
 
   revelar(gsap, reduceMotion);
-  if (reduceMotion || !veiculo || !meta) return;
-  dirigir(gsap, svg, veiculo, meta);
-  narrar(gsap, ScrollTrigger, svg, veiculo, meta.carroceria);
+  if (reduceMotion) return;
+  // O pin da Fábrica empurra tudo que vem depois em uma tela: ele nasce primeiro e um refresh no fim
+  // remede todos os gatilhos já com o espaçador do pin no lugar.
+  if (veiculo && meta) {
+    dirigir(gsap, svg, veiculo, meta);
+    narrar(gsap, ScrollTrigger, svg, veiculo, meta.carroceria);
+  }
+  titulos(gsap);
+  interludios(gsap);
+  ScrollTrigger.refresh();
 }
 
 // Estado escondido só nasce aqui, com o GSAP confirmado: sem ele, nada fica em opacity 0.
@@ -66,8 +73,12 @@ function revelar(gsap, reduceMotion) {
   });
 }
 
-// Caminhão: começa onde a plaqueta cai (topo do mapa a 40% da tela) e chega a Palmas com o mapa no topo.
+const ALTURA_CABECALHO = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header")) || 64;
+
+// Caminhão: a plaqueta cai com o mapa a 40% da tela; depois a seção da Fábrica fica presa (pin) por uma tela
+// inteira de rolagem, e é nesse trecho que o caminhão desce a rota até Palmas, no desktop e no celular.
 function dirigir(gsap, svg, veiculo, meta) {
+  const secao = document.getElementById("fabrica");
   const rota = svg.querySelector("#rota-principal");
   if (!rota) return;
   const pontos = rotaDesde(rota.getAttribute("d"), meta.partida);
@@ -84,7 +95,10 @@ function dirigir(gsap, svg, veiculo, meta) {
   gsap.timeline({
     defaults: { ease: "none" },
     // scrub sem atraso: até o ponto da entrega o caminhão está exatamente na partida, onde a plaqueta pousa.
-    scrollTrigger: { trigger: svg, start: "top 40%", end: "top top", scrub: true, invalidateOnRefresh: true },
+    scrollTrigger: {
+      trigger: secao, start: () => `top ${ALTURA_CABECALHO()}px`, end: "+=100%", scrub: true,
+      pin: true, pinSpacing: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1,
+    },
   })
     .to(veiculo, { motionPath: { path: pontos, autoRotate: false, curviness: 0, fromCurrent: false }, duration: 1 }, 0)
     .fromTo(rota, { strokeDasharray: () => px(total), strokeDashoffset: () => px(resto) }, { strokeDashoffset: 0, duration: 1 }, 0);
@@ -175,4 +189,65 @@ function narrar(gsap, ScrollTrigger, svg, veiculo, carroceria) {
     vigia.observe(palco, { attributes: true, attributeFilter: ["class"] });
   }
   atualizar(st);
+}
+
+// Títulos revelados pelo scroll, palavra a palavra: cada palavra sobe e ganha tinta conforme o título entra na tela.
+// Mantém <em> e <br>: só os nós de texto viram spans. No título da Fábrica o progresso é o da seção presa.
+function dividirPalavras(el) {
+  const spans = [];
+  const andar = (no) => {
+    for (const filho of [...no.childNodes]) {
+      if (filho.nodeType === Node.TEXT_NODE) {
+        const frag = document.createDocumentFragment();
+        for (const parte of filho.textContent.split(/(\s+)/)) {
+          if (!parte) continue;
+          if (/^\s+$/.test(parte)) { frag.append(parte); continue; }
+          const span = document.createElement("span");
+          span.className = "palavra";
+          span.textContent = parte;
+          frag.append(span);
+          spans.push(span);
+        }
+        filho.replaceWith(frag);
+      } else if (filho.nodeType === Node.ELEMENT_NODE && filho.tagName !== "BR") {
+        andar(filho);
+      }
+    }
+  };
+  andar(el);
+  return spans;
+}
+
+function titulos(gsap) {
+  for (const el of gsap.utils.toArray(".section:not(.hero) h2:not(.so-leitor), .par__texto h3")) {
+    const palavras = dividirPalavras(el);
+    if (!palavras.length) continue;
+    const naFabrica = el.closest("#fabrica");
+    gsap.from(palavras, {
+      opacity: 0.08, y: "0.45em", ease: "none", stagger: 0.25,
+      scrollTrigger: naFabrica
+        ? { trigger: "#fabrica", start: () => `top ${ALTURA_CABECALHO()}px`, end: "+=45%", scrub: 0.3 }
+        : { trigger: el, start: "top 92%", end: "top 48%", scrub: 0.3 },
+    });
+  }
+}
+
+// Interlúdios: uma foto de fundo que anda devagar (paralaxe) e uma frase que entra, fica e sai conforme a rolagem.
+function interludios(gsap) {
+  for (const sec of gsap.utils.toArray(".interludio")) {
+    const foto = sec.querySelector(".interludio__foto");
+    const texto = sec.querySelector(".interludio__texto");
+    if (foto) {
+      gsap.fromTo(foto, { yPercent: -7 }, {
+        yPercent: 7, ease: "none",
+        scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: true },
+      });
+    }
+    if (texto) {
+      gsap.timeline({ defaults: { ease: "none" }, scrollTrigger: { trigger: sec, start: "top 65%", end: "bottom 35%", scrub: 0.3 } })
+        .fromTo(texto, { opacity: 0, y: 48 }, { opacity: 1, y: 0, duration: 1 })
+        .to(texto, { opacity: 1, duration: 0.8 })
+        .to(texto, { opacity: 0, y: -48, duration: 1 });
+    }
+  }
 }
