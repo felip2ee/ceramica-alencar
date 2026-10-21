@@ -76,7 +76,7 @@ function recorta(a, b, poli) {
   return [em(t0), em(t1)];
 }
 // Hachura a 45° dentro de um polígono convexo 2D: linhas paralelas a cada `passo`, terminando nas bordas.
-function hachura(poli, passo) {
+export function hachura(poli, passo) {
   const c = poli.map(([u, v]) => u - v);
   const [lo, hi] = [Math.min(...c), Math.max(...c)];
   const ext = Math.max(...poli.flat().map(Math.abs)) * 4;
@@ -92,7 +92,7 @@ console.assert(hachura([[0, 0], [10, 0], [10, 10], [0, 10]], 2).length === 9, "h
 
 // Tom de queima sorteado por plaqueta com PRNG semeado (mulberry32), sem correlação espacial:
 // 65 % tom base, 25 % um pouco mais claro, 10 % um pouco mais escuro.
-function mulberry32(a) {
+export function mulberry32(a) {
   return () => {
     a = (a + 0x6d2b79f5) | 0;
     let t = Math.imul(a ^ (a >>> 15), 1 | a);
@@ -100,9 +100,9 @@ function mulberry32(a) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-const sorteiaTom = (r) => (r < 0.65 ? 0 : r < 0.9 ? 1 : 2);
+export const sorteiaTom = (r) => (r < 0.65 ? 0 : r < 0.9 ? 1 : 2);
 // Recorta um polígono 2D ao retângulo [u0, u1] × [v0, v1] (Sutherland–Hodgman).
-function recortaRet(poli, u0, v0, u1, v1) {
+export function recortaRet(poli, u0, v0, u1, v1) {
   const lados = [[(p) => p[0] >= u0, (a, b) => [u0, a[1] + (b[1] - a[1]) * (u0 - a[0]) / (b[0] - a[0])]],
     [(p) => p[0] <= u1, (a, b) => [u1, a[1] + (b[1] - a[1]) * (u1 - a[0]) / (b[0] - a[0])]],
     [(p) => p[1] >= v0, (a, b) => [a[0] + (b[0] - a[0]) * (v0 - a[1]) / (b[1] - a[1]), v0]],
@@ -121,7 +121,7 @@ const pecas = (x0, x1, js) => {
 };
 
 // Casco convexo (cadeia monótona) dos pontos de planta: contorno da sombra.
-function casco(pts) {
+export function casco(pts) {
   const p = [...pts].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
   const giro = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
   const meia = (lista) => lista.reduce((h, q) => { while (h.length > 1 && giro(h[h.length - 2], h[h.length - 1], q) <= 0) h.pop(); h.push(q); return h; }, []);

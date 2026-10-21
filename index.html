@@ -98,20 +98,36 @@
       </ul>
     </section>
 
-    <section class="section" id="fabrica">
-      <div class="container">
-        <h2>Barro nosso. Forno nosso. <em>Caminhão nosso.</em></h2>
-        <p class="lead">Sem intermediário e sem transportadora entre a fábrica e a obra. Por isso o preço chega competitivo em todo o Norte. Atendemos Tocantins, Maranhão, Pará, Piauí e Goiás.</p>
-        <div class="fabrica__grade">
+    <section class="section fabrica" id="fabrica" aria-labelledby="fabrica-titulo">
+      <div class="grade fabrica__grade">
+        <div class="celula fabrica__moldura">
+          <p class="rotulo rotulo--par fabrica__legenda"><span>Fábrica e logística</span><span>Fig. 02</span></p>
           <div id="caminhao" class="fabrica__mapa"></div>
-          <ul class="numeros">
-            <li><strong>3 a 7 dias</strong><span>da fábrica até a obra</span></li>
-            <li><strong>frete próprio</strong><span>caminhão e entrega da fábrica</span></li>
-            <li><strong>barro e forno próprios</strong><span>extrusão e queima em Tocantinópolis</span></li>
-            <li><strong>7 × 24 cm</strong><span>plaqueta lisa, em três tons</span></li>
+          <ul class="fabrica__chave" aria-label="Legenda do mapa">
+            <li class="rotulo"><span class="traco traco--rota" aria-hidden="true"></span>Rota da fábrica</li>
+            <li class="rotulo"><span class="traco traco--vizinha" aria-hidden="true"></span>Estados atendidos</li>
           </ul>
+          <p class="fabrica__norte rotulo" aria-hidden="true"><svg viewBox="0 0 12 28" width="12" height="28"><path d="M6 27V3M2 8l4-6 4 6" fill="none" stroke="currentColor" stroke-width="1"/></svg>N</p>
+        </div>
+        <div class="celula fabrica__titulo">
+          <h2 id="fabrica-titulo">Do forno à obra, no nosso <em>caminhão.</em></h2>
+        </div>
+        <div class="celula fabrica__texto">
+          <p class="rotulo rotulo--par"><span>[02] Logística</span><span>Tocantinópolis</span></p>
+          <p class="fabrica__copy">A plaqueta sai do nosso forno e segue no nosso caminhão: sem intermediário e sem transportadora. Por isso chega competitiva ao Norte.</p>
+        </div>
+        <div class="celula fabrica__acao">
+          <p class="rotulo">Para lojas</p>
+          <p class="fabrica__copy">Comprando direto da fábrica, a margem fica com quem revende.</p>
+          <a class="btn" data-cta href="#contato">Quero revender</a>
         </div>
       </div>
+      <ul class="grade fabrica__numeros" aria-label="Fábrica e entrega em números">
+        <li class="celula"><p class="rotulo rotulo--par"><span>[01]</span><span>Prazo</span></p><strong>3 a 7</strong><span>dias, do forno até a obra</span></li>
+        <li class="celula"><p class="rotulo rotulo--par"><span>[02]</span><span>Estados</span></p><strong>5</strong><span>TO, MA, PA, PI e GO</span></li>
+        <li class="celula"><p class="rotulo rotulo--par"><span>[03]</span><span>Frete</span></p><strong>0</strong><span>intermediários, frete próprio</span></li>
+        <li class="celula"><p class="rotulo rotulo--par"><span>[04]</span><span>Plaqueta</span></p><strong>7 × 24</strong><span>cm, de barro e forno nossos</span></li>
+      </ul>
     </section>
 
     <section class="section" id="materialidade">
