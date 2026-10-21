@@ -11,3 +11,5 @@ figures/casa.mjs
 figures/mapa-to.json
 figures/kit/
 .github/
+.git
+.git*

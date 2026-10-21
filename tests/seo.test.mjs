@@ -58,3 +58,10 @@ test("nginx entrega .mjs como JavaScript (senão nenhum módulo roda em produç�
   const conf = readFileSync(new URL("deploy/nginx.conf", raiz), "utf8");
   assert.match(conf, /\\\.mjs\$ \{[\s\S]*?default_type application\/javascript/);
 });
+
+test("imagem não leva .git nem .github; nginx nega arquivos ocultos", () => {
+  const ignore = readFileSync(new URL(".dockerignore", raiz), "utf8");
+  for (const l of [".git", ".git*", ".github/"]) assert.ok(ignore.split("\n").includes(l), l);
+  assert.match(readFileSync(new URL("deploy/nginx.conf", raiz), "utf8"), /location ~ \/\\\. \{ deny all; \}/);
+  assert.match(readFileSync(new URL(".github/workflows/docker.yml", raiz), "utf8"), /persist-credentials: false/);
+});
