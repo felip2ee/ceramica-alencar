@@ -86,6 +86,7 @@ function injetarFiguras(F) {
     const corpo = () => { const m = svg?.getScreenCTM(); if (m?.a) caminhao.style.setProperty("--u", (14 / m.a).toFixed(2)); };
     corpo();
     new ResizeObserver(corpo).observe(caminhao);
+    caminhao.parentElement.style.setProperty("--norte", `${F.CAMINHAO_META?.norte ?? 0}deg`);
   }
   depoisDaAbertura(() => {
     try { iniciarScroll({ F, reduceMotion: querMenosMovimento() }); } catch (erro) { console.warn("scroll sem coreografia", erro); }

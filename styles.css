@@ -267,16 +267,19 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .mat-mapa { --anatomy-top: #F0E8DA; --anatomy-shade-0: #D8CCB8; --anatomy-shade-1: #E0D5C1; --anatomy-shade-2: #E8DCC6; --anatomy-shade-3: #EDE4D4; --anatomy-face: #F0E8DA; }
 .iso-dots[data-tone="red"] circle { fill: var(--anatomy-red); opacity: 1; }
 #rota-principal { stroke-width: 1.6; }
-.rotulo-mapa { font: 500 15px var(--font-text); fill: var(--anatomy-hi); paint-order: stroke; stroke: var(--anatomy-paper); stroke-linejoin: round; }
+/* rótulos do mapa: o mesmo rótulo da página (DM Sans 500, caixa alta, 0.08em), com fundo cor de papel (#fundo-rotulo) para nunca ficar sobre traço */
+.rotulo-mapa { font: 500 15px var(--font-text); fill: var(--anatomy-hi); text-transform: uppercase; letter-spacing: .08em; filter: url(#fundo-rotulo); }
 /* corpo dos rótulos do mapa em unidades do viewBox; main.js põe --u = 14 / escala do svg (14 px na tela) */
 #caminhao { --u: 18; }
-.rotulo-mapa { font-size: calc(var(--u) * 1px); stroke-width: calc(var(--u) * .2px); }
-.rotulo-mapa--estado { text-transform: uppercase; letter-spacing: .08em; }
-@media (max-width: 767px) { .rotulo-mapa--estado { display: none; } } /* no celular o mapa é pequeno: o nome do estado encosta em Palmas */
+.rotulo-mapa { font-size: calc(var(--u) * 1px); }
+/* no celular o mapa tem ~360 px e os rótulos de 14 px não cabem todos: saem o nome do estado (encosta em Palmas) e
+   Tocantinópolis (à esquerda sai da tela, à direita fica sob o caminhão); a legenda da figura nomeia a cidade */
+@media (max-width: 767px) { .rotulo-mapa--estado, .rotulo-mapa--largo { display: none; } }
 /* caminhão e mapa: o mesmo acabamento da casa. Silhueta 2 px (laje do mapa; no caminhão, a base em tinta de 4 px
    por baixo das peças deixa 2 px de borda), arestas 1 px, juntas e hachura 0,5 px; sombra projetada pelo mesmo sol */
 #caminhao .iso-edge { stroke: rgba(90, 52, 35, .75); stroke-width: 1px; }
-#caminhao .silhueta-mapa > .iso-edge { stroke: #5A3423; stroke-width: 2px; }
+#caminhao .silhueta-mapa > .iso-edge { stroke: #5A3423; stroke-width: 1px; } /* placa fina: contorno de 1 px; a silhueta de 2 px é só do caminhão */
+#caminhao .hachura--borda { stroke: rgba(90, 52, 35, .45); }
 #caminhao .silhueta-fundo { fill: #5A3423; stroke: #5A3423; stroke-width: 4px; stroke-linejoin: round; }
 #caminhao .junta { stroke: rgba(90, 52, 35, .45); stroke-width: .5px; }
 #caminhao .sombra { fill: var(--ink); fill-opacity: .06; stroke: none; }
@@ -317,6 +320,9 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
     var(--mais) right 11px bottom 16px / 11px 1px no-repeat, var(--mais) right 16px bottom 11px / 1px 11px no-repeat;
 }
 .fabrica__legenda { position: absolute; top: 24px; left: 32px; right: 32px; }
+/* norte no canto de baixo da célula; a seta gira com o mapa (main.js põe --norte, de CAMINHAO_META.norte) */
+.fabrica__norte { position: absolute; left: 32px; bottom: 24px; display: flex; align-items: center; gap: 8px; margin: 0; }
+.fabrica__norte svg { display: block; transform: rotate(var(--norte, 0deg)); }
 .fabrica__grade > .celula:not(.fabrica__moldura) { display: grid; align-content: start; gap: 12px; border-left: 0; border-top: 1px solid var(--line); padding: var(--s-3) var(--gutter); }
 .fabrica__titulo h2 { margin: 4px 0 0; max-width: 10em; font-size: var(--h2); line-height: 1.04; text-wrap: balance; }
 .fabrica__copy { margin: 0; max-width: 300px; font-size: 16px; line-height: 1.6; text-wrap: pretty; }

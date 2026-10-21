@@ -9,9 +9,9 @@ const ELEVACAO = 38;
 const ROTULO = "Caminhão carregado de plaquetas percorrendo o mapa do Tocantins de Tocantinópolis a Palmas";
 
 const CABE = [420, 560]; // o estado cabe nesta caixa do chão
-const LAJE = 5; // espessura do mapa (laje com costura, como a laje da casa)
+const LAJE = 3; // espessura da placa do mapa: chão fino, contorno de 1 px e borda hachurada
 const ROTA_Z = LAJE + 0.2;
-const ESCALA = 3.5; // o caminhão é desenhado em 60 × 22 × 26 e ampliado (licença cartográfica) para ler a 1× e no celular
+const ESCALA = 2.2; // o caminhão é desenhado em 60 × 22 × 26 e ampliado (licença cartográfica): ~120 px de altura em 1440
 const MARGEM = 24; // em volta de tudo o que a figura desenha, no recorte do viewBox
 const ANGULO_MAX = 15;
 // Giro do chão (graus) depois de pôr o norte para cima: a rota Tocantinópolis → Palmas desce na diagonal,
@@ -30,10 +30,10 @@ const LETRA = 28; // corpo do rótulo usado só para reservar espaço no recorte
 // Goiás segue a rota principal (o tracejado fica sob o vermelho) e desce de Palmas.
 const VIZINHAS = [
 // `alem`: quanto cada rota anda no chão depois da borda do mapa; as laterais vão longe para a figura abrir na largura da célula.
-  { uf: "PA", rumo: [-0.9, -0.45], alem: 120 },
-  { uf: "MA", rumo: [0.7, -0.7], alem: 70 },
-  { uf: "PI", rumo: [1, 0.2], alem: 130 },
-  { uf: "GO", rumo: [0, 1], pelaRota: true, alem: 30 },
+  { uf: "PA", rumo: [-0.9, -0.45], alem: 55 },
+  { uf: "MA", rumo: [0.7, -0.7], alem: 45 },
+  { uf: "PI", rumo: [1, 0.2], alem: 55 },
+  { uf: "GO", rumo: [0, 1], pelaRota: true, alem: 45 },
 ];
 
 const r1 = (n) => Math.round(n * 10) / 10;
@@ -106,7 +106,8 @@ export function caminhao(mapa) {
   const pegada = (c, folga) => {
     const h = unit(menos(palmas, c));
     const n = [h[1], -h[0]];
-    const [U, V] = [31 * ESCALA + folga, 11 * ESCALA + folga];
+    // de lado, 9 (e não 11) + folga: as rodas podem tocar a borda da placa, e a partida fica mais perto de Tocantinópolis
+    const [U, V] = [31 * ESCALA + folga, 9 * ESCALA + folga];
     const pts = [];
     for (let i = 0; i <= 8; i++) {
       const u = -U + (2 * U * i) / 8;
@@ -169,7 +170,7 @@ export function caminhao(mapa) {
     const [ti, tf, ce] = [ponto(toc, ROTA_Z), ponto(palmas, ROTA_Z), ponto(sudoeste, LAJE)];
     const lista = [
       // acima e à esquerda, entre a rota do Pará e a do Maranhão: embaixo fica a partida do caminhão
-      { texto: "Tocantinópolis", x: ti[0], y: ti[1], dx: -1.6, dy: -0.5, ancora: "end" },
+      { texto: "Tocantinópolis", x: ti[0], y: ti[1], dx: -1.6, dy: -0.5, ancora: "end", classe: "rotulo-mapa--largo" },
       // abaixo e à esquerda: o caminhão para em cima do ponto, com a frente para baixo e à direita
       { texto: "Palmas", x: tf[0], y: tf[1], dx: -3.2, dy: 1.2, ancora: "end" },
       { texto: "Tocantins", x: ce[0], y: ce[1], dx: 0, dy: 0, ancora: "middle", classe: "rotulo-mapa--estado" },
@@ -213,9 +214,21 @@ export function caminhao(mapa) {
   const caixaSombra = [[Math.min(...sx), Math.min(...sy)], [Math.max(...sx), Math.min(...sy)], [Math.max(...sx), Math.max(...sy)], [Math.min(...sx), Math.max(...sy)]];
   const sombraMapa = `<clipPath id="sombra-mapa"><path d="${dSombra}"/></clipPath><path class="sombra" d="${dSombra}"/>`
     + `<g clip-path="url(#sombra-mapa)">${k.lineSvg(hachura(caixaSombra, HACHURA).map(([a, b]) => k.segment([...a, 0], [...b, 0], P)).join(""), { className: "hachura" })}</g>`;
+  // Borda da placa: em cada trecho do contorno virado para a câmera, hachura a 45° no plano (s ao longo do trecho, z).
+  const area = anel.reduce((acc, [x, y], i) => { const [x2, y2] = anel[(i + 1) % anel.length]; return acc + x * y2 - x2 * y; }, 0);
+  const [tvx, tvy] = k.towardViewer(P);
+  const bordaHachura = anel.flatMap((a, i) => {
+    const b = anel[(i + 1) % anel.length];
+    const [ex, ey] = menos(b, a);
+    const len = Math.hypot(ex, ey);
+    const [nx, ny] = area > 0 ? [ey / len, -ex / len] : [-ey / len, ex / len];
+    if (nx * tvx + ny * tvy <= 1e-9 || len < 0.5) return [];
+    const f = ([t, z]) => [a[0] + (ex * t) / len, a[1] + (ey * t) / len, z];
+    return hachura([[0, 0], [len, 0], [len, LAJE], [0, LAJE]], 1.6).map(([q, r]) => k.segment(f(q), f(r), P));
+  }).join("");
   const laje = k.solidSvg(k.extrude(anel, 0, LAJE, P, { convex: false }), {
     tone: "hi", className: "mat-mapa silhueta-mapa",
-    inner: k.lineSvg(k.ringSeam(anel, LAJE - 1.6, P), { tone: "lo" }),
+    inner: k.lineSvg(bordaHachura, { className: "hachura hachura--borda" }),
   });
   const rotas = vizinhas.map(({ uf, linha, fim }) => `<g class="rota" data-uf="${uf}">`
     + k.lineSvg(k.pathOf(linha.map((p) => k.iso(p, P))), { tone: "mid", dashed: true })
@@ -224,19 +237,9 @@ export function caminhao(mapa) {
   const cidades = k.dotsSvg([toc, palmas].map(([x, y]) => k.iso([x, y, ROTA_Z], P)), { size: 4, tone: "red" });
   const textos = rotulos(P).map(({ texto, x, y, dx, dy, ancora, classe }) =>
     `<text class="rotulo-mapa${classe ? ` ${classe}` : ""}" x="${r1(x)}" y="${r1(y)}" dx="${r1(dx)}em" dy="${r1(dy)}em" text-anchor="${ancora}" dominant-baseline="middle">${texto}</text>`).join("");
-  // Norte: o chão está girado, então a seta mostra para onde o norte caiu na tela; no canto de baixo à esquerda.
-  const norte = (() => {
-    const a = k.iso([0, 0, 0], P);
-    const b = k.iso([...gira([0, -1]), 0], P);
-    const [ux, uy] = unit(menos(b, a));
-    const [cx, cy] = [MARGEM + 30, ALTURA - MARGEM - 40];
-    const [px, py] = [cx - ux * 22, cy - uy * 22];
-    const [qx, qy] = [cx + ux * 22, cy + uy * 22];
-    const ponta = [[qx - ux * 7 - uy * 4, qy - uy * 7 + ux * 4], [qx, qy], [qx - ux * 7 + uy * 4, qy - uy * 7 - ux * 4]];
-    return k.lineSvg(k.pathOf([[px, py], [qx, qy]]) + k.pathOf(ponta), { tone: "hi", className: "norte" })
-      + `<text class="rotulo-mapa" x="${r1(qx + ux * 4)}" y="${r1(qy + uy * 4)}" dx="${r1(ux * 0.7)}em" dy="${r1(uy * 0.7)}em" text-anchor="middle" dominant-baseline="middle">N</text>`;
-  })();
-  const grupoMapa = k.groupSvg([sombraMapa, laje, rotas, principal, cidades, textos, norte], { id: "mapa" });
+  // Fundo cor de papel atrás de cada rótulo (região do filtro = caixa do texto + ~2 px): rótulo nunca sobre traço.
+  const fundo = `<filter id="fundo-rotulo" x="-0.06" y="-0.14" width="1.12" height="1.28"><feFlood flood-color="#FAF8F1"/><feComposite in="SourceGraphic"/></filter>`;
+  const grupoMapa = k.groupSvg([fundo, sombraMapa, laje, rotas, principal, cidades, textos], { id: "mapa" });
   // Caixa no referencial do caminhão: u ao longo do rumo (frente em +30), v de lado, z a partir do mapa (antes da ESCALA).
   const anelLocal = (u0, v0, du, dv, r = 0) => k.ringOf({ x: u0, y: v0, w: du, d: dv, r }, r ? 3 : 1)
     .map(([u, v]) => mundo(u, v, 0).slice(0, 2));
@@ -260,7 +263,7 @@ export function caminhao(mapa) {
   const quad = (f, a0, b0, a1, b1) => k.pathOf([[a0, b0], [a1, b0], [a1, b1], [a0, b1]].map((q) => k.iso(f(q), P)), true);
   const hachuraFace = (f, poli, passo) => hachura(poli, passo).map(([a, b]) => k.segment(f(a), f(b), P)).join("");
   // Luz por face: normal no chão (+u = rumo, +v = lado). A face vista pela câmera e de costas para o sol leva hachura.
-  const [tvx, tvy] = k.towardViewer(P);
+  // (tvx, tvy: rumo da câmera, declarado na borda da placa)
   const normal = { "+u": rumo, "-u": [-rumo[0], -rumo[1]], "+v": lado, "-v": [-lado[0], -lado[1]] };
   const vista = (n) => normal[n][0] * tvx + normal[n][1] * tvy > 1e-6;
   // deslocamento ao longo da normal por unidade de queda do raio de sol (< 0: o raio vem de fora para a face, ela está ao sol)
@@ -444,6 +447,8 @@ export function caminhao(mapa) {
       inicio: tela([...toc, ROTA_Z]),
       fim: tela([...palmas, ROTA_Z]),
       partida: tela([...centro, ROTA_Z]),
+      // para onde o norte aponta na tela, em graus no sentido horário a partir de cima (a seta do canto da célula)
+      norte: (() => { const [nx, ny] = menos(k.iso([...gira([0, -1]), 0], P), k.iso([0, 0, 0], P)); return Math.round((Math.atan2(nx, -ny) * 180) / Math.PI); })(),
       carroceria: {
         sx: r1(Math.min(...xs)), sy: r1(Math.min(...ys)), w: r1(Math.max(...xs) - Math.min(...xs)), h: r1(Math.max(...ys) - Math.min(...ys)),
         // onde a plaqueta extra deita: no fardo do meio junto à cabine, eixos 24 : 7 ao longo do caminhão (ampliada para ler)
