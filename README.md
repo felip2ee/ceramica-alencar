@@ -17,11 +17,13 @@ A abertura (plaquetas assentando na forma da logo) roda uma vez por navegador e 
 
 ## Publicar (Portainer Swarm + Traefik)
 
-`Dockerfile` na raiz empacota `site/` num nginx (`deploy/nginx.conf`: gzip, cache longo para imagens, revalidação para HTML e código). O workflow `.github/workflows/docker.yml` publica `ghcr.io/<owner>/ceramica-alencar:latest` a cada push em `main`; `docker-stack.yml` sobe o serviço na rede `network_public` com os rótulos do Traefik para `ceramicaalencar.dgtnova.com`. Para testar local:
+Só a pasta `site/` vai para o repositório público (github.com/felip2ee/ceramica-alencar) e para a imagem; o repositório local completo (pesquisa, docs, mídia) fica privado. `deploy/publicar.sh` faz as duas coisas: constrói a imagem `linux/amd64` com `Dockerfile` + `deploy/nginx.conf` (gzip, cache longo para imagens, revalidação para HTML e código), envia para `ghcr.io/felip2ee/ceramica-alencar:latest` e força o `git subtree split` de `site/` em `origin/main`. Uma vez só: `gh auth refresh -h github.com -s write:packages,read:packages`.
 
 ```bash
-docker build -t ceramica-alencar . && docker run --rm -p 8080:80 ceramica-alencar
+site/deploy/publicar.sh
 ```
+
+`docker-stack.yml` sobe o serviço no Portainer com os rótulos do Traefik para `ceramicaalencar.dgtnova.com`; a rede externa precisa ser a mesma do Traefik (`docker network ls --filter driver=overlay` no manager). Teste local: `docker build -t ceramica-alencar site && docker run --rm -p 8080:80 ceramica-alencar`.
 
 Domínio final já está no `og:image` (`https://ceramicaalencar.dgtnova.com/...`). Palavra "amostra" no texto visível só entra depois de confirmada com a Cerâmicas Alencar. A classe `.amostra` dos cartões de tom é nome interno e não aparece para o visitante.
 

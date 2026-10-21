@@ -1,0 +1,31 @@
+# Stack para o Portainer (Docker Swarm) da NovaDigital, atrás do Traefik.
+# Imagem publicada pelo workflow .github/workflows/docker.yml a cada push em main.
+version: "3.8"
+
+services:
+  ceramicaalencar:
+    image: ghcr.io/felip2ee/ceramica-alencar:latest
+    networks:
+      - network_public
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        order: start-first
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+      labels:
+        - traefik.enable=1
+        - traefik.http.routers.ceramicaalencar.rule=Host(`ceramicaalencar.dgtnova.com`)
+        - traefik.http.routers.ceramicaalencar.entrypoints=websecure
+        - traefik.http.routers.ceramicaalencar.priority=1
+        - traefik.http.routers.ceramicaalencar.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.ceramicaalencar.service=ceramicaalencar
+        - traefik.http.services.ceramicaalencar.loadbalancer.server.port=80
+        - traefik.http.services.ceramicaalencar.loadbalancer.passHostHeader=true
+
+networks:
+  network_public:
+    external: true

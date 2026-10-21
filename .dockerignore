@@ -1,0 +1,8 @@
+Dockerfile
+.dockerignore
+docker-stack.yml
+deploy/
+tests/
+README.md
+figures/*.mjs
+figures/*.json
