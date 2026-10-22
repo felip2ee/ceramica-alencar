@@ -107,4 +107,12 @@ test("uma casa por argumento: sem redundância e sem texto que exponha o arquite
 test("no toque, a rolagem é normalizada pelo GSAP (sem estalo do pin no celular)", () => {
   const scroll = readFileSync(new URL("../scroll.mjs", import.meta.url), "utf8");
   assert.match(scroll, /ScrollTrigger\.isTouch === 1[^\n]*ScrollTrigger\.normalizeScroll\(\{ allowNestedScroll: true \}\)/);
+  // normalizeScroll + scroll-behavior: smooth: cada scrollTo vira animação e a página quase não desce (arrasto de 400 px movia 59)
+  assert.match(scroll, /scrollBehavior = normalizado \? "auto" : ""/);
+});
+test("no celular a plaqueta narradora não voa (pedido do dono)", () => {
+  const scroll = readFileSync(new URL("../scroll.mjs", import.meta.url), "utf8");
+  const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
+  assert.match(scroll, /clientWidth < 768\) return;/);
+  assert.match(css, /max-width: 767px\) \{ #plaqueta-narradora \{ display: none; \}/);
 });

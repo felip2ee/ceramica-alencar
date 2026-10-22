@@ -29,10 +29,15 @@ export function iniciarScroll({ F, reduceMotion }) {
   // No toque, o navegador avança dezenas de px entre dois eventos de scroll numa flicada: o pin só prende no evento
   // seguinte e a seção estala de volta ao topo (e de novo ao soltar, no fim). normalizeScroll leva a rolagem para o
   // thread do JS, o ScrollTrigger atualiza a cada quadro e o pin prende e solta no px certo. Só no toque; o mouse não precisa.
-  if (ScrollTrigger.isTouch === 1) ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
+  // ?semnormalize: diagnóstico no aparelho, rolagem nativa para comparar o pin com e sem o normalize.
+  const normalizado = ScrollTrigger.isTouch === 1 && !location.search.includes("semnormalize"); if (normalizado) ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
   // O refresh rola para 0 e mede; com html { scroll-behavior: smooth } essa rolagem vira animação
   // e todo start/end sai deslocado pelo scroll atual. Desliga o smooth só durante o refresh.
+  // Com normalizeScroll o smooth fica desligado de vez: ele rola por window.scrollTo a cada quadro, e com smooth
+  // cada chamada vira uma animação que o quadro seguinte interrompe (um arrasto de 400 px movia 59; a página não descia).
   const raiz = document.documentElement;
+  const smoothDeVolta = () => { raiz.style.scrollBehavior = normalizado ? "auto" : ""; };
+  smoothDeVolta();
   ScrollTrigger.addEventListener("refreshInit", () => {
     raiz.style.scrollBehavior = "auto";
     void getComputedStyle(raiz).scrollBehavior; // aplica antes do scrollTo(0) do refresh
@@ -42,7 +47,7 @@ export function iniciarScroll({ F, reduceMotion }) {
   let largura = raiz.clientWidth;
   let espera = 0;
   ScrollTrigger.addEventListener("refresh", () => {
-    raiz.style.scrollBehavior = "";
+    smoothDeVolta();
     largura = raiz.clientWidth;
   });
   window.addEventListener("resize", () => {
@@ -64,6 +69,32 @@ export function iniciarScroll({ F, reduceMotion }) {
   // dos pins que vêm antes dele.
   ScrollTrigger.sort();
   ScrollTrigger.refresh();
+  if (location.search.includes("debug")) diagnostico(gsap, ScrollTrigger);
+}
+
+// Diagnóstico no aparelho (?debug): painel fixo com scroll real x scroll do ScrollTrigger, altura da janela, contagem de
+// refresh/resize, o pin ativo e os últimos eventos. Temporário: sai quando o pin do celular estiver resolvido.
+function diagnostico(gsap, ScrollTrigger) {
+  const el = document.createElement("pre");
+  el.style.cssText = "position:fixed;left:0;bottom:0;z-index:999;margin:0;padding:6px 8px;font:11px/1.35 monospace;background:#000c;color:#9f9;pointer-events:none;white-space:pre;max-width:100vw";
+  document.body.append(el);
+  let refresh = 0, resize = 0, estado = "", t0 = performance.now();
+  const eventos = [];
+  ScrollTrigger.addEventListener("refresh", () => refresh++);
+  window.addEventListener("resize", () => resize++);
+  const anota = (texto) => { eventos.unshift(`${((performance.now() - t0) / 1000).toFixed(1)}s ${texto}`); eventos.length = Math.min(eventos.length, 6); };
+  let ultimoRefresh = 0;
+  gsap.ticker.add(() => {
+    const st = ScrollTrigger.getAll()[0];
+    const pin = ScrollTrigger.getAll().find((t) => t.pin && t.isActive);
+    const y = Math.round(scrollY), sy = Math.round(st.scroll());
+    const agora = pin ? `pin ${pin.trigger.id || pin.trigger.className.split(" ")[0]}` : "sem pin";
+    if (agora !== estado) { anota(`${agora} y${y} st${sy}`); estado = agora; }
+    if (refresh !== ultimoRefresh) { anota(`refresh #${refresh} y${y} ih${innerHeight}`); ultimoRefresh = refresh; }
+    el.textContent = `y ${y}  st ${sy}  ih ${innerHeight}  iw ${innerWidth}  refresh ${refresh}  resize ${resize}\n`
+      + (pin ? `${agora} p ${pin.progress.toFixed(2)} start ${Math.round(pin.start)} end ${Math.round(pin.end)} top ${Math.round(pin.pin.getBoundingClientRect().top)} ${pin.pin.style.position}` : agora)
+      + "\n" + eventos.join("\n");
+  });
 }
 
 // Estado escondido só nasce aqui, com o GSAP confirmado: sem ele, nada fica em opacity 0.
@@ -132,7 +163,8 @@ function narrar(gsap, ScrollTrigger, svg, veiculo, carroceria) {
   const no = document.getElementById("plaqueta-narradora");
   const palco = document.getElementById("casa");
   const casa = palco?.querySelector("#plaqueta-solta");
-  if (!no || !casa || !carroceria) return;
+  // No celular a plaqueta não voa (pedido do dono em 2026-10-21): a peça fica na casa e a carga não entra no caminhão.
+  if (!no || !casa || !carroceria || document.documentElement.clientWidth < 768) return;
 
   const { faces, viewBox } = plaquetaSvg(carroceria);
   const carga = document.createElementNS(NS, "g");
@@ -249,6 +281,7 @@ function interludios(gsap) {
   const { ScrollTrigger } = window;
   for (const sec of gsap.utils.toArray(".interludio")) {
     const foto = sec.querySelector(".interludio__foto");
+    const texto = sec.querySelector(".interludio__texto");
     const [primeira, segunda] = sec.querySelectorAll(".interludio__frase");
     const tl = gsap.timeline({
       defaults: { ease: "none" },
@@ -258,6 +291,9 @@ function interludios(gsap) {
       },
     });
     if (foto) tl.fromTo(foto, { yPercent: -6 }, { yPercent: 6, duration: 10 }, 0);
+    // A frase não congela no pin: segue subindo devagar com a rolagem, para o travar e o soltar não serem secos
+    // (pedido do dono em 2026-10-21). yPercent -50 repete o translateY(-50%) do CSS, que o GSAP substituiria.
+    if (texto) tl.fromTo(texto, { yPercent: -50, y: 36 }, { yPercent: -50, y: -36, duration: 10 }, 0);
     if (primeira && segunda) {
       tl.to(primeira, { opacity: 0, y: -40, duration: 1.5 }, 4)
         .fromTo(segunda, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.5 }, 4.8);

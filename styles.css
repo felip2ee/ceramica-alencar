@@ -451,7 +451,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
 .apl__galeria { display: grid; border-top: 1px solid var(--line); }
 .apl__foto { display: grid; grid-template-rows: minmax(0, 1fr) auto; padding: 0; border-left: 0; }
 .apl__foto + .apl__foto { border-top: 1px solid var(--line); }
-.apl__foto img { width: 100%; height: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0; }
+.apl__foto img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0; } /* height: auto: no Safari, 100% + aspect-ratio na grade estoura a linha e a foto cobre a legenda */
 .apl__foto figcaption {
   display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: var(--s-2); margin: 0; padding: 12px var(--gutter);
   border-top: 1px solid var(--line); font: 500 14px/1.4 var(--font-text); letter-spacing: .08em; text-transform: uppercase;
@@ -475,7 +475,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   .apl__foto:nth-child(n) { border-top: 0; border-left: 1px solid var(--line); }
   .apl__foto:nth-child(3n+1) { border-left: 0; }
   .apl__foto:nth-child(n+4) { border-top: 1px solid var(--line); }
-  .apl__foto img { aspect-ratio: auto; }
+  .apl__foto img { height: 100%; aspect-ratio: auto; } /* aqui as linhas têm altura fixa: a foto enche a célula */
   /* "+" de 11 px centrado em cada cruzamento dos fios da galeria (fio de baixo de cada célula com o fio vertical à esquerda);
      nas bordas da tela, a 16 px, como nas molduras */
   .apl__foto { position: relative; --mais: linear-gradient(var(--ink), var(--ink)); }
@@ -632,7 +632,7 @@ figcaption, .ficha { margin-top: var(--s-1); font: 400 14px/1.5 var(--font-text)
   visibility: hidden; pointer-events: none; will-change: transform;
 }
 #plaqueta-narradora svg { width: 100%; height: auto; overflow: visible; }
-@media (max-width: 767px) { #plaqueta-narradora { width: 44px; } }
+@media (max-width: 767px) { #plaqueta-narradora { display: none; } } /* no celular não voa (scroll.mjs pula o narrar) */
 @media (prefers-reduced-motion: reduce) { #plaqueta-narradora { display: none; } }
 
 /* WhatsApp flutuante: .btn--contorno, não acento (o --action fica para os CTAs do conteúdo) */
